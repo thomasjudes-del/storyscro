@@ -16,9 +16,8 @@ options.add_argument("--window-size=1440,1000")
 options.set_capability("goog:loggingPrefs", {"browser": "ALL"})
 
 driver = webdriver.Chrome(options=options)
-driver.set_window_size(1440, 1000)
 
-shots = [
+desktop_shots = [
     ("00-hero", None, 0.0),
     ("01-decisions-a", "decisions", 0.10),
     ("02-decisions-c", "decisions", 0.78),
@@ -32,10 +31,27 @@ shots = [
     ("10-proof", "proof", 0.68),
 ]
 
-report = {"viewport": [1440, 1000], "shots": [], "console": []}
-try:
+mobile_shots = [
+    ("m00-hero", None, 0.0),
+    ("m01-decisions", "decisions", 0.72),
+    ("m02-vulnerabilities", "vulnerabilities", 0.58),
+    ("m03-arbitrage", "matrix", 0.70),
+    ("m04-method", "method", 0.55),
+    ("m05-planning", "planning", 0.82),
+    ("m06-workshops", "workshops", 0.70),
+    ("m07-deliverables", "deliverables", 0.64),
+    ("m08-proof", "proof", 0.68),
+]
+
+report = {"sets": [], "shots": [], "console": []}
+
+def capture_set(label, width, height, shots):
+    driver.set_window_size(width, height)
     driver.get(BASE)
-    time.sleep(2.2)
+    time.sleep(2.0)
+    actual = driver.execute_script("return [window.innerWidth, window.innerHeight]")
+    report["sets"].append({"label": label, "requested": [width, height], "actual": actual})
+
     for name, scene, progress in shots:
         if scene is None:
             driver.execute_script("window.scrollTo(0,0)")
@@ -54,7 +70,7 @@ try:
             )
             if not result or not result.get("ok"):
                 raise RuntimeError(f"Scene not found: {scene}")
-        time.sleep(0.7)
+        time.sleep(0.65)
         dims = driver.execute_script(
             """
             return {
@@ -71,7 +87,11 @@ try:
         path = OUT / f"{name}.png"
         if not driver.save_screenshot(str(path)):
             raise RuntimeError(f"Screenshot failed: {name}")
-        report["shots"].append({"name": name, "scene": scene, "progress": progress, "dims": dims})
+        report["shots"].append({"set": label, "name": name, "scene": scene, "progress": progress, "dims": dims})
+
+try:
+    capture_set("desktop", 1440, 1000, desktop_shots)
+    capture_set("mobile", 390, 844, mobile_shots)
 
     console = driver.get_log("browser")
     report["console"] = console
@@ -82,4 +102,4 @@ finally:
     (OUT / "report.json").write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     driver.quit()
 
-print(f"Visual capture OK: {len(report['shots'])} viewports, no horizontal overflow or severe console errors.")
+print(f"Visual capture OK: {len(report['shots'])} desktop/mobile viewports, no horizontal overflow or severe console errors.")

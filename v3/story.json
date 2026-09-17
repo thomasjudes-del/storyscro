@@ -1,0 +1,325 @@
+{
+  "version": "0.1.0",
+  "document": {
+    "id": "metropole-horizon-loire-demo",
+    "title": "Stratégie territoriale d'adaptation climatique",
+    "subtitle": "Feuille de route 2035",
+    "source_file": "strategie-territoriale-adaptation-climatique.pdf",
+    "language": "fr",
+    "page_count": 10,
+    "audience": "Décideurs territoriaux",
+    "purpose": "Transformer un diagnostic climatique en choix d'investissement, de gouvernance et d'action.",
+    "core_question": "Où agir d'abord, avec quels leviers, dans quel ordre et avec quelles coalitions d'acteurs ?"
+  },
+  "editorial_policy": {
+    "fidelity": "adaptive",
+    "compression": "balanced",
+    "notes": "La structure source est condensée en une trajectoire de décision. Les faits, nombres et références restent sourcés."
+  },
+  "navigation": {
+    "chapter_header": true,
+    "reading_progress": true,
+    "micro_navigation": true,
+    "keyboard_navigation": true
+  },
+  "assets": [
+    {"id":"city","type":"image","uri":"https://images.pexels.com/photos/17227141/pexels-photo-17227141.jpeg?auto=compress&cs=tinysrgb&w=2400","alt":"Vue urbaine arborée","license":"Pexels"},
+    {"id":"drought","type":"image","uri":"https://images.pexels.com/photos/20253885/pexels-photo-20253885.jpeg?auto=compress&cs=tinysrgb&w=2200","alt":"Sol sec et craquelé","license":"Pexels"},
+    {"id":"river","type":"image","uri":"https://images.pexels.com/photos/20081099/pexels-photo-20081099.jpeg?auto=compress&cs=tinysrgb&w=2200","alt":"Cours d'eau et paysage","license":"Pexels"},
+    {"id":"citydry","type":"image","uri":"https://images.pexels.com/photos/6942516/pexels-photo-6942516.jpeg?auto=compress&cs=tinysrgb&w=2200","alt":"Tissu urbain minéral","license":"Pexels"},
+    {"id":"roofs","type":"image","uri":"https://images.pexels.com/photos/17854877/pexels-photo-17854877.jpeg?auto=compress&cs=tinysrgb&w=2200","alt":"Toitures et tissu urbain","license":"Pexels"}
+  ],
+  "evidence": [
+    {"id":"ev-mission","type":"claim","status":"VERIFIED","text":"Transformer un diagnostic climatique en choix d'investissement, de gouvernance et d'action.","source_refs":[{"file":"strategie-territoriale-adaptation-climatique.pdf","page":2}]},
+    {"id":"ev-questions","type":"claim","status":"VERIFIED","text":"La mission est structurée autour de trois questions : vulnérabilité réelle, actions qui changent la trajectoire, feuille de route exécutable.","source_refs":[{"file":"strategie-territoriale-adaptation-climatique.pdf","page":2}]},
+    {"id":"ev-vulnerability","type":"claim","status":"VERIFIED","text":"Quatre familles de vulnérabilité sont distinguées : confort d'été et santé, ressource en eau, continuité des services, systèmes naturels.","source_refs":[{"file":"strategie-territoriale-adaptation-climatique.pdf","page":3}]},
+    {"id":"ev-matrix","type":"method","status":"VERIFIED","text":"Une matrice qualitative met en regard urgence / vulnérabilité et capacité d'action, avec les postures sécuriser, prioriser, surveiller, accélérer.","source_refs":[{"file":"strategie-territoriale-adaptation-climatique.pdf","page":3}]},
+    {"id":"ev-method","type":"method","status":"VERIFIED","text":"La méthode comprend quatre phases : cadrer et objectiver ; diagnostiquer et comparer ; construire et arbitrer ; programmer et sécuriser.","source_refs":[{"file":"strategie-territoriale-adaptation-climatique.pdf","page":4}]},
+    {"id":"ev-planning","type":"timeline","status":"VERIFIED","text":"Le séquençage illustratif couvre 12 semaines et quatre jalons de décision.","value":12,"unit":"semaines","source_refs":[{"file":"strategie-territoriale-adaptation-climatique.pdf","page":5}]},
+    {"id":"ev-workshops","type":"method","status":"VERIFIED","text":"Trois ateliers sont associés aux fonctions mettre en tension, arbitrer et programmer.","source_refs":[{"file":"strategie-territoriale-adaptation-climatique.pdf","page":6}]},
+    {"id":"ev-deliverables","type":"claim","status":"VERIFIED","text":"Six livrables sont articulés comme outils de pilotage.","value":6,"unit":"livrables","source_refs":[{"file":"strategie-territoriale-adaptation-climatique.pdf","page":7}]},
+    {"id":"ev-refs","type":"claim","status":"VERIFIED","text":"Pathways2Resilience, NetZeroCities, Caux Seine 2 et Veolia - Urban Cool Islands sont présentés comme références mobilisables.","source_refs":[{"file":"strategie-territoriale-adaptation-climatique.pdf","page":9}]},
+    {"id":"ev-conclusion","type":"conclusion","status":"VERIFIED","text":"La proposition est structurée autour de la spécificité, la démonstration, la cohérence et la mise en œuvre.","source_refs":[{"file":"strategie-territoriale-adaptation-climatique.pdf","page":10}]}
+  ],
+  "chapters": [
+    {
+      "id":"opening",
+      "title":"De la vulnérabilité à la décision",
+      "nav_label":"Ouverture",
+      "purpose":"positioning",
+      "source_evidence_ids":["ev-mission"],
+      "scenes":[
+        {
+          "id":"hero",
+          "nav_label":"Titre",
+          "primitive":"hero",
+          "semantic_role":"opening",
+          "message":"De la vulnérabilité à la décision.",
+          "kicker":"Métropole Horizon Loire | Septembre 2026",
+          "title":"De la vulnérabilité à la décision.",
+          "body":"Stratégie territoriale d'adaptation climatique et feuille de route 2035.",
+          "media":[{"asset_id":"city","role":"background"}],
+          "effects":[{"id":"parallax","intensity":"subtle","target":"background","trigger":"scroll"}],
+          "source_evidence_ids":["ev-mission"],
+          "source_refs":[{"file":"strategie-territoriale-adaptation-climatique.pdf","page":2}],
+          "transformations":[{"type":"shorten","description":"Le message de la mission est condensé en une formule d'ouverture.","source_evidence_ids":["ev-mission"]}]
+        },
+        {
+          "id":"core-question",
+          "nav_label":"Question centrale",
+          "primitive":"full_screen_statement",
+          "semantic_role":"thesis",
+          "message":"La difficulté n'est pas de produire un inventaire de risques. Elle est d'identifier où agir d'abord.",
+          "body":"La difficulté n'est pas de produire un inventaire de risques. Elle est d'identifier où agir d'abord, avec quels leviers, dans quel ordre et avec quelles coalitions d'acteurs.",
+          "emphasis":[{"text":"où agir d'abord","style":"scroll_highlight"}],
+          "effects":[{"id":"line_by_line_fade","intensity":"subtle","target":"text","trigger":"scroll"}],
+          "source_evidence_ids":["ev-mission"],
+          "source_refs":[{"file":"strategie-territoriale-adaptation-climatique.pdf","page":2}],
+          "transformations":[{"type":"shorten","description":"Formulation raccourcie pour isoler la question centrale.","source_evidence_ids":["ev-mission"]}]
+        }
+      ]
+    },
+    {
+      "id":"decisions",
+      "title":"Trois questions. Une trajectoire.",
+      "nav_label":"Décisions",
+      "purpose":"problem-framing",
+      "source_evidence_ids":["ev-questions"],
+      "scenes":[
+        {
+          "id":"decision-path",
+          "nav_label":"3 questions",
+          "primitive":"scrollmation",
+          "semantic_role":"decision_sequence",
+          "message":"Voir, choisir, exécuter.",
+          "title":"Trois questions. Une trajectoire.",
+          "data":{"steps":[
+            {"kicker":"Question 01","label":"Voir","title":"Où le territoire est-il réellement vulnérable ?","text":"Croiser aléas, exposition, dépendances fonctionnelles et capacités locales, sans réduire le diagnostic à une carte de risques."},
+            {"kicker":"Question 02","label":"Choisir","title":"Quelles actions changent la trajectoire ?","text":"Distinguer les mesures structurantes des actions opportunistes, et expliciter les arbitrages coût, impact, délai et acceptabilité."},
+            {"kicker":"Question 03","label":"Exécuter","title":"Comment rendre la feuille de route exécutable ?","text":"Associer responsabilités, jalons, financement, indicateurs et gouvernance afin que le plan survive à la phase d'étude."}
+          ]},
+          "media":[{"asset_id":"citydry","role":"background"}],
+          "effects":[{"id":"draw_path","intensity":"medium","target":"visual","trigger":"scroll"},{"id":"sticky_step_change","intensity":"medium","target":"text","trigger":"step"}],
+          "source_evidence_ids":["ev-questions"],
+          "source_refs":[{"file":"strategie-territoriale-adaptation-climatique.pdf","page":2}],
+          "transformations":[{"type":"group","description":"Les trois questions du document sont réunies dans une trajectoire Voir / Choisir / Exécuter.","source_evidence_ids":["ev-questions"]}]
+        }
+      ]
+    },
+    {
+      "id":"vulnerabilities",
+      "title":"Quatre vulnérabilités. Quatre logiques de réponse.",
+      "nav_label":"Vulnérabilités",
+      "purpose":"diagnosis",
+      "source_evidence_ids":["ev-vulnerability"],
+      "scenes":[
+        {
+          "id":"vulnerability-mosaic",
+          "nav_label":"4 vulnérabilités",
+          "primitive":"mosaic",
+          "semantic_role":"parallel_categories",
+          "message":"Quatre familles de vulnérabilité nécessitent des réponses différentes.",
+          "title":"Quatre vulnérabilités. Quatre logiques de réponse.",
+          "data":{"items":[
+            {"id":"heat","title":"Confort d'été & santé","text":"Bâtiments publics, espaces minéralisés, publics sensibles et continuité des usages.","asset_id":"citydry"},
+            {"id":"water","title":"Ressource en eau","text":"Tensions saisonnières, usages concurrents, activités économiques et robustesse des services.","asset_id":"river"},
+            {"id":"services","title":"Continuité des services","text":"Énergie, mobilité, numérique, équipements essentiels et effets en cascade.","asset_id":"roofs"},
+            {"id":"nature","title":"Systèmes naturels","text":"Sols, trames vertes et bleues et solutions fondées sur la nature.","asset_id":"city"}
+          ]},
+          "effects":[{"id":"blur_to_focus","intensity":"medium","target":"visual","trigger":"step"},{"id":"zoom_in","intensity":"subtle","target":"media","trigger":"scroll"}],
+          "source_evidence_ids":["ev-vulnerability"],
+          "source_refs":[{"file":"strategie-territoriale-adaptation-climatique.pdf","page":3}],
+          "transformations":[{"type":"group","description":"Les quatre familles sont transformées en mosaïque narrative.","source_evidence_ids":["ev-vulnerability"]}]
+        }
+      ]
+    },
+    {
+      "id":"arbitrage",
+      "title":"Le diagnostic devient utile quand il force un choix.",
+      "nav_label":"Arbitrage",
+      "purpose":"prioritisation",
+      "source_evidence_ids":["ev-matrix"],
+      "scenes":[
+        {
+          "id":"priority-matrix",
+          "nav_label":"Matrice",
+          "primitive":"matrix",
+          "semantic_role":"prioritisation",
+          "message":"Rendre les critères de choix visibles.",
+          "title":"Le diagnostic devient utile quand il force un choix.",
+          "data":{"x_label":"Capacité d'action","y_label":"Urgence / vulnérabilité","quadrants":["Sécuriser","Prioriser","Surveiller","Accélérer"],"points":["Confort d'été","Ressource en eau","Continuité des services","Végétalisation ciblée","Sensibilisation générale"]},
+          "effects":[{"id":"progressive_build","intensity":"medium","target":"data","trigger":"scroll"}],
+          "source_evidence_ids":["ev-matrix"],
+          "source_refs":[{"file":"strategie-territoriale-adaptation-climatique.pdf","page":3}],
+          "transformations":[{"type":"visualize","description":"La matrice qualitative du document est reconstruite progressivement. Les positions restent qualitatives.","source_evidence_ids":["ev-matrix"]}]
+        }
+      ]
+    },
+    {
+      "id":"method",
+      "title":"Du cadrage au passage à l'action.",
+      "nav_label":"Méthode",
+      "purpose":"method",
+      "source_evidence_ids":["ev-method"],
+      "scenes":[
+        {
+          "id":"method-track",
+          "nav_label":"4 phases",
+          "primitive":"scrollmation",
+          "semantic_role":"ordered_method",
+          "message":"Quatre phases transforment l'analyse en trajectoire pilotable.",
+          "title":"Du cadrage au passage à l'action.",
+          "data":{"steps":[
+            {"n":"01","title":"Cadrer et objectiver","headline":"Aligner les décisions attendues et cibler ce qui mérite d'être approfondi.","text":"Collecte ciblée, unités d'analyse, grille de vulnérabilité, plan d'entretiens.","asset_id":"city"},
+            {"n":"02","title":"Diagnostiquer et comparer","headline":"Transformer données, entretiens et benchmark en options comparables.","text":"Cartographie des dépendances, benchmark de territoires, qualification des options.","asset_id":"river"},
+            {"n":"03","title":"Construire et arbitrer","headline":"Mettre les scénarios en tension avec des critères de choix explicites.","text":"Scénarios, ateliers de priorisation, test des actions et conditions de mise en œuvre.","asset_id":"citydry"},
+            {"n":"04","title":"Programmer et sécuriser","headline":"Transformer les choix en trajectoire pilotable.","text":"Feuille de route, gouvernance, financement, indicateurs, jalons et 100 premiers jours.","asset_id":"roofs"}
+          ]},
+          "effects":[{"id":"horizontal_track","intensity":"medium","target":"section","trigger":"scroll"}],
+          "source_evidence_ids":["ev-method"],
+          "source_refs":[{"file":"strategie-territoriale-adaptation-climatique.pdf","page":4}],
+          "transformations":[{"type":"visualize","description":"Les quatre phases sont transformées en séquence horizontale.","source_evidence_ids":["ev-method"]}]
+        }
+      ]
+    },
+    {
+      "id":"planning",
+      "title":"12 semaines. 4 jalons de décision.",
+      "nav_label":"Planning",
+      "purpose":"planning",
+      "source_evidence_ids":["ev-planning"],
+      "scenes":[
+        {
+          "id":"gantt-12-weeks",
+          "nav_label":"12 semaines",
+          "primitive":"gantt",
+          "semantic_role":"schedule",
+          "message":"Chaque séquence mène à un jalon de décision.",
+          "title":"12 semaines. 4 jalons de décision.",
+          "data":{"periods":["S1","S2","S3","S4","S5","S6","S7","S8","S9","S10","S11","S12"],"tasks":[
+            {"label":"Cadrage & collecte","start":0,"end":2},
+            {"label":"Diagnostic & entretiens","start":1,"end":6},
+            {"label":"Benchmark & options","start":3,"end":7},
+            {"label":"Scénarios & ateliers","start":6,"end":9},
+            {"label":"Feuille de route","start":8,"end":11},
+            {"label":"Finalisation & transfert","start":10,"end":12}
+          ],"milestones":[
+            {"id":"J1","at":0.19,"label":"Cadrage validé"},
+            {"id":"J2","at":0.47,"label":"Diagnostic partagé"},
+            {"id":"J3","at":0.72,"label":"Arbitrages actés"},
+            {"id":"J4","at":0.94,"label":"Feuille de route adoptée"}
+          ]},
+          "effects":[{"id":"progressive_build","intensity":"medium","target":"data","trigger":"scroll"}],
+          "source_evidence_ids":["ev-planning"],
+          "source_refs":[{"file":"strategie-territoriale-adaptation-climatique.pdf","page":5}],
+          "transformations":[{"type":"visualize","description":"Le planning source est reconstruit sous forme de Gantt animé.","source_evidence_ids":["ev-planning"]}]
+        }
+      ]
+    },
+    {
+      "id":"coconstruction",
+      "title":"Chaque contribution doit faire avancer une décision.",
+      "nav_label":"Co-construction",
+      "purpose":"stakeholders",
+      "source_evidence_ids":["ev-workshops"],
+      "scenes":[
+        {
+          "id":"workshop-network",
+          "nav_label":"Acteurs & ateliers",
+          "primitive":"network",
+          "semantic_role":"stakeholder_coordination",
+          "message":"La co-construction est organisée par fonction de décision.",
+          "title":"Chaque contribution doit faire avancer une décision.",
+          "data":{"center":"Décision territoriale","actors":["Élus","Directions","Opérateurs","Experts","Entreprises","Usagers","Financeurs"],"steps":[
+            {"n":"01","title":"Mettre en tension","text":"Partager le diagnostic et confronter les angles morts."},
+            {"n":"02","title":"Arbitrer","text":"Comparer les options avec une grille commune et documenter les désaccords."},
+            {"n":"03","title":"Programmer","text":"Transformer les choix en séquences, responsabilités et engagements concrets."}
+          ]},
+          "media":[{"asset_id":"city","role":"background"}],
+          "effects":[{"id":"progressive_build","intensity":"medium","target":"visual","trigger":"step"}],
+          "source_evidence_ids":["ev-workshops"],
+          "source_refs":[{"file":"strategie-territoriale-adaptation-climatique.pdf","page":6}],
+          "transformations":[{"type":"visualize","description":"Les acteurs et fonctions d'atelier sont présentés dans un schéma de coordination. Les liens ne prétendent pas quantifier des relations.","source_evidence_ids":["ev-workshops"]}]
+        }
+      ]
+    },
+    {
+      "id":"deliverables",
+      "title":"Des outils qui s'enchaînent. Pas des documents qui s'empilent.",
+      "nav_label":"Livrables",
+      "purpose":"outputs",
+      "source_evidence_ids":["ev-deliverables"],
+      "scenes":[
+        {
+          "id":"deliverable-sequence",
+          "nav_label":"6 outils",
+          "primitive":"scrollmation",
+          "semantic_role":"ordered_outputs",
+          "message":"Les livrables s'enchaînent en une logique de pilotage.",
+          "title":"Des outils qui s'enchaînent. Pas des documents qui s'empilent.",
+          "data":{"steps":[
+            {"n":"01","title":"Diagnostic stratégique","text":"Vulnérabilités, dépendances, marges de manœuvre et angles morts."},
+            {"n":"02","title":"Cartographie des priorités","text":"Lecture par enjeu, secteur ou zone, avec criticité et capacité d'action."},
+            {"n":"03","title":"Benchmark ciblé","text":"6 à 10 cas comparables centrés sur les mécanismes de mise en œuvre."},
+            {"n":"04","title":"Portefeuille d'actions","text":"Impact attendu, conditions, dépendances, responsables et maturité."},
+            {"n":"05","title":"Feuille de route 2035","text":"Vagues de mise en œuvre, jalons, décisions et trajectoire d'investissement."},
+            {"n":"06","title":"Tableau de bord","text":"Indicateurs limités et actionnables : exposition, avancement, résultat, capacité et finance."}
+          ]},
+          "effects":[{"id":"horizontal_track","intensity":"medium","target":"section","trigger":"scroll"}],
+          "source_evidence_ids":["ev-deliverables"],
+          "source_refs":[{"file":"strategie-territoriale-adaptation-climatique.pdf","page":7}],
+          "transformations":[{"type":"group","description":"Les six livrables sont racontés comme une chaîne de pilotage.","source_evidence_ids":["ev-deliverables"]}]
+        }
+      ]
+    },
+    {
+      "id":"proof",
+      "title":"Des références qui documentent les compétences utiles.",
+      "nav_label":"Références",
+      "purpose":"proof",
+      "source_evidence_ids":["ev-refs"],
+      "scenes":[
+        {
+          "id":"references",
+          "nav_label":"4 références",
+          "primitive":"background_scrollmation",
+          "semantic_role":"proof_sequence",
+          "message":"Les références sont mobilisées pour leur pouvoir de preuve.",
+          "title":"Des références qui documentent les compétences utiles.",
+          "data":{"steps":[
+            {"meta":"Europe | adaptation & résilience","title":"Pathways2Resilience","text":"Stratégie d'exploitation, ateliers, entretiens KER, analyse des besoins du premier groupe de 40 régions et appui au renforcement de capacités.","asset_id":"city"},
+            {"meta":"Europe | villes & neutralité climatique","title":"NetZeroCities","text":"Travaux sur l'exploitation et les modèles économiques, Community of Practice, social innovation, citizen engagement et benchmark d'Innovation Labs.","asset_id":"roofs"},
+            {"meta":"France | prospective territoriale & industrie","title":"Caux Seine 2","text":"Contraintes réglementaires et marché, cartographie d'acteurs, scénarios, analyse des impacts et recommandations stratégiques.","asset_id":"river"},
+            {"meta":"France, Italie, Espagne | adaptation urbaine","title":"Veolia - Urban Cool Islands","text":"Caractérisation des îlots de chaleur, analyse des besoins des villes, business model, chaîne de valeur et stratégie de déploiement.","asset_id":"citydry"}
+          ]},
+          "effects":[{"id":"crossfade","intensity":"subtle","target":"background","trigger":"step"}],
+          "source_evidence_ids":["ev-refs"],
+          "source_refs":[{"file":"strategie-territoriale-adaptation-climatique.pdf","page":9}],
+          "transformations":[{"type":"group","description":"Les références sont présentées en séquence, sans modifier leur rôle probant.","source_evidence_ids":["ev-refs"]}]
+        }
+      ]
+    },
+    {
+      "id":"conclusion",
+      "title":"Une proposition pensée pour la décision",
+      "nav_label":"Conclusion",
+      "purpose":"synthesis",
+      "source_evidence_ids":["ev-conclusion"],
+      "scenes":[
+        {
+          "id":"finale",
+          "nav_label":"Conclusion",
+          "primitive":"conclusion",
+          "semantic_role":"synthesis",
+          "message":"Spécificité. Démonstration. Cohérence. Mise en œuvre.",
+          "kicker":"Une proposition pensée pour la décision",
+          "title":"Spécificité. Démonstration. Cohérence. Mise en œuvre.",
+          "effects":[{"id":"fade","intensity":"subtle","target":"text","trigger":"enter"}],
+          "source_evidence_ids":["ev-conclusion"],
+          "source_refs":[{"file":"strategie-territoriale-adaptation-climatique.pdf","page":10}],
+          "transformations":[{"type":"none","description":"Conclusion source conservée.","source_evidence_ids":["ev-conclusion"]}]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+name: Smoke StoryScro Generic
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: storyscro-generic-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke-v3:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Check renderer syntax
+        run: node --check v3/app.js
+
+      - name: Validate Story Model and narrative grammar
+        run: node scripts/smoke-v3.mjs

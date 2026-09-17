@@ -21,11 +21,14 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install ingestion dependencies
+      - name: Install engine dependencies
         run: python -m pip install --disable-pip-version-check -r engine/requirements.txt
 
       - name: Syntax check
-        run: python -m py_compile engine/ingest.py scripts/test_ingest.py
+        run: python -m py_compile engine/ingest.py engine/prepare_planner_input.py engine/plan.py scripts/test_ingest.py scripts/test_planner_contract.py
 
       - name: Run synthetic PDF ingestion regression
         run: python scripts/test_ingest.py
+
+      - name: Run planner contract regression
+        run: python scripts/test_planner_contract.py

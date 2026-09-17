@@ -28,6 +28,7 @@ def wait_ready(driver):
     for _ in range(40):
         ready = driver.execute_script("return !!document.querySelector('.story-scene') && !document.querySelector('#loading')")
         if ready:
+            driver.execute_script("document.documentElement.style.scrollBehavior='auto'; document.body.style.scrollBehavior='auto';")
             return
         time.sleep(.25)
     raise RuntimeError('StoryScro renderer did not finish loading')
@@ -86,10 +87,10 @@ def capture(label, width, height):
               const el=document.getElementById(arguments[0]);
               const top=el.getBoundingClientRect().top+window.scrollY;
               const span=Math.max(1,el.offsetHeight-window.innerHeight);
-              window.scrollTo(0,top+span*.5);
+              window.scrollTo({top:top+span*.5,behavior:'auto'});
               return {top,span,height:el.offsetHeight};
             """, scene_id)
-            time.sleep(.35)
+            time.sleep(.12)
             dims = inspect_layout(driver, scene_id)
             out = OUT / f'{label}-{scene_id}.png'
             if not driver.save_screenshot(str(out)):
@@ -98,7 +99,7 @@ def capture(label, width, height):
 
         if width >= 1000:
             first_dot = driver.find_element('css selector','.micro-dot')
-            driver.execute_script("arguments[0].scrollIntoView({block:'center'})", first_dot)
+            driver.execute_script("arguments[0].scrollIntoView({block:'center',behavior:'auto'})", first_dot)
             time.sleep(.1)
             driver.execute_script("arguments[0].click()", first_dot)
             time.sleep(.2)

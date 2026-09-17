@@ -41,13 +41,17 @@
   function currentSceneIndex(){
     const all = scenes();
     if(!all.length) return 0;
-    const y = window.scrollY + window.innerHeight * .46;
-    let idx = 0;
+    const y = window.innerHeight * .46;
+    let containing = -1;
+    let nearest = 0;
+    let nearestDistance = Infinity;
     all.forEach((el,i) => {
-      const top = el.getBoundingClientRect().top + window.scrollY;
-      if(top <= y) idx = i;
+      const r = el.getBoundingClientRect();
+      if(r.top <= y && r.bottom >= y) containing = i;
+      const distance = r.bottom < y ? y - r.bottom : (r.top > y ? r.top - y : 0);
+      if(distance < nearestDistance){ nearestDistance = distance; nearest = i; }
     });
-    return idx;
+    return containing >= 0 ? containing : nearest;
   }
 
   function syncNavigation(){

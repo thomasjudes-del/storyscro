@@ -1,2 +1,4 @@
 PyMuPDF>=1.26,<1.27
 Pillow>=11,<14
+openai>=2,<3
+jsonschema>=4,<5

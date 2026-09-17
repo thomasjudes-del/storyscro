@@ -56,9 +56,10 @@ def capture(label, width, height, selected):
                 const id=arguments[0],p=arguments[1];
                 const el=document.getElementById(id);
                 if(!el) return {ok:false,id};
+                const top=el.getBoundingClientRect().top + window.scrollY;
                 const span=Math.max(1,el.offsetHeight-window.innerHeight);
-                window.scrollTo(0,el.offsetTop+span*p);
-                return {ok:true,id,top:el.offsetTop,height:el.offsetHeight,span};
+                window.scrollTo(0,top+span*p);
+                return {ok:true,id,top,height:el.offsetHeight,span};
                 """,
                 scene_id, progress
             )

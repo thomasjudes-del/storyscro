@@ -1,0 +1,90 @@
+name: Public PDF corpus smoke
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'engine/**'
+      - 'scripts/**'
+      - '.github/workflows/public-pdf-corpus.yml'
+
+concurrency:
+  group: storyscro-public-pdf-corpus-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ccc-adaptation-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install engine dependencies
+        run: python -m pip install --disable-pip-version-check -r engine/requirements.txt
+
+      - name: Download CCC adaptation report
+        run: |
+          mkdir -p tmp/ccc assets/ccc
+          curl -L --fail --retry 3 --retry-delay 2 \
+            -o tmp/ccc/source.pdf \
+            'https://www.theccc.org.uk/wp-content/uploads/2025/04/Progress-in-adapting-to-climate-change-2025.pdf'
+
+      - name: Ingest PDF
+        run: |
+          python engine/ingest.py tmp/ccc/source.pdf \
+            --out tmp/ccc/evidence.json \
+            --assets-dir assets/ccc
+
+      - name: Prepare planner input
+        run: |
+          python engine/prepare_planner_input.py tmp/ccc/evidence.json \
+            --out tmp/ccc/planner-input.json
+
+      - name: Validate genericity signals
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          evidence = json.loads(Path('tmp/ccc/evidence.json').read_text(encoding='utf-8'))
+          planner = json.loads(Path('tmp/ccc/planner-input.json').read_text(encoding='utf-8'))
+          stats = evidence['statistics']
+          title = (planner.get('document_candidates', {}).get('preferred_title') or {}).get('text', '')
+          sections = planner.get('document_candidates', {}).get('sections', [])
+          summary = {
+              'source': 'CCC Progress in adapting to climate change - 2025 report to Parliament',
+              'pages': evidence['document']['page_count'],
+              'language': evidence['document']['language'],
+              'title': title,
+              'sections': len(sections),
+              'text_blocks': stats.get('text_blocks'),
+              'numbers': stats.get('numbers'),
+              'tables': stats.get('tables'),
+              'image_placements': stats.get('image_placements'),
+              'unique_image_assets': stats.get('unique_image_assets'),
+              'vector_regions': stats.get('vector_regions'),
+              'ocr_pages': evidence['document'].get('ocr_pages', []),
+          }
+          print(json.dumps(summary, indent=2, ensure_ascii=False))
+          assert summary['pages'] >= 100, summary
+          assert summary['text_blocks'] >= 300, summary
+          assert len(title) >= 12, summary
+          assert summary['numbers'] >= 50, summary
+          assert summary['vector_regions'] >= 10 or summary['image_placements'] >= 10, summary
+          PY
+
+      - name: Upload evidence package
+        uses: actions/upload-artifact@v4
+        with:
+          name: ccc-adaptation-storyscro-evidence
+          path: |
+            tmp/ccc/evidence.json
+            tmp/ccc/planner-input.json
+            assets/ccc
+          retention-days: 7

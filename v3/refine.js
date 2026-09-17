@@ -50,6 +50,17 @@
     return idx;
   }
 
+  function syncNavigation(){
+    const all = scenes();
+    if(!all.length) return;
+    const cur = all[currentSceneIndex()];
+    if(!cur) return;
+    const chapter = cur.dataset.chapter;
+    document.querySelectorAll('.micro-dot').forEach(dot => dot.classList.toggle('active', dot.dataset.target === cur.id));
+    document.querySelectorAll('.micro-chapter').forEach(group => group.classList.toggle('active', group.dataset.chapter === chapter));
+    document.querySelectorAll('.chapter-nav a').forEach(link => link.classList.toggle('active', link.dataset.chapter === chapter));
+  }
+
   function moveScene(delta){
     const all = scenes();
     if(!all.length) return;
@@ -142,6 +153,7 @@
     refineHorizontal('method-track','.horizontal-track','.horizontal-panel','.panel-copy','.horizontal-heading');
     refineHorizontal('deliverable-sequence','.deliverable-track','.delivery-card','.delivery-copy','.deliverable-heading');
     enhanceMicroNav();
+    syncNavigation();
     updateScrubber();
     const handle = document.querySelector('.micro-scrub-handle');
     if(handle) handle.setAttribute('aria-valuenow',String(Math.round(globalProgress()*100)));

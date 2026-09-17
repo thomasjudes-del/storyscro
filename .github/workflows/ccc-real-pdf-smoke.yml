@@ -1,0 +1,74 @@
+name: Real PDF Smoke - CCC 2025
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'engine/**'
+      - 'scripts/test_planner_contract.py'
+      - '.github/workflows/ccc-real-pdf-smoke.yml'
+
+concurrency:
+  group: storyscro-ccc-real-pdf-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ccc-real-pdf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install engine dependencies
+        run: python -m pip install --disable-pip-version-check -r engine/requirements.txt
+
+      - name: Download official CCC report
+        run: |
+          curl -L --fail --retry 3 --retry-delay 2 \
+            'https://www.theccc.org.uk/wp-content/uploads/2025/04/Progress-in-adapting-to-climate-change-2025-1.pdf' \
+            -o /tmp/ccc-2025.pdf
+          test -s /tmp/ccc-2025.pdf
+
+      - name: Ingest 170-page public report
+        run: |
+          python engine/ingest.py /tmp/ccc-2025.pdf --out /tmp/ccc-evidence.json --assets-dir /tmp/ccc-assets --no-ocr
+          python engine/prepare_planner_input.py /tmp/ccc-evidence.json --out /tmp/ccc-planner-input.json
+
+      - name: Validate generic extraction
+        run: |
+          python - <<'PY'
+          import json
+          e=json.load(open('/tmp/ccc-evidence.json', encoding='utf-8'))
+          p=json.load(open('/tmp/ccc-planner-input.json', encoding='utf-8'))
+          s=e['statistics']
+          assert e['document']['page_count'] >= 160, e['document']['page_count']
+          assert s['text_blocks'] > 100, s
+          assert s['numbers'] > 50, s
+          assert len(p['document_candidates']['sections']) > 3, len(p['document_candidates']['sections'])
+          print(json.dumps({
+            'pages': e['document']['page_count'],
+            'language': e['document']['language'],
+            'title': p['document_candidates']['preferred_title'],
+            'statistics': s,
+            'planner_sections': len(p['document_candidates']['sections']),
+            'candidate_tables': len(p['evidence_candidates']['tables']),
+            'candidate_images': len(p['evidence_candidates']['images']),
+            'candidate_vectors': len(p['evidence_candidates']['vector_visuals'])
+          }, ensure_ascii=False, indent=2))
+          PY
+
+      - name: Upload evidence artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ccc-2025-evidence
+          path: |
+            /tmp/ccc-evidence.json
+            /tmp/ccc-planner-input.json
+          retention-days: 7

@@ -47,10 +47,12 @@ def inspect_layout(driver, scene_id):
         const r=el.getBoundingClientRect(), cs=getComputedStyle(el);
         return {tag:el.tagName.toLowerCase(),id:el.id||'',cls:el.className?.toString?.()||'',left:r.left,right:r.right,width:r.width,display:cs.display,position:cs.position};
       }).filter(x=>x.display!=='none' && x.width>0 && (x.right>w+5 || x.left<-5) && !String(x.cls).includes('horizontal-track') && !String(x.cls).includes('deliverable-track'));
-      const visibleHorizontalCopies = scene ? [...scene.querySelectorAll('.panel-copy')].filter(el => {
+      const horizontalCopies = scene ? [...scene.querySelectorAll('.panel-copy')] : [];
+      const visibleCopies = horizontalCopies.filter(el => {
         const r=el.getBoundingClientRect(), cs=getComputedStyle(el);
         return Number(cs.opacity) > .2 && r.right > 0 && r.left < window.innerWidth && r.bottom > 0 && r.top < window.innerHeight;
-      }).length : 0;
+      });
+      const activeHorizontalRect = visibleCopies[0] ? (()=>{const r=visibleCopies[0].getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height};})() : null;
       return {
         w:window.innerWidth,h:window.innerHeight,sw:document.documentElement.scrollWidth,sh:document.documentElement.scrollHeight,
         scrollY:window.scrollY,marker,
@@ -62,7 +64,9 @@ def inspect_layout(driver, scene_id):
         chapter:document.querySelector('.chapter-nav a.active')?.textContent?.trim()||'',
         activeChapter:document.querySelector('.chapter-nav a.active')?.dataset.chapter||'',
         expectedChapter:scene?.dataset.chapter||'',
-        visibleHorizontalCopies,
+        totalHorizontalCopies:horizontalCopies.length,
+        visibleHorizontalCopies:visibleCopies.length,
+        activeHorizontalRect,
         offenders:offenders.slice(0,30)
       };
     """, scene_id)
@@ -74,8 +78,10 @@ def inspect_layout(driver, scene_id):
         raise RuntimeError(f'Micro-navigation lag at {scene_id}: active target is {dims["activeTarget"]}: {json.dumps(dims)}')
     if dims['activeChapter'] != dims['expectedChapter']:
         raise RuntimeError(f'Chapter navigation lag at {scene_id}: expected {dims["expectedChapter"]}, got {dims["activeChapter"]}: {json.dumps(dims)}')
-    if dims['visibleHorizontalCopies'] > 1:
-        raise RuntimeError(f'Competing horizontal panel copy at {scene_id}: {dims["visibleHorizontalCopies"]} visible panels')
+    if dims['totalHorizontalCopies'] and dims['visibleHorizontalCopies'] != 1:
+        raise RuntimeError(f'Horizontal narrative focus failure at {scene_id}: expected 1 visible panel, got {dims["visibleHorizontalCopies"]}')
+    if dims['activeHorizontalRect'] and (dims['activeHorizontalRect']['left'] < -5 or dims['activeHorizontalRect']['right'] > dims['w'] + 5):
+        raise RuntimeError(f'Clipped horizontal narrative copy at {scene_id}: {dims["activeHorizontalRect"]}')
     if not dims['scrubber']:
         raise RuntimeError('Generic draggable scrubber is missing')
     return dims
@@ -125,4 +131,4 @@ def capture(label, width, height):
 
 capture('desktop', 1440, 1000)
 capture('mobile', 390, 844)
-print(f'Generic case visual QA OK for {BASE}: desktop + mobile, navigation labels + scrubber, active scene/chapter sync, single horizontal narrative focus, no severe console errors.')
+print(f'Generic case visual QA OK for {BASE}: desktop + mobile, navigation labels + scrubber, active scene/chapter sync, single unclipped horizontal narrative focus, no severe console errors.')

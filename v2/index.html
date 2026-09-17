@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071d2a">
+  <title>StoryScro | Strategie territoriale d'adaptation climatique</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="progress"><span id="progressBar"></span></div>
+  <header class="topbar" id="topbar">
+    <a class="brand" href="#top" aria-label="StoryScro"><span class="brand-mark"></span><span>StoryScro</span></a>
+    <button class="menu-btn" id="menuBtn" aria-label="Sommaire">Sommaire</button>
+    <button class="source-btn top-source" data-source="all">Sources</button>
+  </header>
+
+  <nav class="chapter-dots" id="chapterDots" aria-label="Chapitres">
+    <a href="#decisions" data-label="Decisions"></a>
+    <a href="#vulnerabilities" data-label="Vulnerabilites"></a>
+    <a href="#arbitrage" data-label="Arbitrage"></a>
+    <a href="#method" data-label="Methode"></a>
+    <a href="#planning" data-label="Planning"></a>
+    <a href="#workshops" data-label="Concertation"></a>
+    <a href="#deliverables" data-label="Livrables"></a>
+    <a href="#proof" data-label="References"></a>
+  </nav>
+
+  <main id="top">
+    <section class="hero chapter" data-chapter="hero">
+      <div class="hero-image" id="heroImage"></div>
+      <div class="hero-grain"></div>
+      <div class="hero-copy">
+        <p class="kicker">Metropole Horizon Loire | Septembre 2026</p>
+        <h1>De la vulnerabilite<br>a la decision.</h1>
+        <p class="hero-deck">Strategie territoriale d'adaptation climatique et feuille de route 2035.</p>
+        <button class="source-btn" data-source="mission">Source p.2</button>
+      </div>
+      <div class="scroll-indicator"><span></span><small>Defiler</small></div>
+    </section>
+
+    <section class="statement chapter" data-chapter="intro">
+      <div class="statement-inner reveal-text">
+        <p>La difficulte n'est pas de produire un inventaire de risques.</p>
+        <h2>Elle est d'identifier <em>ou agir d'abord</em>, avec quels leviers, dans quel ordre et avec quelles coalitions d'acteurs.</h2>
+        <button class="source-btn dark-source" data-source="mission">Source p.2</button>
+      </div>
+    </section>
+
+    <section class="decision-scrolly scrolly chapter" id="decisions" data-chapter="decisions" data-scene="decisions">
+      <div class="sticky-stage decision-stage">
+        <div class="decision-photo"></div>
+        <div class="decision-shade"></div>
+        <svg class="decision-path" viewBox="0 0 1000 700" aria-hidden="true">
+          <path id="decisionLine" d="M170 520 C330 460 360 300 500 315 C650 330 655 500 830 210" />
+          <circle cx="170" cy="520" r="11"></circle>
+          <circle cx="500" cy="315" r="11"></circle>
+          <circle cx="830" cy="210" r="11"></circle>
+        </svg>
+        <div class="stage-title"><span class="chapter-no">01</span><h2>Trois questions.<br>Une trajectoire.</h2></div>
+        <div class="decision-label label-1"><b>01</b><span>Voir</span></div>
+        <div class="decision-label label-2"><b>02</b><span>Choisir</span></div>
+        <div class="decision-label label-3"><b>03</b><span>Executer</span></div>
+        <div class="scene-copy" id="decisionCopy">
+          <p class="scene-kicker">Question 01</p>
+          <h3>Ou le territoire est-il reellement vulnerable ?</h3>
+          <p>Croiser aleas, exposition, dependances fonctionnelles et capacites locales, sans reduire le diagnostic a une carte de risques.</p>
+          <button class="source-btn" data-source="mission">Source p.2</button>
+        </div>
+      </div>
+      <div class="scroll-steps" aria-hidden="true">
+        <div class="step" data-step="0"></div>
+        <div class="step" data-step="1"></div>
+        <div class="step" data-step="2"></div>
+      </div>
+    </section>
+
+    <section class="vulnerability-scrolly scrolly chapter" id="vulnerabilities" data-chapter="vulnerabilities" data-scene="vulnerabilities">
+      <div class="sticky-stage mosaic-stage">
+        <div class="mosaic intro-mosaic" id="mosaic">
+          <article class="mosaic-tile heat" data-tile="0"><div class="tile-image"></div><div class="tile-copy"><b>01</b><h3>Confort d'ete & sante</h3><p>Batiments publics, espaces mineralises, publics sensibles et continuite des usages.</p></div></article>
+          <article class="mosaic-tile water" data-tile="1"><div class="tile-image"></div><div class="tile-copy"><b>02</b><h3>Ressource en eau</h3><p>Tensions saisonnieres, usages concurrents, activites economiques et robustesse des services.</p></div></article>
+          <article class="mosaic-tile services" data-tile="2"><div class="tile-image"></div><div class="tile-copy"><b>03</b><h3>Continuite des services</h3><p>Energie, mobilite, numerique, equipements essentiels et effets en cascade.</p></div></article>
+          <article class="mosaic-tile nature" data-tile="3"><div class="tile-image"></div><div class="tile-copy"><b>04</b><h3>Systemes naturels</h3><p>Sols, trames vertes et bleues et solutions fondees sur la nature.</p></div></article>
+        </div>
+        <div class="mosaic-intro" id="mosaicIntro"><span class="chapter-no">02</span><h2>Quatre vulnerabilites.<br>Quatre logiques de reponse.</h2><button class="source-btn" data-source="prediag">Source p.3</button></div>
+      </div>
+      <div class="scroll-steps">
+        <div class="step" data-step="-1"></div>
+        <div class="step" data-step="0"></div>
+        <div class="step" data-step="1"></div>
+        <div class="step" data-step="2"></div>
+        <div class="step" data-step="3"></div>
+      </div>
+    </section>
+
+    <section class="matrix-scrolly scrolly chapter" id="arbitrage" data-chapter="arbitrage" data-scene="matrix">
+      <div class="sticky-stage matrix-stage">
+        <div class="matrix-head"><span class="chapter-no">03</span><p>Arbitrage</p><h2>Le diagnostic devient utile<br>quand il force un choix.</h2></div>
+        <div class="matrix-visual" id="matrixVisual">
+          <div class="mquad mq1"><span>SECURISER</span></div>
+          <div class="mquad mq2"><span>PRIORISER</span></div>
+          <div class="mquad mq3"><span>SURVEILLER</span></div>
+          <div class="mquad mq4"><span>ACCELERER</span></div>
+          <div class="m-axis axis-x"><span>Capacite d'action</span></div>
+          <div class="m-axis axis-y"><span>Urgence / vulnerabilite</span></div>
+          <div class="m-point mp1"><i></i><span>Confort d'ete</span></div>
+          <div class="m-point mp2"><i></i><span>Ressource en eau</span></div>
+          <div class="m-point mp3"><i></i><span>Continuite des services</span></div>
+          <div class="m-point mp4"><i></i><span>Vegetalisation ciblee</span></div>
+          <div class="m-point mp5"><i></i><span>Sensibilisation generale</span></div>
+        </div>
+        <div class="matrix-caption" id="matrixCaption"><strong>Urgence x capacite d'action</strong><span>Les entretiens et ateliers servent a tester ces arbitrages.</span><button class="source-btn dark-source" data-source="prediag">Source p.3</button></div>
+      </div>
+      <div class="scroll-steps matrix-steps">
+        <div class="step" data-step="0"></div>
+        <div class="step" data-step="1"></div>
+        <div class="step" data-step="2"></div>
+        <div class="step" data-step="3"></div>
+      </div>
+    </section>
+
+    <section class="method-scrolly scrolly chapter" id="method" data-chapter="method" data-scene="method">
+      <div class="sticky-stage method-stage">
+        <div class="method-heading"><span class="chapter-no">04</span><p>Methode</p><h2>Du cadrage au passage a l'action.</h2></div>
+        <div class="method-track" id="methodTrack">
+          <article class="method-panel mpanel-1"><div class="panel-bg"></div><div class="panel-copy"><b>01</b><p>Cadrer et objectiver</p><h3>Aligner les decisions attendues et cibler ce qui merite d'etre approfondi.</h3><span>Collecte ciblee, unites d'analyse, grille de vulnerabilite, plan d'entretiens.</span></div></article>
+          <article class="method-panel mpanel-2"><div class="panel-bg"></div><div class="panel-copy"><b>02</b><p>Diagnostiquer et comparer</p><h3>Transformer donnees, entretiens et benchmark en options comparables.</h3><span>Cartographie des dependances, benchmark de territoires, qualification des options.</span></div></article>
+          <article class="method-panel mpanel-3"><div class="panel-bg"></div><div class="panel-copy"><b>03</b><p>Construire et arbitrer</p><h3>Mettre les scenarios en tension avec des criteres de choix explicites.</h3><span>Scenarios, ateliers de priorisation, test des actions et conditions de mise en oeuvre.</span></div></article>
+          <article class="method-panel mpanel-4"><div class="panel-bg"></div><div class="panel-copy"><b>04</b><p>Programmer et securiser</p><h3>Transformer les choix en trajectoire pilotable.</h3><span>Feuille de route, gouvernance, financement, indicateurs, jalons et 100 premiers jours.</span></div></article>
+        </div>
+        <button class="source-btn method-source" data-source="method">Source p.4</button>
+      </div>
+      <div class="scroll-spacer"></div>
+    </section>
+
+    <section class="planning-scrolly scrolly chapter" id="planning" data-chapter="planning" data-scene="planning">
+      <div class="sticky-stage planning-stage">
+        <div class="planning-copy"><span class="chapter-no">05</span><p>Planning</p><h2>12 semaines.<br>4 jalons de decision.</h2><button class="source-btn dark-source" data-source="planning">Source p.5</button></div>
+        <div class="timeline-shell">
+          <div class="week-row" id="weekRow"></div>
+          <div class="gantt-lines" id="ganttLines"></div>
+          <div class="milestones" id="milestones">
+            <div class="milestone" data-at="0.19"><b>J1</b><span>Cadrage valide</span></div>
+            <div class="milestone" data-at="0.47"><b>J2</b><span>Diagnostic partage</span></div>
+            <div class="milestone" data-at="0.72"><b>J3</b><span>Arbitrages actes</span></div>
+            <div class="milestone" data-at="0.94"><b>J4</b><span>Feuille de route adoptee</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-spacer planning-space"></div>
+    </section>
+
+    <section class="workshop-scrolly scrolly chapter" id="workshops" data-chapter="workshops" data-scene="workshops">
+      <div class="sticky-stage workshop-stage">
+        <div class="workshop-bg"></div>
+        <div class="workshop-title"><span class="chapter-no">06</span><p>Co-construction</p><h2>Chaque contribution doit faire avancer une decision.</h2></div>
+        <div class="orbit" id="orbit">
+          <div class="orbit-ring ring-1"></div><div class="orbit-ring ring-2"></div>
+          <div class="orbit-core">Decision<br>territoriale</div>
+          <div class="actor a1">Elus</div><div class="actor a2">Directions</div><div class="actor a3">Operateurs</div><div class="actor a4">Experts</div><div class="actor a5">Entreprises</div><div class="actor a6">Usagers</div><div class="actor a7">Financeurs</div>
+        </div>
+        <div class="workshop-word" id="workshopWord"><b>01</b><span>Mettre en tension</span><small>Partager le diagnostic et confronter les angles morts.</small></div>
+        <button class="source-btn workshop-source" data-source="coconstruction">Source p.6</button>
+      </div>
+      <div class="scroll-steps workshop-steps"><div class="step" data-step="0"></div><div class="step" data-step="1"></div><div class="step" data-step="2"></div></div>
+    </section>
+
+    <section class="deliverables-scrolly scrolly chapter" id="deliverables" data-chapter="deliverables" data-scene="deliverables">
+      <div class="sticky-stage deliverables-stage">
+        <div class="deliverable-title"><span class="chapter-no">07</span><p>Livrables</p><h2>Des outils qui s'enchainent.<br>Pas des documents qui s'empilent.</h2></div>
+        <div class="deliverable-track" id="deliverableTrack">
+          <article class="delivery d1"><b>01</b><span>Diagnostic strategique</span><p>Vulnerabilites, dependances, marges de manoeuvre et angles morts.</p></article>
+          <article class="delivery d2"><b>02</b><span>Cartographie des priorites</span><p>Lecture par enjeu, secteur ou zone, avec criticite et capacite d'action.</p></article>
+          <article class="delivery d3"><b>03</b><span>Benchmark cible</span><p>6 a 10 cas comparables centres sur les mecanismes de mise en oeuvre.</p></article>
+          <article class="delivery d4"><b>04</b><span>Portefeuille d'actions</span><p>Impact attendu, conditions, dependances, responsables et maturite.</p></article>
+          <article class="delivery d5"><b>05</b><span>Feuille de route 2035</span><p>Vagues de mise en oeuvre, jalons, decisions et trajectoire d'investissement.</p></article>
+          <article class="delivery d6"><b>06</b><span>Tableau de bord</span><p>Indicateurs limites et actionnables: exposition, avancement, resultat, capacite et finance.</p></article>
+        </div>
+        <button class="source-btn deliverable-source" data-source="deliverables">Source p.7</button>
+      </div>
+      <div class="scroll-spacer deliverable-space"></div>
+    </section>
+
+    <section class="proof-scrolly scrolly chapter" id="proof" data-chapter="proof" data-scene="proof">
+      <div class="sticky-stage proof-stage">
+        <div class="proof-bg" id="proofBg"></div>
+        <div class="proof-title"><span class="chapter-no">08</span><p>Pouvoir de preuve</p><h2>Des references qui documentent les competences utiles.</h2></div>
+        <div class="proof-copy" id="proofCopy"><p class="scene-kicker">Europe | adaptation & resilience</p><h3>Pathways2Resilience</h3><p>Strategie d'exploitation, ateliers, entretiens KER, analyse des besoins du premier groupe de 40 regions et appui au renforcement de capacites.</p><button class="source-btn" data-source="refs">Source p.9</button></div>
+      </div>
+      <div class="scroll-steps proof-steps"><div class="step" data-step="0"></div><div class="step" data-step="1"></div><div class="step" data-step="2"></div><div class="step" data-step="3"></div></div>
+    </section>
+
+    <section class="finale chapter" data-chapter="finale">
+      <div class="finale-bg"></div>
+      <div class="finale-copy">
+        <p>Une proposition pensee pour la decision</p>
+        <h2>Specificite.<br>Demonstration.<br>Coherence.<br>Mise en oeuvre.</h2>
+        <button class="source-btn" data-source="conclusion">Source p.10</button>
+      </div>
+    </section>
+  </main>
+
+  <aside class="drawer" id="sourceDrawer" aria-hidden="true">
+    <button class="drawer-close" id="sourceClose">Fermer</button>
+    <p class="drawer-kicker">Provenance</p>
+    <h2 id="sourceTitle">Sources</h2>
+    <div id="sourceBody"></div>
+  </aside>
+
+  <aside class="menu-drawer" id="menuDrawer" aria-hidden="true">
+    <button class="drawer-close" id="menuClose">Fermer</button>
+    <p class="drawer-kicker">Sommaire</p>
+    <a href="#decisions">01. Trois decisions</a>
+    <a href="#vulnerabilities">02. Vulnerabilites</a>
+    <a href="#arbitrage">03. Arbitrage</a>
+    <a href="#method">04. Methode</a>
+    <a href="#planning">05. Planning</a>
+    <a href="#workshops">06. Co-construction</a>
+    <a href="#deliverables">07. Livrables</a>
+    <a href="#proof">08. References</a>
+  </aside>
+
+  <script src="story-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+name: Visual StoryScro Generic
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: storyscro-generic-visual-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  visual-v3:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install Selenium
+        run: python -m pip install --disable-pip-version-check selenium==4.35.0
+
+      - name: Start static server
+        run: |
+          python -m http.server 4174 --bind 127.0.0.1 > /tmp/storyscro-v3-server.log 2>&1 &
+          echo $! > /tmp/storyscro-v3-server.pid
+          for i in {1..20}; do
+            curl -fsS http://127.0.0.1:4174/v3/ >/dev/null && exit 0
+            sleep 0.5
+          done
+          cat /tmp/storyscro-v3-server.log
+          exit 1
+
+      - name: Capture and validate generated scenes
+        run: python scripts/visual_capture_v3.py
+
+      - name: Upload visual artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: storyscro-generic-visual-${{ github.sha }}
+          path: visual-artifacts-v3/
+          if-no-files-found: warn
+          retention-days: 7

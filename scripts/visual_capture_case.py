@@ -41,12 +41,15 @@ def inspect_layout(driver, scene_id):
     dims = driver.execute_script("""
       const w=window.innerWidth;
       const scene=document.getElementById(arguments[0]);
+      const marker=window.innerHeight*.46;
       const offenders=[...document.querySelectorAll('*')].map(el=>{
         const r=el.getBoundingClientRect(), cs=getComputedStyle(el);
         return {tag:el.tagName.toLowerCase(),id:el.id||'',cls:el.className?.toString?.()||'',left:r.left,right:r.right,width:r.width,display:cs.display,position:cs.position};
       }).filter(x=>x.display!=='none' && x.width>0 && (x.right>w+5 || x.left<-5) && !String(x.cls).includes('horizontal-track') && !String(x.cls).includes('deliverable-track'));
       return {
         w:window.innerWidth,h:window.innerHeight,sw:document.documentElement.scrollWidth,sh:document.documentElement.scrollHeight,
+        scrollY:window.scrollY,marker,
+        sceneRects:[...document.querySelectorAll('.story-scene')].map(el=>{const r=el.getBoundingClientRect();return {id:el.id,chapter:el.dataset.chapter,top:r.top,bottom:r.bottom,height:r.height,offsetTop:el.offsetTop};}),
         activeDots:document.querySelectorAll('.micro-dot.active').length,
         activeTarget:document.querySelector('.micro-dot.active')?.dataset.target||'',
         activeLabels:[...document.querySelectorAll('.micro-dot.active .micro-scene-label')].map(x=>x.textContent.trim()),
@@ -60,11 +63,11 @@ def inspect_layout(driver, scene_id):
     if dims['sw'] > dims['w'] + 5:
         raise RuntimeError(f'Horizontal page overflow at {scene_id}: {dims}')
     if dims['activeDots'] != 1:
-        raise RuntimeError(f'Expected one active micro-nav scene at {scene_id}, got {dims["activeDots"]}')
+        raise RuntimeError(f'Expected one active micro-nav scene at {scene_id}, got {dims["activeDots"]}: {json.dumps(dims)}')
     if dims['activeTarget'] != scene_id:
-        raise RuntimeError(f'Micro-navigation lag at {scene_id}: active target is {dims["activeTarget"]}')
+        raise RuntimeError(f'Micro-navigation lag at {scene_id}: active target is {dims["activeTarget"]}: {json.dumps(dims)}')
     if dims['activeChapter'] != dims['expectedChapter']:
-        raise RuntimeError(f'Chapter navigation lag at {scene_id}: expected {dims["expectedChapter"]}, got {dims["activeChapter"]}')
+        raise RuntimeError(f'Chapter navigation lag at {scene_id}: expected {dims["expectedChapter"]}, got {dims["activeChapter"]}: {json.dumps(dims)}')
     if not dims['scrubber']:
         raise RuntimeError('Generic draggable scrubber is missing')
     return dims

@@ -11,20 +11,16 @@
     return clamp((window.scrollY - top) / span);
   }
 
-  function refineHorizontalScene(scene, itemSelector, copySelector, headingSelector, trackSelector){
-    if(!scene) return;
+  function applyHorizontalState(scene, p, itemSelector, copySelector, headingSelector, trackSelector){
     const items = [...scene.querySelectorAll(itemSelector)];
     if(!items.length) return;
-    const p = progress(scene);
-    const pos = p * Math.max(1, items.length - 1);
+    const pos = clamp(p) * Math.max(1, items.length - 1);
     const active = Math.round(pos);
     const narrow = matchMedia('(max-width:820px)').matches;
     const track = scene.querySelector(trackSelector);
     const heading = scene.querySelector(headingSelector);
 
-    if(track){
-      track.style.setProperty('transform',`translate3d(${-active*innerWidth}px,0,0)`,'important');
-    }
+    if(track) track.style.setProperty('transform',`translate3d(${-active*innerWidth}px,0,0)`,'important');
 
     if(heading){
       const fade = narrow
@@ -46,6 +42,20 @@
       copy.style.transform = `translate3d(${isActive ? 0 : (i < active ? -22 : 22)}px,0,0)`;
       copy.style.pointerEvents = isActive ? 'auto' : 'none';
     });
+  }
+
+  function refineHorizontalScene(scene, itemSelector, copySelector, headingSelector, trackSelector){
+    if(!scene || !scene.querySelector(itemSelector)) return;
+    const wrapKey = trackSelector === '.horizontal-track' ? 'horizontal' : 'deliverable';
+    if(scene.dataset.storyscroRefinedTrack !== wrapKey){
+      const nativeUpdate = typeof scene._update === 'function' ? scene._update.bind(scene) : null;
+      scene._update = p => {
+        if(nativeUpdate) nativeUpdate(p);
+        applyHorizontalState(scene,p,itemSelector,copySelector,headingSelector,trackSelector);
+      };
+      scene.dataset.storyscroRefinedTrack = wrapKey;
+    }
+    applyHorizontalState(scene,progress(scene),itemSelector,copySelector,headingSelector,trackSelector);
   }
 
   function refineNarrativeTracks(){

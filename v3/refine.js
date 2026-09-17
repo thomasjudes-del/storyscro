@@ -24,13 +24,9 @@
 
     if(track){
       if(narrow){
-        track.style.setProperty('transform','none','important');
-        track.style.setProperty('position','absolute');
-        track.style.setProperty('inset','0');
-      } else {
-        track.style.removeProperty('position');
-        track.style.removeProperty('inset');
-        if(track.style.getPropertyPriority('transform') === 'important') track.style.removeProperty('transform');
+        track.style.setProperty('transform',`translate3d(${-active*innerWidth}px,0,0)`,'important');
+      } else if(track.style.getPropertyPriority('transform') === 'important'){
+        track.style.removeProperty('transform');
       }
     }
 
@@ -44,21 +40,12 @@
     }
 
     items.forEach((item,i) => {
-      const copy = item.querySelector(copySelector);
-      const isActive = i === active;
-      if(narrow){
-        item.style.setProperty('position','absolute','important');
-        item.style.setProperty('inset','0','important');
-        item.style.setProperty('width','100vw','important');
-        item.style.setProperty('opacity',isActive ? '1' : '0','important');
-        item.style.setProperty('pointer-events',isActive ? 'auto' : 'none','important');
-        item.style.setProperty('transform','none','important');
-      } else {
-        for(const prop of ['position','inset','width','opacity','pointer-events','transform']){
-          if(item.style.getPropertyPriority(prop) === 'important' || item.style.getPropertyValue(prop)) item.style.removeProperty(prop);
-        }
+      for(const prop of ['position','inset','width','opacity','pointer-events','transform']){
+        if(item.style.getPropertyPriority(prop) === 'important') item.style.removeProperty(prop);
       }
+      const copy = item.querySelector(copySelector);
       if(!copy) return;
+      const isActive = i === active;
       copy.style.opacity = isActive ? '1' : '0';
       copy.style.transform = `translate3d(${isActive ? 0 : (i < active ? -22 : 22)}px,0,0)`;
       copy.style.pointerEvents = isActive ? 'auto' : 'none';

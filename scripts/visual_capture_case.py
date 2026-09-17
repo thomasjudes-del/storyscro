@@ -40,6 +40,7 @@ def scene_ids(driver):
 def inspect_layout(driver, scene_id):
     dims = driver.execute_script("""
       const w=window.innerWidth;
+      const scene=document.getElementById(arguments[0]);
       const offenders=[...document.querySelectorAll('*')].map(el=>{
         const r=el.getBoundingClientRect(), cs=getComputedStyle(el);
         return {tag:el.tagName.toLowerCase(),id:el.id||'',cls:el.className?.toString?.()||'',left:r.left,right:r.right,width:r.width,display:cs.display,position:cs.position};
@@ -47,16 +48,23 @@ def inspect_layout(driver, scene_id):
       return {
         w:window.innerWidth,h:window.innerHeight,sw:document.documentElement.scrollWidth,sh:document.documentElement.scrollHeight,
         activeDots:document.querySelectorAll('.micro-dot.active').length,
+        activeTarget:document.querySelector('.micro-dot.active')?.dataset.target||'',
         activeLabels:[...document.querySelectorAll('.micro-dot.active .micro-scene-label')].map(x=>x.textContent.trim()),
         scrubber:!!document.querySelector('.micro-scrub-handle'),
         chapter:document.querySelector('.chapter-nav a.active')?.textContent?.trim()||'',
+        activeChapter:document.querySelector('.chapter-nav a.active')?.dataset.chapter||'',
+        expectedChapter:scene?.dataset.chapter||'',
         offenders:offenders.slice(0,30)
       };
-    """)
+    """, scene_id)
     if dims['sw'] > dims['w'] + 5:
         raise RuntimeError(f'Horizontal page overflow at {scene_id}: {dims}')
     if dims['activeDots'] != 1:
         raise RuntimeError(f'Expected one active micro-nav scene at {scene_id}, got {dims["activeDots"]}')
+    if dims['activeTarget'] != scene_id:
+        raise RuntimeError(f'Micro-navigation lag at {scene_id}: active target is {dims["activeTarget"]}')
+    if dims['activeChapter'] != dims['expectedChapter']:
+        raise RuntimeError(f'Chapter navigation lag at {scene_id}: expected {dims["expectedChapter"]}, got {dims["activeChapter"]}')
     if not dims['scrubber']:
         raise RuntimeError('Generic draggable scrubber is missing')
     return dims
@@ -106,4 +114,4 @@ def capture(label, width, height):
 
 capture('desktop', 1440, 1000)
 capture('mobile', 390, 844)
-print(f'Generic case visual QA OK for {BASE}: desktop + mobile, navigation labels + scrubber, no severe console errors.')
+print(f'Generic case visual QA OK for {BASE}: desktop + mobile, navigation labels + scrubber, active scene/chapter sync, no severe console errors.')

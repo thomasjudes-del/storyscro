@@ -1,0 +1,23 @@
+name: Smoke StoryScro
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+      - name: Check JavaScript syntax
+        run: |
+          node --check v2/app.js
+          node --check v2/story-data.js
+      - name: Validate narrative build
+        run: node scripts/smoke.mjs

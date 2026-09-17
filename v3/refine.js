@@ -23,11 +23,7 @@
     const heading = scene.querySelector(headingSelector);
 
     if(track){
-      if(narrow){
-        track.style.setProperty('transform',`translate3d(${-active*innerWidth}px,0,0)`,'important');
-      } else if(track.style.getPropertyPriority('transform') === 'important'){
-        track.style.removeProperty('transform');
-      }
+      track.style.setProperty('transform',`translate3d(${-active*innerWidth}px,0,0)`,'important');
     }
 
     if(heading){

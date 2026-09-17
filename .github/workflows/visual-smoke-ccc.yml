@@ -1,0 +1,61 @@
+name: Visual StoryScro - CCC 2025
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ccc-2025/**'
+      - 'v3/app.js'
+      - 'v3/style.css'
+      - 'v3/refine.js'
+      - 'v3/refine.css'
+      - 'engine/narrative-grammar.json'
+      - 'scripts/visual_capture_case.py'
+      - '.github/workflows/visual-smoke-ccc.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: storyscro-ccc-visual-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  visual-ccc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install Selenium
+        run: python -m pip install --disable-pip-version-check selenium==4.35.0
+
+      - name: Start static server
+        run: |
+          python -m http.server 4174 --bind 127.0.0.1 > /tmp/storyscro-ccc-server.log 2>&1 &
+          echo $! > /tmp/storyscro-ccc-server.pid
+          for i in {1..20}; do
+            curl -fsS http://127.0.0.1:4174/ccc-2025/ >/dev/null && exit 0
+            sleep 0.5
+          done
+          cat /tmp/storyscro-ccc-server.log
+          exit 1
+
+      - name: Capture and validate CCC story
+        env:
+          STORYSCRO_BASE: http://127.0.0.1:4174/ccc-2025/
+          STORYSCRO_OUT: visual-artifacts-ccc
+          STORYSCRO_MIN_SCENES: '7'
+        run: python scripts/visual_capture_case.py
+
+      - name: Upload visual artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: storyscro-ccc-visual-${{ github.sha }}
+          path: visual-artifacts-ccc/
+          if-no-files-found: warn
+          retention-days: 7

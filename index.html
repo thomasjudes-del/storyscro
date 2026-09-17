@@ -1,284 +1,232 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>StoryScro V0 - LGI demo</title>
-<style>
-:root{
-  --blue:#1478b8; --blue2:#0f6ca8; --orange:#f39a00; --purple:#6750c7; --green:#48c989;
-  --ink:#18303f; --muted:#6e7d87; --paper:#f7f9fb; --line:#dbe4ea; --white:#fff;
-  --shadow:0 18px 60px rgba(15,40,60,.16);
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:#fff;overflow-x:hidden}
-a{color:inherit;text-decoration:none}
-button{font:inherit}
-.topbar{position:fixed;z-index:50;top:0;left:0;right:0;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;background:rgba(255,255,255,.9);backdrop-filter:blur(14px);border-bottom:1px solid rgba(24,48,63,.08)}
-.brand{display:flex;gap:10px;align-items:center;font-weight:800}.brand-mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--blue),#43c2ef);position:relative}.brand-mark:after{content:"";position:absolute;width:8px;height:8px;border-radius:50%;background:var(--orange);right:-3px;top:-3px}
-.top-actions{display:flex;gap:8px}.modebtn,.srcbtn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;cursor:pointer;color:var(--ink)}.modebtn.active{background:var(--ink);color:#fff;border-color:var(--ink)}
-.hero{min-height:100vh;padding:120px 7vw 72px;display:grid;grid-template-columns:1.2fr .8fr;gap:5vw;align-items:center;background:radial-gradient(circle at 90% 10%,rgba(20,120,184,.14),transparent 36%),radial-gradient(circle at 10% 80%,rgba(243,154,0,.12),transparent 34%),#fff}
-.kicker{text-transform:uppercase;letter-spacing:.14em;font-weight:800;color:var(--orange);font-size:13px}.hero h1{font-size:clamp(48px,7vw,96px);line-height:.95;margin:.2em 0}.hero p{font-size:clamp(19px,2.2vw,28px);line-height:1.35;max-width:850px;color:#40515c}.hero-card{background:rgba(255,255,255,.88);border:1px solid rgba(24,48,63,.09);border-radius:28px;padding:28px;box-shadow:var(--shadow)}
-.badge{display:inline-flex;align-items:center;gap:7px;background:#fff5e6;color:#9b6200;border:1px solid #ffdca5;border-radius:999px;padding:8px 11px;font-size:13px;font-weight:700}.dot{width:8px;height:8px;background:var(--orange);border-radius:50%}
-.choice{display:grid;gap:10px;margin-top:20px}.choice button{padding:16px;text-align:left;border-radius:16px;border:1px solid var(--line);background:#fff;cursor:pointer}.choice button:hover{border-color:var(--blue);transform:translateY(-1px)}.choice strong{display:block;margin-bottom:4px}.choice small{color:var(--muted)}
-.section{padding:110px 7vw}.section.alt{background:var(--paper)}.eyebrow{color:var(--blue);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:13px}.section h2{font-size:clamp(38px,5vw,68px);line-height:1.03;margin:.15em 0 .25em}.lead{font-size:clamp(19px,2.2vw,28px);line-height:1.42;max-width:940px;color:#4b5e69}
-.scrolly{display:grid;grid-template-columns:minmax(310px,.9fr) minmax(430px,1.1fr);gap:6vw;align-items:start}.sticky{position:sticky;top:100px;height:calc(100vh - 130px);display:flex;align-items:center}.stage{width:100%;aspect-ratio:1/1;border-radius:32px;background:#eef6fb;position:relative;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(20,120,184,.08)}.stage-inner{position:absolute;inset:0;padding:9%;display:flex;flex-direction:column;justify-content:center;transition:.45s ease}.big-num{font-size:clamp(76px,10vw,150px);font-weight:900;line-height:.8;color:var(--blue)}.stage h3{font-size:clamp(28px,3vw,46px);margin:.25em 0}.stage p{font-size:18px;line-height:1.5;color:#4f6370}
-.steps{padding:20vh 0}.step{min-height:72vh;display:flex;align-items:center;opacity:.28;transition:.3s}.step.active{opacity:1}.step-card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:28px;box-shadow:0 12px 40px rgba(15,40,60,.08)}.step-card .n{font-weight:900;color:var(--orange);font-size:14px}.step-card h3{font-size:30px;margin:8px 0}.step-card p{font-size:18px;line-height:1.55;color:#536772}
-.source-chip{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:7px 10px;border-radius:999px;border:1px solid #cbd8df;background:#fff;font-size:12px;color:#4e616c;cursor:pointer}.source-chip:hover{border-color:var(--blue);color:var(--blue)}
-.matrix-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:5vw;align-items:center;margin-top:50px}.matrix{position:relative;aspect-ratio:1.15/1;border:1px solid var(--line);border-radius:26px;overflow:hidden;background:#fff;box-shadow:var(--shadow)}.quad{position:absolute;width:50%;height:50%;padding:18px;font-weight:800;font-size:14px}.q1{left:0;top:0;background:#fff4e7;color:#a56b00}.q2{right:0;top:0;background:#f1edff;color:#5c46bb}.q3{left:0;bottom:0;background:#f0f3f5;color:#71808a}.q4{right:0;bottom:0;background:#eaf5fc;color:#1478b8}.axisx,.axisy{position:absolute;background:#506470}.axisx{height:2px;left:5%;right:4%;bottom:8%}.axisy{width:2px;top:6%;bottom:7%;left:7%}.pt{position:absolute;width:18px;height:18px;border-radius:50%;box-shadow:0 0 0 7px rgba(255,255,255,.75);transition:.25s}.pt:hover{transform:scale(1.25)}.pt span{position:absolute;white-space:nowrap;font-size:13px;font-weight:650;color:#354852;left:24px;top:-6px}.p1{left:64%;top:17%;background:var(--purple)}.p2{left:34%;top:27%;background:var(--orange)}.p3{left:54%;top:43%;background:var(--blue)}.p4{left:61%;top:69%;background:var(--green)}.p5{left:34%;top:69%;background:#919da5}
-.matrix-copy h3{font-size:36px;margin:.2em 0}.matrix-copy p{font-size:19px;line-height:1.55;color:#50636f}.warn{margin-top:18px;padding:16px 18px;background:#fff6e9;border-left:4px solid var(--orange);border-radius:10px;color:#77511b;font-weight:700}
-.phase-track{margin-top:55px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.phase{border-radius:22px;padding:22px;min-height:230px;background:#fff;border:1px solid var(--line);position:relative;overflow:hidden}.phase:after{content:"";position:absolute;left:0;right:0;bottom:0;height:7px;background:var(--blue)}.phase:nth-child(2):after{background:#3ba7da}.phase:nth-child(3):after{background:var(--orange)}.phase:nth-child(4):after{background:var(--purple)}.phase .num{font-size:54px;font-weight:900;color:#d6e4ec}.phase h3{font-size:24px;margin:8px 0}.phase p{line-height:1.5;color:#536772}
-.gantt{margin-top:42px;overflow:auto;border:1px solid var(--line);border-radius:22px;background:#fff;padding:20px}.weeks{display:grid;grid-template-columns:170px repeat(12,minmax(52px,1fr));gap:4px;min-width:950px}.cell{height:42px;background:#f1f4f6;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px}.rowlabel{justify-content:flex-start;font-weight:700;background:transparent}.fill-blue{background:var(--blue);color:#fff}.fill-blue2{background:#3ba7da;color:#fff}.fill-green{background:var(--green);color:#fff}.fill-orange{background:var(--orange);color:#fff}.fill-purple{background:var(--purple);color:#fff}.fill-dark{background:#42494d;color:#fff}
-.network{position:relative;height:520px;margin-top:40px;background:radial-gradient(circle at center,rgba(20,120,184,.08),transparent 45%);border-radius:30px;border:1px solid var(--line);overflow:hidden}.node{position:absolute;width:118px;height:118px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;background:#fff;border:1px solid #b8cfdd;font-weight:750;box-shadow:0 8px 24px rgba(20,70,100,.08)}.node.core{width:150px;height:150px;background:var(--blue);color:#fff;border:none;left:50%;top:50%;transform:translate(-50%,-50%);font-size:18px}.node.a{left:9%;top:12%}.node.b{right:9%;top:12%}.node.c{left:5%;bottom:13%}.node.d{right:5%;bottom:13%}.node.e{left:50%;top:4%;transform:translateX(-50%);background:#fff6e7;border-color:#ffd28a}.node.f{left:50%;bottom:4%;transform:translateX(-50%);background:#f2edff;border-color:#cabdf7}.line{position:absolute;height:1px;background:#b9ccd8;transform-origin:left center;opacity:.8}
-.deliverables{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:38px}.deliv{border:1px solid var(--line);border-radius:20px;padding:22px;background:#fff;min-height:180px}.deliv .dnum{font-size:12px;font-weight:900;color:var(--orange)}.deliv h3{margin:7px 0;font-size:23px}.deliv p{color:#5b6d77;line-height:1.45}.deliv:nth-child(4){background:#f3efff}.deliv:nth-child(5){background:#edf9f4}.deliv:nth-child(6){background:#f3f7f9}
-.refs{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:34px}.ref{border-radius:22px;padding:24px;background:#fff;border:1px solid var(--line)}.ref h3{font-size:26px;margin:0 0 6px}.ref .meta{font-size:13px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.06em}.ref p{line-height:1.55;color:#50636f}
-.final{min-height:92vh;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(150deg,#0e3146,#0d2230);color:#fff}.final .eyebrow{color:#6dd0ff}.final h2{max-width:1000px}.final .lead{color:#d8e6ee}.pillrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}.pill{padding:10px 14px;border:1px solid rgba(255,255,255,.25);border-radius:999px}
-.drawer{position:fixed;z-index:100;right:0;top:0;bottom:0;width:min(460px,92vw);background:#fff;box-shadow:-20px 0 70px rgba(0,0,0,.22);transform:translateX(105%);transition:.25s;padding:26px;overflow:auto}.drawer.open{transform:translateX(0)}.drawer h3{font-size:28px;margin:10px 0}.drawer .close{float:right;border:none;background:#f1f4f6;border-radius:10px;padding:8px 10px;cursor:pointer}.srcbox{border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}.srcbox b{display:block;margin-bottom:6px}.srcbox p{margin:0;line-height:1.5;color:#536772}
-#variantB{display:none}.variantB .hero{background:linear-gradient(180deg,#071e2c,#0d3146);color:#fff}.variantB .hero p{color:#dbe7ed}.variantB .hero-card{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);color:#fff}.variantB .choice button{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.16);color:#fff}.variantB .choice small{color:#c6d4dc}.variantB .section h2{max-width:1050px}.variantB .spotlight{font-size:clamp(72px,12vw,170px);font-weight:950;letter-spacing:-.06em;line-height:.8;color:var(--orange);margin:18px 0}.variantB .three{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}.variantB .three>div{padding:24px;border-radius:20px;background:#fff;border:1px solid var(--line)}.variantB .three h3{font-size:26px;margin:6px 0}.variantB .three p{color:#586b76;line-height:1.5}.variantB .dark{background:#102b3b;color:#fff}.variantB .dark .lead{color:#d5e4ec}.variantB .dark .eyebrow{color:#6ac8f5}
-@media(max-width:900px){.hero,.scrolly,.matrix-wrap{grid-template-columns:1fr}.hero-card{margin-top:10px}.sticky{position:relative;top:auto;height:auto}.steps{padding:0}.step{min-height:auto;opacity:1;margin:20px 0}.phase-track{grid-template-columns:1fr 1fr}.deliverables,.refs,.variantB .three{grid-template-columns:1fr 1fr}.top-actions .srcbtn{display:none}.network{height:640px}.node{width:95px;height:95px;font-size:12px}.node.core{width:130px;height:130px}.hero{padding-top:100px}}
-@media(max-width:600px){.phase-track,.deliverables,.refs,.variantB .three{grid-template-columns:1fr}.section{padding:80px 6vw}.hero{padding-left:6vw;padding-right:6vw}.topbar{padding:0 12px}.modebtn{padding:7px 9px;font-size:12px}.matrix{aspect-ratio:1/1.25}.pt span{white-space:normal;width:110px}.network{height:760px}.node.a{left:4%}.node.b{right:4%}.node.c{left:4%}.node.d{right:4%}}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#102b3b" />
+  <title>StoryScro | Stratégie territoriale d'adaptation climatique</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div class="topbar">
-  <div class="brand"><span class="brand-mark"></span>StoryScro <span style="font-weight:500;color:#7b8991">V0</span></div>
-  <div class="top-actions">
-    <button class="modebtn active" data-mode="A">A. Décision</button>
-    <button class="modebtn" data-mode="B">B. Éditorial</button>
-    <button class="srcbtn" onclick="openSources('about')">Sources</button>
-  </div>
+<header class="shellbar">
+  <div class="brand"><span class="mark"></span>StoryScro</div>
+  <nav class="viewnav" aria-label="Vues du document">
+    <button class="viewbtn" data-view-target="narrative">Narratif</button>
+    <button class="viewbtn" data-view-target="tldr">TL;DR</button>
+    <button class="viewbtn" data-view-target="data">Data</button>
+    <button class="viewbtn" data-view-target="workshop">Concertation</button>
+    <button class="ghostbtn" id="sourcesToggle">Sources</button>
+    <button class="ghostbtn" id="editToggle">Edit</button>
+  </nav>
+</header>
+
+<main id="view-narrative" class="view">
+  <section class="hero" data-section-id="n-hero">
+    <div class="hero-media"></div>
+    <div class="hero-inner">
+      <div class="meta">Métropole Horizon Loire · Septembre 2026</div>
+      <h1 data-editable data-key="n-hero-title">De la vulnérabilité à la décision.</h1>
+      <p class="deck" data-editable data-key="n-hero-deck">Stratégie territoriale d'adaptation climatique et feuille de route 2035.</p>
+      <button class="source-dot" data-source="mission">Source p.2</button>
+      <div class="scrollcue"><i></i> Faire défiler</div>
+    </div>
+  </section>
+
+  <section class="scrolly-block" data-scrolly="questions" data-section-id="n-questions">
+    <div class="scrolly-stage">
+      <div class="scrolly-bg" style="background-image:url('https://images.pexels.com/photos/6942516/pexels-photo-6942516.jpeg?auto=compress&cs=tinysrgb&w=2200')"></div>
+      <div class="scrolly-label">
+        <div class="giant">01</div>
+        <h3>Où sommes-nous réellement vulnérables ?</h3>
+        <p>Croiser aléas, exposition, dépendances fonctionnelles et capacités locales.</p>
+      </div>
+    </div>
+    <div class="scrolly-steps">
+      <div class="story-step active" data-scene="q1" data-zoom="1.10" data-x="35" data-y="50">
+        <article class="story-card"><div class="num">QUESTION 01</div><h3 data-editable data-key="n-q1-title">Voir les vulnérabilités qui comptent vraiment.</h3><p data-editable data-key="n-q1-copy">Le diagnostic croise aléas, exposition, dépendances fonctionnelles et capacités locales au lieu de s'arrêter à une carte de risques.</p><button class="source-dot" data-source="mission">Source p.2</button></article>
+      </div>
+      <div class="story-step" data-scene="q2" data-zoom="1.19" data-x="55" data-y="42">
+        <article class="story-card"><div class="num">QUESTION 02</div><h3 data-editable data-key="n-q2-title">Séparer l'action structurante de l'action opportuniste.</h3><p data-editable data-key="n-q2-copy">Les options sont mises en tension selon leur coût, leur impact, leur délai et leur acceptabilité.</p><button class="source-dot" data-source="mission">Source p.2</button></article>
+      </div>
+      <div class="story-step" data-scene="q3" data-zoom="1.28" data-x="70" data-y="55">
+        <article class="story-card"><div class="num">QUESTION 03</div><h3 data-editable data-key="n-q3-title">Faire survivre la feuille de route à la phase d'étude.</h3><p data-editable data-key="n-q3-copy">Chaque choix doit se traduire en responsabilités, jalons, financement, indicateurs et gouvernance.</p><button class="source-dot" data-source="mission">Source p.2</button></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="parallax" data-section-id="n-vulnerabilities">
+    <div class="parallax-media" style="background-image:url('https://images.pexels.com/photos/20253885/pexels-photo-20253885.jpeg?auto=compress&cs=tinysrgb&w=2200')"></div>
+    <div class="parallax-copy">
+      <div class="eyebrow">Pré-diagnostic</div>
+      <h2 data-editable data-key="n-vul-title">Quatre vulnérabilités. Quatre logiques de réponse.</h2>
+      <p data-editable data-key="n-vul-copy">Confort d'été et santé. Ressource en eau. Continuité des services. Systèmes naturels.</p>
+      <div class="chips"><span class="chip">Confort d'été & santé</span><span class="chip">Ressource en eau</span><span class="chip">Continuité des services</span><span class="chip">Systèmes naturels</span></div>
+      <button class="source-dot" data-source="prediag">Source p.3</button>
+    </div>
+  </section>
+
+  <section class="section narrow paper" data-section-id="n-matrix">
+    <div class="eyebrow">Arbitrage</div>
+    <h2 data-editable data-key="n-matrix-title">Le diagnostic devient utile quand il force un choix.</h2>
+    <div class="matrix-grid">
+      <div class="matrix" aria-label="Matrice urgence et capacité d'action">
+        <div class="quad q1">SÉCURISER</div><div class="quad q2">PRIORISER</div><div class="quad q3">SURVEILLER</div><div class="quad q4">ACCÉLÉRER</div>
+        <div class="axis-x"></div><div class="axis-y"></div>
+        <div class="point p1"><span>Confort d'été</span></div>
+        <div class="point p2"><span>Ressource en eau</span></div>
+        <div class="point p3"><span>Continuité des services</span></div>
+        <div class="point p4"><span>Végétalisation ciblée</span></div>
+        <div class="point p5"><span>Sensibilisation générale</span></div>
+      </div>
+      <div class="matrix-copy">
+        <h3 data-editable data-key="n-matrix-side">Urgence × capacité d'action</h3>
+        <p data-editable data-key="n-matrix-copy">Le portefeuille d'actions est classé par urgence, capacité d'action et dépendances. Les entretiens et ateliers servent ensuite à tester ces arbitrages.</p>
+        <button class="source-dot" data-source="prediag">Source p.3</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="scrolly-block" data-scrolly="phases" data-section-id="n-method">
+    <div class="scrolly-stage">
+      <div class="scrolly-bg" style="background-image:url('https://images.pexels.com/photos/20081099/pexels-photo-20081099.jpeg?auto=compress&cs=tinysrgb&w=2200')"></div>
+      <div class="scrolly-label">
+        <div class="giant">01</div><h3>Cadrer et objectiver</h3><p>Aligner les décisions attendues, cibler la collecte et préparer les entretiens.</p>
+      </div>
+    </div>
+    <div class="scrolly-steps">
+      <div class="story-step active" data-scene="p1" data-zoom="1.08" data-x="36" data-y="45"><article class="story-card"><div class="num">PHASE 01</div><h3>Cadrer et objectiver</h3><p>Questions de décision, collecte ciblée, unités d'analyse, grille de vulnérabilité et plan d'entretiens.</p><button class="source-dot" data-source="method">Source p.4</button></article></div>
+      <div class="story-step" data-scene="p2" data-zoom="1.16" data-x="48" data-y="48"><article class="story-card"><div class="num">PHASE 02</div><h3>Diagnostiquer et comparer</h3><p>Données, entretiens, dépendances, benchmark et première qualification des options.</p><button class="source-dot" data-source="method">Source p.4</button></article></div>
+      <div class="story-step" data-scene="p3" data-zoom="1.24" data-x="62" data-y="55"><article class="story-card"><div class="num">PHASE 03</div><h3>Construire et arbitrer</h3><p>Scénarios, ateliers de priorisation, test des actions et conditions de mise en œuvre.</p><button class="source-dot" data-source="method">Source p.4</button></article></div>
+      <div class="story-step" data-scene="p4" data-zoom="1.31" data-x="72" data-y="58"><article class="story-card"><div class="num">PHASE 04</div><h3>Programmer et sécuriser</h3><p>Feuille de route, gouvernance, financement, indicateurs, responsabilités et 100 premiers jours.</p><button class="source-dot" data-source="method">Source p.4</button></article></div>
+    </div>
+  </section>
+
+  <section class="section paper" data-section-id="n-planning">
+    <div class="eyebrow">12 semaines</div>
+    <h2 data-editable data-key="n-planning-title">Un chemin critique visible, quatre jalons de décision.</h2>
+    <div class="gantt-shell"><div class="gantt" id="ganttNarrative"></div></div>
+    <button class="source-dot" data-source="planning">Source p.5</button>
+  </section>
+
+  <section class="section dark" data-section-id="n-workshop">
+    <div class="eyebrow">Co-construction</div>
+    <h2 data-editable data-key="n-workshop-title">La participation n'est pas une étape. C'est une fonction dans le raisonnement.</h2>
+    <div class="network">
+      <div class="node core">Décision<br>territoriale</div>
+      <div class="node n1">Experts</div><div class="node n2">Entreprises</div><div class="node n3">Usagers</div><div class="node n4">Services publics</div><div class="node n5">Élus</div><div class="node n6">Opérateurs</div>
+    </div>
+    <div class="flow">
+      <div class="flow-card"><div class="big">01</div><h3>Mettre en tension</h3><p>Partager le diagnostic et confronter les angles morts.</p></div>
+      <div class="flow-card"><div class="big">02</div><h3>Arbitrer</h3><p>Comparer les options avec une grille commune et documenter les désaccords.</p></div>
+      <div class="flow-card"><div class="big">03</div><h3>Programmer</h3><p>Transformer les choix en séquences, responsabilités et engagements concrets.</p></div>
+      <div class="flow-card"><div class="big">→</div><h3>Capitaliser</h3><p>Traduire immédiatement chaque contribution en décision, inconnue ou action à instruire.</p></div>
+    </div>
+    <button class="source-dot" data-source="coconstruction">Source p.6</button>
+  </section>
+
+  <section class="section" data-section-id="n-deliverables">
+    <div class="eyebrow">Livrables</div>
+    <h2 data-editable data-key="n-deliv-title">Des outils qui s'enchaînent, pas des documents qui s'empilent.</h2>
+    <div class="deliverables">
+      <article class="deliverable"><b>01</b><h3>Diagnostic stratégique</h3><p>Vulnérabilités, dépendances, marges de manœuvre et angles morts.</p></article>
+      <article class="deliverable"><b>02</b><h3>Cartographie des priorités</h3><p>Lecture par enjeu, secteur ou zone, avec criticité et capacité d'action.</p></article>
+      <article class="deliverable"><b>03</b><h3>Benchmark ciblé</h3><p>6 à 10 cas comparables centrés sur les mécanismes de mise en œuvre.</p></article>
+      <article class="deliverable"><b>04</b><h3>Portefeuille d'actions</h3><p>Impact attendu, conditions, dépendances, responsables et maturité.</p></article>
+      <article class="deliverable"><b>05</b><h3>Feuille de route 2035</h3><p>Vagues de mise en œuvre, jalons, décisions et trajectoire d'investissement.</p></article>
+      <article class="deliverable"><b>06</b><h3>Tableau de bord</h3><p>Indicateurs limités et actionnables: exposition, avancement, résultat, capacité et finance.</p></article>
+    </div>
+    <button class="source-dot" data-source="deliverables">Source p.7</button>
+  </section>
+
+  <section class="parallax" data-section-id="n-proof">
+    <div class="parallax-media" style="background-image:url('https://images.pexels.com/photos/17227141/pexels-photo-17227141.jpeg?auto=compress&cs=tinysrgb&w=2200')"></div>
+    <div class="parallax-copy">
+      <div class="eyebrow">Pouvoir de preuve</div>
+      <h2 data-editable data-key="n-proof-title">Des références qui documentent les compétences utiles.</h2>
+      <p data-editable data-key="n-proof-copy">Pathways2Resilience, NetZeroCities, Caux Seine 2 et Veolia Urban Cool Islands.</p>
+      <button class="source-dot" data-source="refs">Source p.9</button>
+    </div>
+  </section>
+
+  <section class="section paper" data-section-id="n-refs">
+    <div class="reference-grid">
+      <article class="reference"><div class="rmeta">Europe · adaptation & résilience</div><h3>Pathways2Resilience</h3><p>Stratégie d'exploitation, ateliers, entretiens KER, analyse des besoins du premier groupe de 40 régions et appui au renforcement de capacités.</p></article>
+      <article class="reference"><div class="rmeta">Europe · villes & neutralité climatique</div><h3>NetZeroCities</h3><p>Exploitation et modèles économiques, Community of Practice, social innovation, citizen engagement et benchmark d'Innovation Labs.</p></article>
+      <article class="reference"><div class="rmeta">France · prospective territoriale & industrie</div><h3>Caux Seine 2</h3><p>Contraintes réglementaires et marché, cartographie d'acteurs, scénarios, impacts et recommandations stratégiques.</p></article>
+      <article class="reference"><div class="rmeta">France, Italie, Espagne · adaptation urbaine</div><h3>Veolia · Urban Cool Islands</h3><p>Îlots de chaleur, besoins des villes, business model, chaîne de valeur et stratégie de déploiement.</p></article>
+    </div>
+    <button class="source-dot" data-source="refs">Source p.9</button>
+  </section>
+
+  <section class="final" data-section-id="n-final">
+    <div class="inner">
+      <div class="eyebrow">Feuille de route 2035</div>
+      <h2 data-editable data-key="n-final-title">Comprendre. Arbitrer. Programmer. Agir.</h2>
+      <p data-editable data-key="n-final-copy">Une proposition pensée pour que méthode, planning, gouvernance, équipe et livrables racontent la même trajectoire.</p>
+      <button class="source-dot" data-source="conclusion">Source p.10</button>
+    </div>
+  </section>
+</main>
+
+<main id="view-tldr" class="view">
+  <section class="tldr-hero" data-section-id="t-hero">
+    <div><div class="meta">Métropole Horizon Loire · Feuille de route 2035</div><h1 data-editable data-key="t-title">La mission, en cinq minutes.</h1><p class="deck">Transformer un diagnostic climatique en choix explicites, puis en trajectoire exécutable.</p><button class="source-dot" data-source="mission">Source p.2</button></div>
+  </section>
+  <section class="section paper" data-section-id="t-summary">
+    <div class="tldr-grid">
+      <div class="summary-stack">
+        <article class="summary-block"><small>01 · VOIR</small><h3>Où le territoire est-il réellement vulnérable ?</h3><p>Aléas, exposition, dépendances fonctionnelles et capacités locales sont analysés ensemble.</p></article>
+        <article class="summary-block"><small>02 · CHOISIR</small><h3>Quelles actions changent la trajectoire ?</h3><p>Les options sont comparées selon coût, impact, délai et acceptabilité.</p></article>
+        <article class="summary-block"><small>03 · EXÉCUTER</small><h3>Comment rendre la feuille de route pilotable ?</h3><p>Responsabilités, jalons, financement, indicateurs et gouvernance sont intégrés au plan.</p></article>
+        <article class="summary-block"><small>RÉSULTAT</small><h3>Une lecture partagée, des choix explicites, une trajectoire pilotable.</h3><p>Le document final est plus court que la somme des analyses mais conserve les preuves en annexes et outils de travail.</p></article>
+      </div>
+      <aside class="sticky-note"><div class="kpi">12</div><h3>semaines</h3><p>Quatre jalons structurent le chemin: cadrage validé, diagnostic partagé, arbitrages actés, feuille de route adoptée.</p><button class="source-dot" data-source="planning">Source p.5</button></aside>
+    </div>
+  </section>
+  <section class="section" data-section-id="t-metrics">
+    <div class="eyebrow">Architecture</div><h2>Un système simple à lire.</h2>
+    <div class="metric-strip"><div class="metric"><b>3</b><span>questions de décision</span></div><div class="metric"><b>4</b><span>phases méthodologiques</span></div><div class="metric"><b>6</b><span>livrables articulés</span></div><div class="metric"><b>4</b><span>références mobilisables</span></div></div>
+    <button class="source-dot" data-source="method">Sources p.4, p.7 et p.9</button>
+  </section>
+  <section class="section paper" data-section-id="t-gantt"><div class="eyebrow">Planning</div><h2>Le chemin critique en un regard.</h2><div class="gantt-shell"><div class="gantt" id="ganttTldr"></div></div><button class="source-dot" data-source="planning">Source p.5</button></section>
+  <section class="final" data-section-id="t-final"><div class="inner"><div class="eyebrow">2035</div><h2>Décider avant de documenter davantage.</h2><p>Chaque séquence d'engagement doit produire une décision ou réduire une incertitude.</p><button class="source-dot" data-source="mission">Source p.2</button></div></section>
+</main>
+
+<main id="view-data" class="view">
+  <section class="data-hero" data-section-id="d-hero"><div class="eyebrow">Lecture data</div><h1 data-editable data-key="d-title">La trajectoire, structurée en signaux.</h1><p class="lead">Uniquement des éléments quantifiés ou catégorisés présents dans le document source.</p></section>
+  <section class="data-canvas" data-section-id="d-overview">
+    <div class="metric-strip"><div class="metric"><b>3</b><span>questions de décision</span></div><div class="metric"><b>4</b><span>familles de vulnérabilité</span></div><div class="metric"><b>12</b><span>semaines</span></div><div class="metric"><b>6</b><span>livrables</span></div></div>
+    <div class="data-panel"><div class="eyebrow">Méthode</div><h3>4 phases, de l'objectivation à la sécurisation</h3><div class="data-flow"><div class="box"><b>01</b><span>Cadrer</span></div><div class="box"><b>02</b><span>Diagnostiquer</span></div><div class="box"><b>03</b><span>Arbitrer</span></div><div class="box"><b>04</b><span>Programmer</span></div></div><button class="source-dot" data-source="method">Source p.4</button></div>
+    <div class="data-panel"><div class="eyebrow">Arbitrage</div><h3>Urgence × capacité d'action</h3><div class="matrix-grid"><div class="matrix"><div class="quad q1">SÉCURISER</div><div class="quad q2">PRIORISER</div><div class="quad q3">SURVEILLER</div><div class="quad q4">ACCÉLÉRER</div><div class="axis-x"></div><div class="axis-y"></div><div class="point p1"><span>Confort d'été</span></div><div class="point p2"><span>Ressource en eau</span></div><div class="point p3"><span>Continuité des services</span></div><div class="point p4"><span>Végétalisation ciblée</span></div><div class="point p5"><span>Sensibilisation générale</span></div></div><div class="matrix-copy"><p>La matrice source organise les options en quatre postures: sécuriser, prioriser, surveiller et accélérer.</p><button class="source-dot" data-source="prediag">Source p.3</button></div></div></div>
+    <div class="data-panel"><div class="eyebrow">Planning</div><h3>12 semaines</h3><div class="gantt-shell"><div class="gantt" id="ganttData"></div></div><button class="source-dot" data-source="planning">Source p.5</button></div>
+    <div class="data-panel"><div class="eyebrow">Livrables</div><h3>Une chaîne de transformation</h3><div class="data-flow"><div class="box"><b>01</b><span>Diagnostic</span></div><div class="box"><b>02</b><span>Priorités</span></div><div class="box"><b>04</b><span>Portefeuille</span></div><div class="box"><b>05</b><span>Feuille de route</span></div></div><button class="source-dot" data-source="deliverables">Source p.7</button></div>
+  </section>
+</main>
+
+<main id="view-workshop" class="view">
+  <section class="workshop-hero" data-section-id="w-hero"><div><div class="meta">Concertation orientée décision</div><h1 data-editable data-key="w-title">Co-construire sans diluer la décision.</h1><p class="deck">Mobiliser les bons acteurs au bon moment, avec une fonction explicite dans le raisonnement.</p><button class="source-dot" data-source="coconstruction">Source p.6</button></div></section>
+  <section class="section dark" data-section-id="w-network"><div class="eyebrow">Écosystème</div><h2>La décision territoriale au centre.</h2><div class="network"><div class="node core">Décision<br>territoriale</div><div class="node n1">Experts</div><div class="node n2">Entreprises</div><div class="node n3">Usagers</div><div class="node n4">Services publics</div><div class="node n5">Élus</div><div class="node n6">Opérateurs</div></div><button class="source-dot" data-source="coconstruction">Source p.6</button></section>
+  <section class="section paper" data-section-id="w-agenda"><div class="eyebrow">Trois ateliers, trois fonctions</div><h2>Chaque séquence doit produire quelque chose.</h2><div class="agenda"><article class="agenda-card"><b>01</b><h3>Mettre en tension</h3><p>Partager le diagnostic et confronter les angles morts.</p></article><article class="agenda-card"><b>02</b><h3>Arbitrer</h3><p>Comparer les options avec une grille commune et documenter les désaccords.</p></article><article class="agenda-card"><b>03</b><h3>Programmer</h3><p>Transformer les choix en séquences, responsabilités et engagements concrets.</p></article></div><button class="source-dot" data-source="coconstruction">Source p.6</button></section>
+  <section class="parallax" data-section-id="w-rules"><div class="parallax-media" style="background-image:url('https://images.pexels.com/photos/17227141/pexels-photo-17227141.jpeg?auto=compress&cs=tinysrgb&w=2200')"></div><div class="parallax-copy"><div class="eyebrow">Règles d'animation</div><h2>Préparer. Confronter. Capitaliser.</h2><p>Questionnaire court, scénarios visibles, critères communs, désaccords documentés, compte rendu décisionnel et prochaine échéance.</p><button class="source-dot" data-source="coconstruction">Source p.6</button></div></section>
+  <section class="section" data-section-id="w-output"><div class="eyebrow">Sortie</div><h2>Des contributions immédiatement traduites en décisions, hypothèses ou actions.</h2><p class="lead">Entretiens ciblés, ateliers d'arbitrage, revues documentaires et validations asynchrones sont combinés selon la question à résoudre.</p><button class="source-dot" data-source="coconstruction">Source p.6</button></section>
+</main>
+
+<aside class="drawer" id="sourceDrawer" aria-label="Provenance">
+  <button class="drawer-close" id="sourceClose">Fermer</button>
+  <div class="eyebrow">Provenance</div>
+  <h2 id="sourceTitle">Sources du document</h2>
+  <div id="sourceBody"></div>
+</aside>
+
+<div class="editpanel" id="editPanel">
+  <button id="densityToggle">Densité</button>
+  <select id="imageSelect" aria-label="Image de couverture"><option value="city">Ville verte</option><option value="cityDry">Ville sèche</option><option value="river">Eau</option><option value="drought">Sécheresse</option><option value="rooftops">Toits</option></select>
+  <button id="restoreSections">Réafficher sections</button>
+  <button id="resetEdits">Reset</button>
 </div>
 
-<main id="variantA" class="variantA">
-<section class="hero">
-  <div>
-    <div class="kicker">Démonstrateur graphique | cas fictif</div>
-    <h1>De la vulnérabilité à la décision.</h1>
-    <p>Une stratégie territoriale d'adaptation climatique ne vaut que si elle transforme un diagnostic en choix d'investissement, de gouvernance et d'action.</p>
-    <button class="source-chip" onclick="openSources('mission')">Voir la source dans le PDF · p.2</button>
-  </div>
-  <div class="hero-card">
-    <span class="badge"><span class="dot"></span> Métropole Horizon Loire · septembre 2026</span>
-    <h3 style="font-size:28px;margin-bottom:8px">Deux directions éditoriales</h3>
-    <p style="margin-top:0;color:#5c6d77">Même source, deux façons de la raconter. Bascule en haut de page à tout moment.</p>
-    <div class="choice">
-      <button onclick="setMode('A')"><strong>A. Décision</strong><small>Scrollytelling de conseil, centré sur les arbitrages et la méthode.</small></button>
-      <button onclick="setMode('B')"><strong>B. Éditorial</strong><small>Plus spectaculaire, plus dépouillé, proche d'un reportage interactif.</small></button>
-    </div>
-  </div>
-</section>
-
-<section class="section alt">
-  <div class="eyebrow">01 · La vraie question</div>
-  <h2>Le sujet n'est pas de cartographier plus de risques.</h2>
-  <p class="lead">Le sujet est d'identifier où agir d'abord, avec quels leviers, dans quel ordre et avec quelles coalitions d'acteurs.</p>
-  <button class="source-chip" onclick="openSources('mission')">Source · p.2</button>
-</section>
-
-<section class="section">
-  <div class="scrolly">
-    <div class="sticky"><div class="stage"><div class="stage-inner" id="stageA"><div class="big-num">01</div><h3>Où sommes-nous réellement vulnérables ?</h3><p>Croiser aléas, exposition, dépendances fonctionnelles et capacités locales, sans réduire le diagnostic à une carte de risques.</p></div></div></div>
-    <div class="steps">
-      <div class="step active" data-stage="1"><div class="step-card"><div class="n">QUESTION 01</div><h3>Vulnérabilité réelle</h3><p>Le diagnostic doit dépasser la lecture par aléas et mettre en évidence les dépendances fonctionnelles et les capacités locales.</p><button class="source-chip" onclick="openSources('mission')">PDF · p.2</button></div></div>
-      <div class="step" data-stage="2"><div class="step-card"><div class="n">QUESTION 02</div><h3>Actions structurantes</h3><p>Distinguer les mesures qui changent réellement la trajectoire des actions opportunistes, puis expliciter les arbitrages coût, impact, délai et acceptabilité.</p><button class="source-chip" onclick="openSources('mission')">PDF · p.2</button></div></div>
-      <div class="step" data-stage="3"><div class="step-card"><div class="n">QUESTION 03</div><h3>Exécution</h3><p>Associer responsabilités, jalons, financement, indicateurs et gouvernance pour que le plan survive à la phase d'étude.</p><button class="source-chip" onclick="openSources('mission')">PDF · p.2</button></div></div>
-    </div>
-  </div>
-</section>
-
-<section class="section alt">
-  <div class="eyebrow">02 · Pré-diagnostic illustratif</div>
-  <h2>Quatre vulnérabilités, donc quatre types de décisions.</h2>
-  <p class="lead">Le document propose un cas d'école. Il est explicitement indiqué comme fictif et non fondé sur des données réelles du client.</p>
-  <div class="matrix-wrap">
-    <div class="matrix" aria-label="Matrice d'arbitrage qualitative">
-      <div class="quad q1">SÉCURISER</div><div class="quad q2">PRIORISER</div><div class="quad q3">SURVEILLER</div><div class="quad q4">ACCÉLÉRER</div>
-      <div class="axisx"></div><div class="axisy"></div>
-      <div class="pt p1"><span>Confort d'été</span></div><div class="pt p2"><span>Ressource en eau</span></div><div class="pt p3"><span>Continuité des services</span></div><div class="pt p4"><span>Végétalisation ciblée</span></div><div class="pt p5"><span>Sensibilisation générale</span></div>
-    </div>
-    <div class="matrix-copy"><div class="eyebrow">Arbitrer, pas seulement diagnostiquer</div><h3>Urgence × capacité d'action</h3><p>Le diagnostic doit rapidement déboucher sur un portefeuille d'actions classées par urgence, capacité d'action et dépendances. Les entretiens et ateliers servent alors à tester ces arbitrages.</p><div class="warn">Exemple fictif. Aucune donnée client réelle n'est utilisée ici.</div><button class="source-chip" onclick="openSources('prediag')">Source · p.3</button></div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="eyebrow">03 · Méthode</div>
-  <h2>Un chemin continu, du cadrage au passage à l'action.</h2>
-  <div class="phase-track">
-    <div class="phase"><div class="num">01</div><h3>Cadrer et objectiver</h3><p>Décisions attendues, collecte ciblée, unités d'analyse, grille de vulnérabilité et plan d'entretiens.</p></div>
-    <div class="phase"><div class="num">02</div><h3>Diagnostiquer et comparer</h3><p>Données, entretiens, dépendances, benchmark et première qualification des options.</p></div>
-    <div class="phase"><div class="num">03</div><h3>Construire et arbitrer</h3><p>Scénarios, ateliers de priorisation, test des actions et conditions de mise en œuvre.</p></div>
-    <div class="phase"><div class="num">04</div><h3>Programmer et sécuriser</h3><p>Feuille de route, gouvernance, financement, indicateurs, responsabilités et 100 premiers jours.</p></div>
-  </div>
-  <button class="source-chip" onclick="openSources('method')">Source · p.4</button>
-</section>
-
-<section class="section alt">
-  <div class="eyebrow">04 · 12 semaines</div>
-  <h2>Chaque séquence mène à un jalon de décision.</h2>
-  <p class="lead">Le planning n'est pas une succession de tâches isolées. Il fait converger collecte, diagnostic, benchmark, scénarios et feuille de route vers quatre jalons.</p>
-  <div class="gantt"><div class="weeks" id="gantt"></div></div>
-  <button class="source-chip" onclick="openSources('planning')">Source · p.5</button>
-</section>
-
-<section class="section">
-  <div class="eyebrow">05 · Co-construction</div>
-  <h2>Mobiliser les bons acteurs, au bon moment, pour une fonction explicite.</h2>
-  <div class="network" id="network">
-    <div class="node core">Décision<br>territoriale</div>
-    <div class="node a">Experts</div><div class="node b">Entreprises</div><div class="node c">Usagers</div><div class="node d">Services publics</div><div class="node e">Élus</div><div class="node f">Opérateurs</div>
-  </div>
-  <div class="phase-track" style="grid-template-columns:repeat(3,1fr)">
-    <div class="phase"><div class="num">01</div><h3>Mettre en tension</h3><p>Partager le diagnostic et confronter les angles morts.</p></div>
-    <div class="phase"><div class="num">02</div><h3>Arbitrer</h3><p>Comparer les options avec une grille commune et documenter les désaccords.</p></div>
-    <div class="phase"><div class="num">03</div><h3>Programmer</h3><p>Transformer les choix en séquences, responsabilités et engagements concrets.</p></div>
-  </div>
-  <button class="source-chip" onclick="openSources('coconstruction')">Source · p.6</button>
-</section>
-
-<section class="section alt">
-  <div class="eyebrow">06 · Livrables</div>
-  <h2>Des outils de pilotage, pas une pile de documents.</h2>
-  <div class="deliverables">
-    <div class="deliv"><div class="dnum">01</div><h3>Diagnostic stratégique</h3><p>Vulnérabilités, dépendances, marges de manœuvre et angles morts.</p></div>
-    <div class="deliv"><div class="dnum">02</div><h3>Cartographie des priorités</h3><p>Lecture par enjeu, secteur ou zone, avec criticité et capacité d'action.</p></div>
-    <div class="deliv"><div class="dnum">03</div><h3>Benchmark ciblé</h3><p>6 à 10 cas comparables centrés sur la mise en œuvre et la gouvernance.</p></div>
-    <div class="deliv"><div class="dnum">04</div><h3>Portefeuille d'actions</h3><p>Impact attendu, conditions, dépendances, responsables et maturité.</p></div>
-    <div class="deliv"><div class="dnum">05</div><h3>Feuille de route 2035</h3><p>Vagues de mise en œuvre, jalons, décisions et trajectoire d'investissement.</p></div>
-    <div class="deliv"><div class="dnum">06</div><h3>Tableau de bord</h3><p>Indicateurs limités et actionnables: exposition, avancement, résultat, capacité et finance.</p></div>
-  </div>
-  <button class="source-chip" onclick="openSources('deliverables')">Source · p.7</button>
-</section>
-
-<section class="section">
-  <div class="eyebrow">07 · Pouvoir de preuve</div>
-  <h2>Quatre références mobilisables.</h2>
-  <div class="refs">
-    <div class="ref"><div class="meta">Europe · adaptation & résilience</div><h3>Pathways2Resilience</h3><p>Stratégie d'exploitation, ateliers, entretiens KER et responsables de WP, analyse des besoins du premier groupe de 40 régions et renforcement de capacités.</p></div>
-    <div class="ref"><div class="meta">Europe · villes & neutralité climatique</div><h3>NetZeroCities</h3><p>Exploitation et modèles économiques, Community of Practice, social innovation, citizen engagement et benchmark d'Innovation Labs.</p></div>
-    <div class="ref"><div class="meta">France · prospective territoriale & industrie</div><h3>Caux Seine 2</h3><p>Contraintes réglementaires et marché, cartographie d'acteurs, scénarios, impacts et recommandations stratégiques.</p></div>
-    <div class="ref"><div class="meta">France, Italie, Espagne · adaptation urbaine</div><h3>Veolia - Urban Cool Islands</h3><p>Îlots de chaleur, besoins des villes, business model, chaîne de valeur et stratégie de déploiement.</p></div>
-  </div>
-  <button class="source-chip" onclick="openSources('refs')">Source · p.9</button>
-</section>
-
-<section class="section final">
-  <div class="eyebrow">Conclusion</div>
-  <h2>Une proposition pensée pour la décision.</h2>
-  <p class="lead">Le document doit montrer comment l'équipe travaillera, ce qu'elle a déjà compris et ce que le client pourra décider à chaque étape.</p>
-  <div class="pillrow"><span class="pill">Spécificité</span><span class="pill">Démonstration</span><span class="pill">Cohérence</span><span class="pill">Mise en œuvre</span></div>
-  <button class="source-chip" style="margin-top:28px;width:max-content" onclick="openSources('conclusion')">Source · p.10</button>
-</section>
-</main>
-
-<main id="variantB" class="variantB">
-<section class="hero">
-  <div>
-    <div class="kicker">Métropole Horizon Loire · cas fictif</div>
-    <div class="spotlight">2035</div>
-    <h1 style="font-size:clamp(42px,5.6vw,78px)">Une feuille de route n'est utile que si elle survit à l'étude.</h1>
-    <p>Responsabilités, jalons, financement, indicateurs et gouvernance: l'enjeu est de rendre la trajectoire exécutable.</p>
-    <button class="source-chip" onclick="openSources('mission')">PDF · p.2</button>
-  </div>
-  <div class="hero-card">
-    <span class="badge"><span class="dot"></span> Direction B</span>
-    <h3 style="font-size:28px">Version éditoriale</h3>
-    <p>Plus proche d'un long format interactif: moins de "slides web", davantage de rythme, d'espace et de séquences.</p>
-  </div>
-</section>
-
-<section class="section">
-  <div class="eyebrow">Le problème</div>
-  <h2>Trois questions. Une seule trajectoire de décision.</h2>
-  <div class="three">
-    <div><div class="spotlight" style="font-size:76px">01</div><h3>Voir</h3><p>Où le territoire est-il réellement vulnérable ?</p></div>
-    <div><div class="spotlight" style="font-size:76px;color:var(--blue)">02</div><h3>Choisir</h3><p>Quelles actions changent réellement la trajectoire ?</p></div>
-    <div><div class="spotlight" style="font-size:76px;color:var(--purple)">03</div><h3>Exécuter</h3><p>Comment rendre la feuille de route pilotable et durable ?</p></div>
-  </div>
-  <button class="source-chip" onclick="openSources('mission')">Source · p.2</button>
-</section>
-
-<section class="section dark">
-  <div class="eyebrow">Le signal</div>
-  <div class="spotlight">4</div>
-  <h2>familles de vulnérabilité n'appellent pas les mêmes réponses.</h2>
-  <p class="lead">Confort d'été et santé. Ressource en eau. Continuité des services. Systèmes naturels.</p>
-  <div class="warn" style="max-width:760px">Le document source précise que cet exemple est fictif et non fondé sur des données réelles du client.</div>
-  <button class="source-chip" onclick="openSources('prediag')">Source · p.3</button>
-</section>
-
-<section class="section">
-  <div class="eyebrow">Le choix</div>
-  <h2>Passer du risque à l'arbitrage.</h2>
-  <p class="lead">La matrice qualitative oppose urgence et capacité d'action. Elle force le passage de l'observation à une posture: sécuriser, prioriser, surveiller ou accélérer.</p>
-  <div class="matrix" style="max-width:900px;margin:46px auto 0">
-      <div class="quad q1">SÉCURISER</div><div class="quad q2">PRIORISER</div><div class="quad q3">SURVEILLER</div><div class="quad q4">ACCÉLÉRER</div>
-      <div class="axisx"></div><div class="axisy"></div>
-      <div class="pt p1"><span>Confort d'été</span></div><div class="pt p2"><span>Ressource en eau</span></div><div class="pt p3"><span>Continuité des services</span></div><div class="pt p4"><span>Végétalisation ciblée</span></div><div class="pt p5"><span>Sensibilisation générale</span></div>
-  </div>
-  <button class="source-chip" onclick="openSources('prediag')">Source · p.3</button>
-</section>
-
-<section class="section alt">
-  <div class="eyebrow">Le tempo</div>
-  <div class="spotlight">12</div>
-  <h2>semaines pour transformer l'analyse en feuille de route.</h2>
-  <p class="lead">Cadrage. Diagnostic. Benchmark. Scénarios. Feuille de route. Finalisation. Quatre jalons structurent les décisions.</p>
-  <div class="gantt"><div class="weeks" id="ganttB"></div></div>
-  <button class="source-chip" onclick="openSources('planning')">Source · p.5</button>
-</section>
-
-<section class="section dark">
-  <div class="eyebrow">La participation</div>
-  <h2>Chaque atelier doit produire une décision ou réduire une incertitude.</h2>
-  <div class="three">
-    <div><div class="spotlight" style="font-size:64px">01</div><h3>Mettre en tension</h3><p>Partager le diagnostic, confronter les angles morts.</p></div>
-    <div><div class="spotlight" style="font-size:64px;color:#6dd0ff">02</div><h3>Arbitrer</h3><p>Comparer les options, documenter les désaccords.</p></div>
-    <div><div class="spotlight" style="font-size:64px;color:#b8a7ff">03</div><h3>Programmer</h3><p>Transformer les choix en responsabilités et engagements concrets.</p></div>
-  </div>
-  <button class="source-chip" onclick="openSources('coconstruction')">Source · p.6</button>
-</section>
-
-<section class="section">
-  <div class="eyebrow">Le livrable</div>
-  <div class="spotlight" style="color:var(--blue)">6</div>
-  <h2>outils qui s'enchaînent, au lieu de six documents qui s'empilent.</h2>
-  <p class="lead">Le diagnostic nourrit la priorisation. La priorisation structure le portefeuille d'actions. Le portefeuille devient feuille de route. Les annexes conservent les preuves sans alourdir le document de décision.</p>
-  <button class="source-chip" onclick="openSources('deliverables')">Source · p.7</button>
-</section>
-
-<section class="section final">
-  <div class="eyebrow">LGI Sustainable Innovation</div>
-  <h2>Spécificité. Démonstration. Cohérence. Mise en œuvre.</h2>
-  <p class="lead">Une proposition qui raconte la même trajectoire du diagnostic aux 100 premiers jours.</p>
-  <button class="source-chip" style="margin-top:28px;width:max-content" onclick="openSources('conclusion')">Source · p.10</button>
-</section>
-</main>
-
-<aside class="drawer" id="drawer"><button class="close" onclick="closeSources()">Fermer</button><div class="eyebrow">Provenance</div><h3 id="srcTitle">Source</h3><div id="srcContent"></div></aside>
-<script>
-const sources={
-  about:{title:'À propos du document',page:'p.1',quote:'La mission et le client sont fictifs. Le document sert uniquement à tester la qualité graphique d’un mémoire technique LGI.'},
-  mission:{title:'Notre lecture de la mission',page:'p.2',quote:'Transformer un diagnostic climatique en choix d’investissement, de gouvernance et d’action. Trois questions de décision structurent la mission.'},
-  prediag:{title:'Premières observations illustratives',page:'p.3',quote:'Exemple fictif - non fondé sur des données réelles du client. Quatre familles de vulnérabilité sont distinguées, puis une matrice d’arbitrage illustre urgence et capacité d’action.'},
-  method:{title:'Une méthode en quatre phases',page:'p.4',quote:'Cadrer et objectiver; diagnostiquer et comparer; construire et arbitrer; programmer et sécuriser.'},
-  planning:{title:'Planning et gouvernance de mission',page:'p.5',quote:'Exemple de séquençage sur 12 semaines avec quatre jalons de décision: cadrage validé, diagnostic partagé, arbitrages actés, feuille de route adoptée.'},
-  coconstruction:{title:'Co-construction utile à la décision',page:'p.6',quote:'Trois ateliers, trois fonctions: mettre en tension, arbitrer, programmer.'},
-  deliverables:{title:'Livrables conçus comme des outils de pilotage',page:'p.7',quote:'Six livrables articulés: diagnostic, cartographie, benchmark, portefeuille d’actions, feuille de route 2035 et tableau de bord.'},
-  refs:{title:'Références mobilisables',page:'p.9',quote:'Pathways2Resilience, NetZeroCities, Caux Seine 2 et Veolia - Urban Cool Islands sont présentés comme références mobilisables.'},
-  conclusion:{title:'Une proposition pensée pour la décision',page:'p.10',quote:'Spécificité, démonstration, cohérence et mise en œuvre structurent la conclusion du mémoire.'}
-};
-function openSources(k){const s=sources[k]||sources.about;document.getElementById('srcTitle').textContent=s.title;document.getElementById('srcContent').innerHTML=`<div class="srcbox"><b>${s.page}</b><p>${s.quote}</p></div><div class="srcbox"><b>Transformation appliquée</b><p>Réorganisation éditoriale et visualisation web. Aucun chiffre nouveau n’a été ajouté. Les formulations ont été condensées pour la lecture écran.</p></div>`;document.getElementById('drawer').classList.add('open')}
-function closeSources(){document.getElementById('drawer').classList.remove('open')}
-function setMode(m){document.querySelectorAll('.modebtn').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));document.getElementById('variantA').style.display=m==='A'?'block':'none';document.getElementById('variantB').style.display=m==='B'?'block':'none';window.scrollTo({top:0,behavior:'smooth'});history.replaceState(null,'',m==='B'?'#editorial':'#decision')}
-document.querySelectorAll('.modebtn').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
-if(location.hash==='#editorial')setMode('B');
-const stageData={1:['01','Où sommes-nous réellement vulnérables ?','Croiser aléas, exposition, dépendances fonctionnelles et capacités locales, sans réduire le diagnostic à une carte de risques.'],2:['02','Quelles actions changent la trajectoire ?','Distinguer les mesures structurantes des actions opportunistes, puis expliciter les arbitrages coût, impact, délai et acceptabilité.'],3:['03','Comment rendre la feuille de route exécutable ?','Associer responsabilités, jalons, financement, indicateurs et gouvernance afin que le plan survive à la phase d’étude.']};
-const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));e.target.classList.add('active');const d=stageData[e.target.dataset.stage];document.getElementById('stageA').innerHTML=`<div class="big-num">${d[0]}</div><h3>${d[1]}</h3><p>${d[2]}</p>`}})},{threshold:.6});document.querySelectorAll('.step').forEach(s=>observer.observe(s));
-function buildGantt(id){const rows=[['Séquence',...Array.from({length:12},(_,i)=>'S'+(i+1))],['Cadrage & collecte',1,1,0,0,0,0,0,0,0,0,0,0],['Diagnostic & entretiens',0,2,2,2,2,2,0,0,0,0,0,0],['Benchmark & options',0,0,0,3,3,3,3,0,0,0,0,0],['Scénarios & ateliers',0,0,0,0,0,0,4,4,4,0,0,0],['Feuille de route',0,0,0,0,0,0,0,0,5,5,5,0],['Finalisation & transfert',0,0,0,0,0,0,0,0,0,0,6,6]];const cls=['','fill-blue2','fill-blue','fill-green','fill-orange','fill-purple','fill-dark'];const g=document.getElementById(id);rows.forEach((r,ri)=>{r.forEach((v,ci)=>{const c=document.createElement('div');c.className='cell'+(ci===0?' rowlabel':'')+(ri>0&&ci>0&&v?' '+cls[v]:'');c.textContent=(ri===0||ci===0)?v:'';g.appendChild(c)})})}
-buildGantt('gantt');buildGantt('ganttB');
-function drawNetwork(){const net=document.getElementById('network');const core={x:net.clientWidth/2,y:net.clientHeight/2};net.querySelectorAll('.node:not(.core)').forEach(n=>{const r=n.getBoundingClientRect(),nr=net.getBoundingClientRect();const x=r.left-nr.left+r.width/2,y=r.top-nr.top+r.height/2;const dx=x-core.x,dy=y-core.y,len=Math.hypot(dx,dy);const l=document.createElement('div');l.className='line';l.style.width=len+'px';l.style.left=core.x+'px';l.style.top=core.y+'px';l.style.transform=`rotate(${Math.atan2(dy,dx)}rad)`;net.insertBefore(l,net.firstChild)})}
-window.addEventListener('load',drawNetwork);
-</script>
+<footer><span>LGI Sustainable Innovation</span><span>Stratégie d'innovation durable · adaptation · territoires · co-construction</span></footer>
+<script src="story-data.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

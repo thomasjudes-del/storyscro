@@ -3,9 +3,60 @@
   const D = window.STORYSCRO || { decisions:[], workshop:[], proof:[], images:{}, sources:{} };
   const clamp = (v,min=0,max=1) => Math.min(max,Math.max(min,v));
   const lerp = (a,b,t) => a + (b-a)*t;
+  const smoothstep = t => { t = clamp(t); return t*t*(3-2*t); };
   const $ = (s,c=document) => c.querySelector(s);
   const $$ = (s,c=document) => [...c.querySelectorAll(s)];
   const vh = () => window.innerHeight || 800;
+
+  const frenchFixes = [
+    [/\bMetropole\b/g,'Métropole'],[/\bstrategie\b/gi,m=>m[0]==='S'?'Stratégie':'stratégie'],[/\badaptation\b/g,'adaptation'],
+    [/\bvulnerabilites\b/gi,'vulnérabilités'],[/\bvulnerabilite\b/gi,'vulnérabilité'],[/\breellement\b/g,'réellement'],[/\baleas\b/g,'aléas'],
+    [/\bdependances\b/g,'dépendances'],[/\bcapacites\b/g,'capacités'],[/\bcapacite\b/g,'capacité'],[/\breduire\b/g,'réduire'],[/\bcout\b/g,'coût'],
+    [/\bdelai\b/g,'délai'],[/\bacceptabilite\b/g,'acceptabilité'],[/\bresponsabilites\b/g,'responsabilités'],[/\betude\b/g,'étude'],
+    [/\bMethode\b/g,'Méthode'],[/\bmethode\b/g,'méthode'],[/\bdecisions\b/g,'décisions'],[/\bdecision\b/g,'décision'],[/\bSecuriser\b/g,'Sécuriser'],
+    [/\bsecuriser\b/g,'sécuriser'],[/\bPrioriser\b/g,'Prioriser'],[/\bAccelerer\b/g,'Accélérer'],[/\baccelerer\b/g,'accélérer'],
+    [/\bdonnees\b/g,'données'],[/\bpremiere\b/g,'première'],[/\bScenarios\b/g,'Scénarios'],[/\bscenarios\b/g,'scénarios'],[/\bpriorites\b/g,'priorités'],
+    [/\bpriorite\b/g,'priorité'],[/\bsequencage\b/g,'séquençage'],[/\bvalide\b/g,'validé'],[/\bpartage\b/g,'partagé'],[/\bactes\b/g,'actés'],
+    [/\badoptee\b/g,'adoptée'],[/\bElus\b/g,'Élus'],[/\bOperateurs\b/g,'Opérateurs'],[/\bsequences\b/g,'séquences'],[/\benchainent\b/g,'enchaînent'],
+    [/\bstrategique\b/g,'stratégique'],[/\bcriticite\b/g,'criticité'],[/\bcible\b/g,'ciblé'],[/\bmecanismes\b/g,'mécanismes'],[/\bmaturite\b/g,'maturité'],
+    [/\bneutralite\b/g,'neutralité'],[/\bmodeles\b/g,'modèles'],[/\beconomiques\b/g,'économiques'],[/\bEtude\b/g,'Étude'],[/\bdeveloppement\b/g,'développement'],
+    [/\breglementaires\b/g,'réglementaires'],[/\bmarche\b/g,'marché'],[/\bcaracterisation\b/g,'caractérisation'],[/\bilots\b/g,'îlots'],[/\bchaine\b/g,'chaîne'],
+    [/\bdeploiement\b/g,'déploiement'],[/\breferences\b/gi,'références'],[/\bcompetences\b/g,'compétences'],[/\bSpecificite\b/g,'Spécificité'],
+    [/\bDemonstration\b/g,'Démonstration'],[/\bCoherence\b/g,'Cohérence'],[/\bresultat\b/g,'résultat'],[/\blimites\b/g,'limités'],[/\bmanoeuvre\b/g,'manœuvre'],
+    [/\bCadrage valide\b/g,'Cadrage validé'],[/\bDiagnostic partage\b/g,'Diagnostic partagé'],[/\bArbitrages actes\b/g,'Arbitrages actés'],
+    [/\bFeuille de route adoptee\b/g,'Feuille de route adoptée'],[/\bMettre en tension\b/g,'Mettre en tension'],[/\bCo-construction\b/g,'Co-construction'],
+    [/\bmise en oeuvre\b/g,'mise en œuvre'],[/\bMise en oeuvre\b/g,'Mise en œuvre'],[/\bdu cadrage au passage a l'action\b/gi, m=>m[0]==='D'?"Du cadrage au passage à l'action":"du cadrage au passage à l'action"],
+    [/\ba la decision\b/gi, m=>m[0]==='A'?"À la décision":"à la décision"],[/\bde la vulnerabilite a la decision\b/gi,'de la vulnérabilité à la décision'],
+    [/\b6 a 10\b/g,'6 à 10'],[/\bSource P\./g,'Source p.']
+  ];
+  const fr = text => {
+    let out = String(text ?? '');
+    frenchFixes.forEach(([rx,repl]) => { out = out.replace(rx,repl); });
+    return out;
+  };
+  function restoreFrenchTypography(root=document.body){
+    if (!root) return;
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+    const nodes=[];
+    while(walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(node => {
+      const parent=node.parentElement;
+      if(!parent || ['SCRIPT','STYLE','NOSCRIPT'].includes(parent.tagName)) return;
+      const fixed=fr(node.nodeValue);
+      if(fixed!==node.nodeValue) node.nodeValue=fixed;
+    });
+  }
+  function heldTrackPosition(p,count){
+    if (p >= .9999) return count-1;
+    const z=clamp(p)*(count-1);
+    const i=Math.min(count-2,Math.floor(z));
+    const f=z-i;
+    const transition=smoothstep((f-.58)/.42);
+    return i+transition;
+  }
+
+  const refinement=document.createElement('link');
+  refinement.rel='stylesheet'; refinement.href='refine.css'; document.head.appendChild(refinement);
 
   const drawer = $('#sourceDrawer');
   const sourceTitle = $('#sourceTitle');
@@ -18,11 +69,12 @@
     const source = D.sources[key];
     if (!source) {
       sourceTitle.textContent = 'Sources';
-      sourceBody.innerHTML = `<div class="source-list">${Object.entries(D.sources).map(([id,s]) => `<button data-source="${id}"><strong>Page ${s.page}</strong><small>${s.title}</small></button>`).join('')}</div>`;
+      sourceBody.innerHTML = `<div class="source-list">${Object.entries(D.sources).map(([id,s]) => `<button data-source="${id}"><strong>Page ${s.page}</strong><small>${fr(s.title)}</small></button>`).join('')}</div>`;
     } else {
-      sourceTitle.textContent = source.title;
-      sourceBody.innerHTML = `<div class="source-card"><b>PDF | page ${source.page}</b><p>${source.text}</p></div><div class="source-card"><b>Traitement editorial</b><p>Le contenu a ete condense, reordonne et mis en scene. Les informations factuelles proviennent du document source.</p></div>`;
+      sourceTitle.textContent = fr(source.title);
+      sourceBody.innerHTML = `<div class="source-card"><b>PDF | page ${source.page}</b><p>${fr(source.text)}</p></div><div class="source-card"><b>Traitement éditorial</b><p>Le contenu a été condensé, réordonné et mis en scène. Les informations factuelles proviennent du document source.</p></div>`;
     }
+    restoreFrenchTypography(drawer);
     openDrawer(drawer);
   }
   document.addEventListener('click', e => {
@@ -60,9 +112,9 @@
     if (box && box.dataset.index !== String(index)) {
       box.dataset.index = String(index);
       box.animate([{opacity:.18,transform:'translateY(14px)'},{opacity:1,transform:'translateY(0)'}],{duration:380,easing:'ease-out'});
-      $('.scene-kicker',box).textContent = copy.kicker;
-      $('h3',box).textContent = copy.title;
-      $$('p',box).find(x => !x.classList.contains('scene-kicker')).textContent = copy.text;
+      $('.scene-kicker',box).textContent = fr(copy.kicker);
+      $('h3',box).textContent = fr(copy.title);
+      $$('p',box).find(x => !x.classList.contains('scene-kicker')).textContent = fr(copy.text);
     }
     const path = $('#decisionLine');
     if (path) path.style.strokeDashoffset = String(1600*(1-clamp(.15+p*.9)));
@@ -113,23 +165,31 @@
     const cap = $('#matrixCaption');
     if (cap) {
       const strong = $('strong',cap); const span = $('span',cap);
-      if (p < .26) { strong.textContent="Urgence x capacite d'action"; span.textContent="Rendre les criteres de choix visibles."; }
-      else if (p < .52) { strong.textContent='Securiser. Prioriser.'; span.textContent="Les options ne demandent ni le meme horizon, ni la meme posture."; }
-      else if (p < .78) { strong.textContent='Surveiller. Accelerer.'; span.textContent="Chaque action prend place dans une logique d'arbitrage explicite."; }
-      else { strong.textContent='Tester les arbitrages.'; span.textContent="Entretiens et ateliers servent a confronter urgence, capacite d'action et dependances."; }
+      if (p < .26) { strong.textContent="Urgence × capacité d'action"; span.textContent="Rendre les critères de choix visibles."; }
+      else if (p < .52) { strong.textContent='Sécuriser. Prioriser.'; span.textContent="Les options ne demandent ni le même horizon, ni la même posture."; }
+      else if (p < .78) { strong.textContent='Surveiller. Accélérer.'; span.textContent="Chaque action prend place dans une logique d'arbitrage explicite."; }
+      else { strong.textContent='Tester les arbitrages.'; span.textContent="Entretiens et ateliers servent à confronter urgence, capacité d'action et dépendances."; }
     }
   }
 
   function updateMethod(p){
     const track = $('#methodTrack');
     if (!track) return;
-    const x = p * 3 * window.innerWidth;
+    const pos=heldTrackPosition(p,4);
+    const x = pos * window.innerWidth;
     track.style.transform = `translate3d(${-x}px,0,0)`;
+    const heading=$('.method-heading');
+    if(heading){
+      const intro=clamp(1-p/.12);
+      heading.style.opacity=String(intro);
+      heading.style.transform=`translate3d(0,${(1-intro)*-18}px,0)`;
+      heading.style.pointerEvents=intro>.2?'auto':'none';
+    }
     const panels = $$('.method-panel',track);
     panels.forEach((panel,i) => {
-      const local = clamp(1-Math.abs(p*3-i));
+      const local = clamp(1-Math.abs(pos-i));
       const bg = $('.panel-bg',panel);
-      if (bg) bg.style.transform = `scale(${1.1-local*.04}) translate3d(${(i-p*3)*1.2}%,0,0)`;
+      if (bg) bg.style.transform = `scale(${1.1-local*.04}) translate3d(${(i-pos)*1.2}%,0,0)`;
     });
   }
 
@@ -137,21 +197,21 @@
     {label:'Cadrage & collecte',start:0,end:2,cls:'bar-blue2'},
     {label:'Diagnostic & entretiens',start:1,end:6,cls:'bar-blue'},
     {label:'Benchmark & options',start:3,end:7,cls:'bar-green'},
-    {label:'Scenarios & ateliers',start:6,end:9,cls:'bar-orange'},
+    {label:'Scénarios & ateliers',start:6,end:9,cls:'bar-orange'},
     {label:'Feuille de route',start:8,end:11,cls:'bar-purple'},
     {label:'Finalisation & transfert',start:10,end:12,cls:'bar-dark'}
   ];
   function buildPlanning(){
     const weeks = $('#weekRow'); const lines = $('#ganttLines');
     if (!weeks || !lines || weeks.children.length) return;
-    const lead = document.createElement('div'); lead.className='week'; lead.textContent='Sequence'; weeks.appendChild(lead);
+    const lead = document.createElement('div'); lead.className='week'; lead.textContent='Séquence'; weeks.appendChild(lead);
     for(let i=1;i<=12;i++){ const w=document.createElement('div'); w.className='week'; w.textContent=`S${i}`; weeks.appendChild(w); }
     gantt.forEach((row,i) => {
       const r=document.createElement('div'); r.className='gantt-row'; r.dataset.row=String(i);
-      const label=document.createElement('div'); label.className='gantt-label'; label.textContent=row.label; r.appendChild(label);
+      const label=document.createElement('div'); label.className='gantt-label'; label.textContent=fr(row.label); r.appendChild(label);
       const bar=document.createElement('div'); bar.className=`gantt-bar ${row.cls}`; bar.dataset.start=String(row.start); bar.dataset.end=String(row.end); bar.style.marginLeft=`${(row.start/12)*100}%`; bar.style.width=`${((row.end-row.start)/12)*100}%`; r.appendChild(bar); lines.appendChild(r);
     });
-    $$('.milestone').forEach((m,i) => { const at=Number(m.dataset.at||0); m.style.left=`${at*100}%`; });
+    $$('.milestone').forEach(m => { const at=Number(m.dataset.at||0); m.style.left=`${at*100}%`; });
   }
   buildPlanning();
   function updatePlanning(p){
@@ -169,7 +229,7 @@
     const word=$('#workshopWord');
     if (word && word.dataset.index!==String(index)) {
       word.dataset.index=String(index);
-      $('b',word).textContent=w.n; $('span',word).textContent=w.title; $('small',word).textContent=w.text;
+      $('b',word).textContent=w.n; $('span',word).textContent=fr(w.title); $('small',word).textContent=fr(w.text);
       word.animate([{opacity:.15,transform:'translateY(12px)'},{opacity:1,transform:'translateY(0)'}],{duration:360,easing:'ease-out'});
     }
     const orbit=$('#orbit'); if(!orbit) return;
@@ -181,16 +241,25 @@
       const float=Math.sin((p*7+i)*1.1)*4;
       a.style.transform=`translate3d(${tx}px,${ty+float}px,0) scale(${1-p*.08})`;
     });
-    $('.workshop-bg').style.transform=`scale(${1.08+p*.08}) translate3d(${p*2}%,0,0)`;
+    const bg=$('.workshop-bg');
+    if(bg) bg.style.transform=`scale(${1.08+p*.08}) translate3d(${p*2}%,0,0)`;
   }
 
   function updateDeliverables(p){
     const track=$('#deliverableTrack'); if(!track) return;
-    const x=p*5*window.innerWidth;
+    const pos=heldTrackPosition(p,6);
+    const x=pos*window.innerWidth;
     track.style.transform=`translate3d(${-x}px,0,0)`;
+    const title=$('.deliverable-title');
+    if(title){
+      const intro=clamp(1-p/.1);
+      title.style.opacity=String(intro);
+      title.style.transform=`translate3d(0,${(1-intro)*-16}px,0)`;
+      title.style.pointerEvents=intro>.2?'auto':'none';
+    }
     $$('.delivery',track).forEach((d,i) => {
-      const local=clamp(1-Math.abs(p*5-i));
-      d.style.opacity=String(.55+.45*local);
+      const local=clamp(1-Math.abs(pos-i));
+      d.style.opacity=String(.50+.50*local);
     });
   }
 
@@ -200,9 +269,9 @@
     const box=$('#proofCopy'); const bg=$('#proofBg');
     if (box && box.dataset.index!==String(index)) {
       box.dataset.index=String(index);
-      $('.scene-kicker',box).textContent=item.meta;
-      $('h3',box).textContent=item.title;
-      $$('p',box).find(x=>!x.classList.contains('scene-kicker')).textContent=item.text;
+      $('.scene-kicker',box).textContent=fr(item.meta);
+      $('h3',box).textContent=fr(item.title);
+      $$('p',box).find(x=>!x.classList.contains('scene-kicker')).textContent=fr(item.text);
       box.animate([{opacity:.12,transform:'translateY(16px)'},{opacity:1,transform:'translateY(0)'}],{duration:400,easing:'ease-out'});
     }
     const image=D.images[item.image];
@@ -245,5 +314,6 @@
   },{threshold:.15,rootMargin:'-35% 0px -55% 0px'});
   $$('.chapter[id]').forEach(s=>chapterObserver.observe(s));
 
+  restoreFrenchTypography(document.body);
   requestUpdate();
 })();

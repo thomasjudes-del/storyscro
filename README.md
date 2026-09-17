@@ -10,5 +10,7 @@ The current build deliberately focuses on one narrative experience: full-screen 
 
 - `v2/` current narrative engine and public experience
 - `scripts/smoke.mjs` structural and provenance checks
-- `.github/workflows/smoke.yml` automated smoke test
-- `.github/workflows/deploy-pages.yml` GitHub Pages deployment
+- `scripts/visual_capture.py` headless scene-by-scene visual validation
+- `.github/workflows/smoke.yml` automated structural smoke test
+- `.github/workflows/visual-smoke.yml` automated desktop rendering and screenshot capture
+- GitHub Pages deployment is handled by the repository's native Pages workflow

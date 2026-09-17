@@ -158,6 +158,7 @@
     refineHorizontal('deliverable-sequence','.deliverable-track','.delivery-card','.delivery-copy','.deliverable-heading');
     enhanceMicroNav();
     syncNavigation();
+    requestAnimationFrame(syncNavigation);
     updateScrubber();
     const handle = document.querySelector('.micro-scrub-handle');
     if(handle) handle.setAttribute('aria-valuenow',String(Math.round(globalProgress()*100)));

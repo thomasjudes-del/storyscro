@@ -35,7 +35,7 @@ def driver_for(width, height):
 
 def capture(label, width, height, selected):
     driver = driver_for(width, height)
-    report = {'viewport': [width, height], 'shots': [], 'console': []}
+    report = {'viewport': [width, height], 'shots': [], 'console': [], 'overflowers': []}
     try:
         driver.get(BASE)
         for _ in range(30):
@@ -74,6 +74,20 @@ def capture(label, width, height, selected):
               };
             """)
             if dims['sw'] > dims['w'] + 4:
+                overflowers = driver.execute_script("""
+                  const w=window.innerWidth;
+                  return [...document.querySelectorAll('*')].map(el=>{
+                    const r=el.getBoundingClientRect(), cs=getComputedStyle(el);
+                    return {
+                      tag:el.tagName.toLowerCase(), id:el.id||'', cls:el.className?.toString?.()||'',
+                      left:Math.round(r.left*10)/10,right:Math.round(r.right*10)/10,width:Math.round(r.width*10)/10,
+                      position:cs.position,overflowX:cs.overflowX,display:cs.display,
+                      parentOverflowX:el.parentElement?getComputedStyle(el.parentElement).overflowX:''
+                    };
+                  }).filter(x=>x.display!=='none' && (x.right>w+4 || x.left<-4)).slice(0,80);
+                """)
+                report['overflowers'].append({'scene':scene_id,'dims':dims,'elements':overflowers})
+                print('OVERFLOW_DIAGNOSTIC', json.dumps({'scene':scene_id,'dims':dims,'elements':overflowers}, ensure_ascii=False))
                 raise RuntimeError(f'Horizontal overflow at {label}/{scene_id}: {dims}')
             if dims['activeDots'] != 1:
                 raise RuntimeError(f'Expected one active micro-nav dot at {label}/{scene_id}, got {dims["activeDots"]}')

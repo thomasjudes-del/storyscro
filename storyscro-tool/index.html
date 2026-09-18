@@ -329,40 +329,6 @@ function isHeadingLike(line,bodySize){
   return numbered||canonical||titleish||sizeSignal;
 }
 
-function recoverNumberedHeadings(rawItems,pages,bodySize){
-  const pageDims=new Map(pages.map(p=>[p.number,p]));
-  const byPage=new Map();
-  for(const it of rawItems){if(it.rotated)continue;if(!byPage.has(it.page))byPage.set(it.page,[]);byPage.get(it.page).push(it)}
-  const out=[];
-  for(const [page,items] of byPage){
-    const dims=pageDims.get(page); if(!dims)continue;
-    const sorted=[...items].sort((a,b)=>b.y-a.y||a.x-b.x);
-    for(let i=0;i<sorted.length;i++){
-      const start=sorted[i],st=normalize(start.text);
-      if(!/^\d{1,2}(?:\.\d+){0,3}\.?$/.test(st))continue;
-      const same=sorted.filter(x=>x.x>start.x&&Math.abs(x.y-start.y)<=Math.max(2.5,start.size*.45))
-        .sort((a,b)=>a.x-b.x).slice(0,6);
-      if(!same.length)continue;
-      const titleParts=[];let lastRight=start.x+start.width;
-      for(const x of same){
-        const gap=x.x-lastRight;
-        if(titleParts.length&&gap>Math.max(70,dims.width*.13))break;
-        const tx=normalize(x.text); if(!tx)continue;
-        titleParts.push(tx);lastRight=x.x+x.width;
-        if(titleParts.join(' ').length>105)break;
-      }
-      const text=normalize(st+' '+titleParts.join(' '));
-      const fonts=[start,...same.slice(0,titleParts.length)];
-      const font=fonts.sort((a,b)=>String(b.text).length-String(a.text).length)[0]?.font||start.font||'';
-      const line={text,page,x:start.x,y:start.y,width:Math.max(1,lastRight-start.x),size:start.size,maxSize:Math.max(start.size,...same.map(x=>x.size)),font,bold:isBold(font),pageWidth:dims.width,pageHeight:dims.height,topRatio:1-start.y/dims.height,bottomRatio:start.y/dims.height,recovered:true};
-      const rest=normalize(text.replace(/^\d{1,2}(?:\.\d+){0,3}\.?\s*/,'')),alphaWords=(rest.match(/[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ'’/-]*/g)||[]);
-      const editorial=alphaWords.length>=1&&titleCaseRatio(rest)>=.54&&!/[.!?;,:]$/.test(rest);
-      if(editorial&&numberedHeadingQuality(line,bodySize))out.push(line);
-    }
-  }
-  return out;
-}
-
 function detectNumbers(paragraphs){
   const rx=/(?:[$€£]\s?)?\b\d{1,3}(?:[ ,.]\d{3})*(?:[.,]\d+)?\s?(?:%|°C|°F|km|m|ha|years?|months?|days?|million|billion|bn|Mt|Gt|tCO2e|CO2e)?\b/gi;
   const out=[];
@@ -601,13 +567,7 @@ async function ingestPdf(file,onProgress=()=>{},signal){
   }
   const repeatedKeys=new Set([...repeated.entries()].filter(([,set])=>set.size>=Math.max(2,Math.ceil(pdf.numPages*.28))).map(([k])=>k));
   for(const l of allLines)l.isRepeated=repeatedKeys.has(normalizeKey(l.text));
-  const recoveredHeadings=recoverNumberedHeadings(rawItemsAll,pages,bodySize);
-  const candidatePool=[...allLines.filter(l=>l.text.length>=3&&l.text.length<=170&&isHeadingLike(l,bodySize)),...recoveredHeadings];
-  const headingCandidates=[];
-  for(const h of candidatePool){
-    const duplicate=headingCandidates.some(x=>x.page===h.page&&normalize(x.text).toLowerCase()===normalize(h.text).toLowerCase()&&Math.abs(x.y-h.y)<bodySize*1.4);
-    if(!duplicate)headingCandidates.push(h);
-  }
+  const headingCandidates=allLines.filter(l=>l.text.length>=3&&l.text.length<=170&&isHeadingLike(l,bodySize));
   const sizes=[...new Set(headingCandidates.map(h=>Math.round(h.maxSize*10)/10))].sort((a,b)=>b-a);
   const thresholds=sizes.slice(0,5);
   const headings=headingCandidates.map((h,i)=>{

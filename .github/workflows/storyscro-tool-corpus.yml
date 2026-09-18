@@ -1,0 +1,96 @@
+name: StoryScro Tool - PDF corpus
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/storyscro-tool-corpus.yml'
+      - 'storyscro-tool/**'
+  workflow_dispatch:
+
+concurrency:
+  group: storyscro-tool-corpus-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  corpus:
+    name: ${{ matrix.kind }} - ${{ matrix.slug }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - kind: scientific
+            slug: attention
+            url: https://arxiv.org/pdf/1706.03762
+            filename: attention.pdf
+          - kind: public-policy
+            slug: ccc-2025
+            url: https://www.theccc.org.uk/wp-content/uploads/2025/04/Progress-in-adapting-to-climate-change-2025-1.pdf
+            filename: ccc-2025.pdf
+          - kind: data-market
+            slug: imf-weo-2025
+            url: https://www.imf.org/-/media/files/publications/weo/2025/update/july/english/text.pdf
+            filename: imf-weo-2025.pdf
+          - kind: project-deliverable
+            slug: eu-fossa-comparative
+            url: https://interoperable-europe.ec.europa.eu/sites/default/files/inline-files/DLV%20WP1%20-%2007%20Comparative%20study_published%281%29.pdf
+            filename: eu-fossa-comparative.pdf
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install Selenium
+        run: python -m pip install --disable-pip-version-check selenium==4.35.0
+
+      - name: Download public PDF
+        run: |
+          curl -L --fail --retry 4 --retry-delay 3 "${{ matrix.url }}" -o "/tmp/${{ matrix.filename }}"
+          test -s "/tmp/${{ matrix.filename }}"
+          file "/tmp/${{ matrix.filename }}"
+
+      - name: Start StoryScro Tool
+        run: |
+          python -m http.server 4182 --bind 127.0.0.1 > /tmp/storyscro-tool-server.log 2>&1 &
+          for i in {1..30}; do
+            curl -fsS http://127.0.0.1:4182/storyscro-tool/ >/dev/null && exit 0
+            sleep 0.5
+          done
+          cat /tmp/storyscro-tool-server.log
+          exit 1
+
+      - name: Generate StoryScro in real browser
+        env:
+          STORYSCRO_TOOL_BASE: http://127.0.0.1:4182/storyscro-tool/
+          STORYSCRO_TOOL_PDF: /tmp/${{ matrix.filename }}
+          STORYSCRO_TOOL_OUT: corpus-artifacts/${{ matrix.slug }}
+        run: python storyscro-tool/test_smoke.py
+
+      - name: Add corpus metadata
+        if: always()
+        run: |
+          mkdir -p "corpus-artifacts/${{ matrix.slug }}"
+          cat > "corpus-artifacts/${{ matrix.slug }}/case.json" <<'JSON'
+          {
+            "kind": "${{ matrix.kind }}",
+            "slug": "${{ matrix.slug }}",
+            "source_url": "${{ matrix.url }}",
+            "filename": "${{ matrix.filename }}"
+          }
+          JSON
+
+      - name: Upload corpus artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: storyscro-corpus-${{ matrix.slug }}-${{ github.sha }}
+          path: corpus-artifacts/${{ matrix.slug }}/
+          if-no-files-found: warn
+          retention-days: 7

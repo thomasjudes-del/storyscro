@@ -37,6 +37,9 @@ def build_input(planner_input: dict[str, Any], grammar: dict[str, Any], user_ins
         "selection_rules": grammar.get("selection_rules", []),
         "media_policy": grammar.get("media_policy", {}),
         "motion_policy": grammar.get("motion_policy", {}),
+        "source_design_policy": grammar.get("source_design_policy", {}),
+        "scene_lifecycle": grammar.get("scene_lifecycle", {}),
+        "interaction_policy": grammar.get("interaction_policy", {}),
     }
     content: list[dict[str, Any]] = [
         {

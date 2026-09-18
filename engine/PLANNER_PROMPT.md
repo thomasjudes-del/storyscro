@@ -38,7 +38,7 @@ If a relationship needed for a network, causal diagram, map or matrix is not sup
 7. For each scene, identify its semantic role before choosing a primitive.
 8. Choose the simplest primitive that best expresses the relationship.
 9. Add motion only when it improves comprehension, sequencing, comparison, focus or pacing.
-10. Review the whole story for rhythm, repetition, density and factual traceability.
+10. Define scene pacing (`pacing`) for scroll-driven scenes: intro hold, reveal mode, title behaviour and focus mode.\n11. Review the whole story for rhythm, repetition, density, source visual identity and factual traceability.
 
 ## Primitive selection
 
@@ -61,6 +61,38 @@ Examples:
 - photographic or contextual transition -> `text_over_media` or `hero`.
 
 Do not use a visual primitive merely to vary the page.
+
+## Source visual identity
+
+Before choosing scenes, inspect the source's visual language as evidence about presentation, not factual content. Use the supplied design/style profile and source PDF when available.
+
+Determine whether the source has a coherent visual identity. If it does, preserve recognisable cues such as:
+- dominant and accent colours;
+- typography character and relative hierarchy;
+- logo/publisher identity;
+- chart colours and status scales;
+- recurring visual motifs;
+- image/diagram style.
+
+Do not automatically recolour every document into a generic StoryScro palette. StoryScro should make the document dynamic while still looking recognisably related to its source unless the user asks for rebranding.
+
+Strong source charts, diagrams and images should normally be reused, cropped, annotated or progressively revealed rather than recreated from scratch. External contextual imagery is allowed only as context/atmosphere and must be marked as external media rather than source evidence.
+
+## Scene lifecycle and disclosure
+
+Every scroll-driven scene must be planned as a sequence of readable states rather than one continuous animation.
+
+Use this mental model:
+1. ARRIVE - the scene enters and establishes its frame;
+2. SETTLE - the title/thesis is held long enough to read;
+3. REVEAL - one meaningful item/state is introduced;
+4. HOLD - that state remains stable long enough to inspect;
+5. TRANSITION - a short change to the next state;
+6. EXIT - the scene leaves cleanly.
+
+Default to progressive discovery. Do not show all future items and then repeat them one by one unless the overview itself is analytically necessary. For a four-step sequence, a good default is: title -> item 1 -> item 2 -> item 3 -> item 4, with inactive items hidden or strongly demoted.
+
+Prevent collisions by design. If a scene title and active step copy cannot coexist in clearly separate zones, set the title to compact or fade before the steps start. Text-on-text overlap is a rendering failure, not an acceptable effect.
 
 ## Effects and pacing
 
@@ -127,7 +159,7 @@ Reject and fix the plan if any of the following is true:
 - the story is dominated by decorative cards;
 - effects are used without explanatory value;
 - every section uses the same layout;
-- the same image is reused without explicit purpose;
+- the same image is reused without explicit purpose;\n- the output ignores a coherent source visual identity without a stated reason;\n- a sequential scene reveals all future steps before the reader reaches them;\n- title and active content are likely to collide or overlap;
 - data visualisation implies unsupported precision;
 - a network invents relationships;
 - a map is decorative rather than geographic evidence;

@@ -34,6 +34,7 @@ def run(label,width,height):
             pages:e?.stats?.pages||0,
             paragraphs:e?.stats?.paragraphs||0,
             numbers:e?.stats?.numbers||0,
+            tables:e?.stats?.tables||0,
             sections:e?.stats?.sections||0,
             chapters:s?.chapters?.length||0,
             scenes:(s?.chapters||[]).reduce((n,c)=>n+(c.scenes||[]).length,0),
@@ -42,7 +43,12 @@ def run(label,width,height):
             sourceLink:document.querySelector('.story-actions a')?.href||'',
             overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth,
             microDots:document.querySelectorAll('.micro-dot').length,
-            sourceButtons:document.querySelectorAll('.source-chip').length
+            sourceButtons:document.querySelectorAll('.source-chip').length,
+            charts:document.querySelectorAll('.trend-scene').length,
+            externalImages:(s?.assets||[]).filter(a=>a.origin==='external-context').length,
+            numericNav:[...document.querySelectorAll('.chapter-nav a')].filter(a=>/^\d+$/.test(a.textContent.trim())).length,
+            sourceBackdropRefs:(()=>{const am=new Map((s?.assets||[]).map(a=>[a.id,a]));const scenes=(s?.chapters||[]).flatMap(c=>c.scenes||[]);const ids=scenes.flatMap(sc=>[...(sc.media||[]).map(m=>m.asset_id),...((sc.data?.items)||[]).map(x=>x.asset_id),...((sc.data?.steps)||[]).map(x=>x.asset_id)]).filter(Boolean);return ids.filter(id=>am.get(id)?.origin==='source').length})(),
+            titleTooTall:[...document.querySelectorAll('.story-scene h1,.story-scene h2')].filter(el=>el.getBoundingClientRect().height>window.innerHeight*.58).length
           }
         """)
         assert stats["pages"] >= 8, stats
@@ -54,6 +60,11 @@ def run(label,width,height):
         assert stats["overflow"] <= 2, stats
         assert stats["microDots"] == stats["scenes"], stats
         assert stats["sourceButtons"] >= stats["scenes"]-1, stats
+        assert stats["numericNav"] == 0, stats
+        assert stats["sourceBackdropRefs"] == 0, stats
+        assert stats["titleTooTall"] == 0, stats
+        if stats["tables"] > 0:
+            assert stats["charts"] > 0, stats
         # Generic editorial quality gates: the StoryScro must not elevate obvious front matter/noise.
         quality=d.execute_script("""
           const e=window.__storyscro?.getEvidence?.(), s=window.__storyscro?.getStory?.();
@@ -79,9 +90,14 @@ def run(label,width,height):
             (OUT/"browser-evidence.json").write_text(json.dumps(payload["evidence"],indent=2),encoding="utf-8")
             (OUT/"browser-story.json").write_text(json.dumps(payload["story"],indent=2),encoding="utf-8")
         d.save_screenshot(str(OUT/f"{label}-hero.png"))
+        chart=d.find_elements(By.CSS_SELECTOR,".trend-scene")
+        if chart:
+            d.execute_script("arguments[0].scrollIntoView({block:'start'})",chart[0])
+            time.sleep(.5)
+            d.save_screenshot(str(OUT/f"{label}-chart.png"))
         scrolly=d.find_elements(By.CSS_SELECTOR,".story-scene.scrolly")
         if scrolly:
-            d.execute_script("arguments[0].scrollIntoView({block:'start'}); window.scrollBy(0, arguments[0].offsetHeight*0.32)",scrolly[min(1,len(scrolly)-1)])
+            d.execute_script("arguments[0].scrollIntoView({block:'start'}); window.scrollBy(0, arguments[0].offsetHeight*0.24)",scrolly[min(1,len(scrolly)-1)])
             time.sleep(.7)
             d.save_screenshot(str(OUT/f"{label}-scrolly.png"))
         severe=[x for x in d.get_log("browser") if x.get("level")=="SEVERE" and "favicon.ico" not in x.get("message","")]

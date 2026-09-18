@@ -371,8 +371,8 @@ function detectBullets(lines){
 function detectTables(allLines,headings=[]){
   const out=[];const byPage=new Map();
   for(const l of allLines){if(l.isRepeated||l.rotated)continue;if(!byPage.has(l.page))byPage.set(l.page,[]);byPage.get(l.page).push(l)}
-  const numRx=/\d+(?:[ \u00a0.]\d{3})*(?:[.,]\d+)?/g;
-  const parseValue=raw=>{let t=String(raw||'').replace(/[ \u00a0]/g,'').replace(',','.');if(/^\d{1,3}(?:\.\d{3})+$/.test(t))t=t.replace(/\./g,'');const n=Number(t);return Number.isFinite(n)?n:null};
+  const numRx=/[-+]?\d+(?:[ \u00a0.]\d{3})*(?:[.,]\d+)?/g;
+  const parseValue=raw=>{let t=String(raw||'').replace(/[ \u00a0]/g,'').replace(',','.');if(/^[-+]?\d{1,3}(?:\.\d{3})+$/.test(t))t=t.replace(/\./g,'');const n=Number(t);return Number.isFinite(n)?n:null};
   for(const [page,lines] of byPage){
     const sorted=[...lines].sort((a,b)=>b.y-a.y||a.x-b.x);const groups=[];
     for(const l of sorted){
@@ -382,29 +382,45 @@ function detectTables(allLines,headings=[]){
     }
     groups.sort((a,b)=>b.y-a.y);
     for(let i=0;i<groups.length;i++){
-      const g=groups[i];const headerText=g.parts.sort((a,b)=>a.x-b.x).map(x=>x.text).join(' ');
-      const years=[...headerText.matchAll(/\b(?:19|20)\d{2}\b/g)].map(m=>m[0]).filter((v,k,a)=>a.indexOf(v)===k);
-      if(years.length<3)continue;
+      const g=groups[i];const headerParts=[...g.parts].sort((a,b)=>a.x-b.x);
+      const yearParts=headerParts.map(p=>({p,years:[...String(p.text||'').matchAll(/\b(?:19|20)\d{2}\b/g)].map(m=>m[0])})).filter(x=>x.years.length===1);
+      if(yearParts.length<3)continue;
+      const seenYears=new Set(),cols=[];
+      for(const yp of yearParts){const year=yp.years[0];if(seenYears.has(year))continue;seenYears.add(year);cols.push({year,x:yp.p.x})}
+      cols.sort((a,b)=>a.x-b.x);
+      if(cols.length<3)continue;
+      const pageWidth=headerParts[0]?.pageWidth||Math.max(...headerParts.map(p=>p.x+Math.max(30,(p.width||0))),600);
+      if(cols[cols.length-1].x-cols[0].x<pageWidth*.24)continue;
+      const gaps=cols.slice(1).map((c,k)=>c.x-cols[k].x).filter(x=>x>8);
+      const minGap=gaps.length?Math.min(...gaps):pageWidth*.12;const tol=Math.max(18,Math.min(pageWidth*.09,minGap*.46));
       const rows=[];
-      for(let j=i+1;j<Math.min(groups.length,i+12);j++){
-        const rg=groups[j];const parts=[...rg.parts].sort((a,b)=>a.x-b.x);
-        const text=normalize(parts.map(x=>x.text).join(' '));
-        if(!text)continue;
-        if(([...text.matchAll(/\b(?:19|20)\d{2}\b/g)]).length>=3)break;
-        const firstNum=text.search(/\d/);if(firstNum<2)continue;
-        const label=normalize(text.slice(0,firstNum)).replace(/[|:;-]+$/,'').trim();
-        if(label.length<2||label.split(/\s+/).length>12)continue;
-        const rawNums=[...text.slice(firstNum).matchAll(numRx)].map(m=>m[0]);
-        if(rawNums.length<years.length)continue;
-        const values=rawNums.slice(0,years.length).map((raw,k)=>({year:years[k],raw,value:parseValue(raw)}));
-        if(values.some(v=>v.value===null))continue;
+      for(let j=i+1;j<Math.min(groups.length,i+14);j++){
+        const rg=groups[j],parts=[...rg.parts].sort((a,b)=>a.x-b.x);
+        const rowText=normalize(parts.map(x=>x.text).join(' '));if(!rowText)continue;
+        const rowYearParts=parts.filter(p=>/\b(?:19|20)\d{2}\b/.test(p.text||''));
+        if(rowYearParts.length>=3)break;
+        const labelParts=parts.filter(p=>p.x<cols[0].x-tol*.45&&/[A-Za-zÀ-ÿ]/.test(p.text||''));
+        if(!labelParts.length)continue;
+        const label=normalize(labelParts.map(p=>p.text).join(' ')).replace(/[|:;-]+$/,'').trim();
+        if(label.length<2||label.split(/\s+/).length>14||/^https?:\/\//i.test(label))continue;
+        const values=[];let aligned=true;
+        for(const col of cols){
+          const candidates=parts.filter(p=>Math.abs(p.x-col.x)<=tol&&numRx.test(String(p.text||''))).sort((a,b)=>Math.abs(a.x-col.x)-Math.abs(b.x-col.x));
+          numRx.lastIndex=0;
+          const cell=candidates[0];if(!cell){aligned=false;break}
+          const m=String(cell.text||'').match(numRx);if(!m?.length){aligned=false;break}
+          const raw=m[0],value=parseValue(raw);if(value===null){aligned=false;break}
+          values.push({year:col.year,raw,value});
+        }
+        if(!aligned||values.length!==cols.length)continue;
         let unit='';
-        if(/million/i.test(text)&&/[€£$]/.test(text))unit='M€';
-        else if(/\bETP\b/i.test(text))unit='ETP';
-        else if(/%/.test(text))unit='%';
+        if(/million/i.test(rowText)&&/[€£$]/.test(rowText))unit='M€';
+        else if(/\bETP\b/i.test(rowText))unit='ETP';
+        else if(/%/.test(rowText))unit='%';
         rows.push({label,unit,values});
       }
       if(rows.length<2)continue;
+      const years=cols.map(c=>c.year);
       const near=headings.filter(h=>h.page===page&&h.y>g.y).sort((a,b)=>(a.y-g.y)-(b.y-g.y))[0];
       const sig=page+'|'+years.join('|')+'|'+rows.map(r=>r.label).join('|');
       if(out.some(t=>t._sig===sig))continue;

@@ -699,9 +699,12 @@ function sectionBullets(evidence,section){return evidence.bullets.filter(n=>n.pa
 function sectionYears(evidence,section){const arr=sectionNumbers(evidence,section).filter(n=>n.year);const seen=new Set();return arr.filter(n=>!seen.has(n.raw)&&seen.add(n.raw)).slice(0,7)}
 function sectionTables(evidence,section){
   const titles=new Set((section.grouped_titles||[section.title]).map(cleanHeadingTitle).map(x=>x.toLowerCase()).filter(Boolean));
-  const exact=(evidence.tables||[]).filter(t=>titles.has(cleanHeadingTitle(t.title).toLowerCase()));
+  const all=evidence.tables||[];
+  const exact=all.filter(t=>titles.has(cleanHeadingTitle(t.title).toLowerCase()));
   if(exact.length)return exact;
-  return (evidence.tables||[]).filter(t=>t.page>=section.page_start&&t.page<=section.page_end&&section.page_start===section.page_end);
+  const inRange=all.filter(t=>t.page>=section.page_start&&t.page<=section.page_end);
+  if(inRange.length===1)return inRange;
+  return inRange.filter(t=>{const tt=cleanHeadingTitle(t.title).toLowerCase();return [...titles].some(st=>st&&tt&&(st.includes(tt)||tt.includes(st)))});
 }
 function pickParagraphs(ps,count=3){return ps.filter(p=>p.text.length>55&&usefulText(p.text)).slice(0,count)}
 function topNumbers(ns,count=4){const seen=new Set();return [...ns].sort((a,b)=>b.score-a.score).filter(n=>!seen.has(n.raw)&&seen.add(n.raw)).slice(0,count)}

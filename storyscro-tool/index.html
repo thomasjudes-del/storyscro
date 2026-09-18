@@ -841,6 +841,7 @@ function consolidateSections(evidence,max=7){
     return s.title&&!/^page \d+$/i.test(s.title)&&!NOISE_RX.test(s.title)&&s.kind!=='references'&&s.kind!=='annex'&&s.title.split(/\s+/).length<=26&&!/^(?:figure|table|input-input layer)/i.test(s.title)&&!/^conclusion$/i.test(t)&&/[A-Za-zÀ-ÿ]/.test(t)&&!/^\d+(?:\.\d+)*$/.test(t);
   });
   raw=raw.filter(s=>!(s.page_start===1&&s.title.length>=14&&docTitle.includes(normalize(s.title).toLowerCase())));
+  const docPages=Math.max(1,evidence.document?.page_count||1);
   const buildGroups=anchors=>{
     const ordered=[...anchors].filter(Boolean).sort((a,b)=>a.page_start-b.page_start||(a.heading?.y||0)-(b.heading?.y||0));
     const positions=ordered.map(a=>raw.findIndex(x=>x.id===a.id)).filter(i=>i>=0).sort((a,b)=>a-b);
@@ -878,13 +879,15 @@ function consolidateSections(evidence,max=7){
     anchors.sort((a,b)=>raw.indexOf(a)-raw.indexOf(b));
     if(anchors.length>max)anchors=spreadAnchors(evidence,anchors,max);
     const groups=buildGroups(anchors);
-    if(groups.length>=2)return groups.slice(0,max);
+    const coverage=groups.length?Math.max(...groups.map(g=>g.page_end||g.page_start||1))/docPages:0;
+    if(groups.length>=2&&(docPages<20||coverage>=.55))return groups.slice(0,max);
   }
 
   const meaningful=raw.filter(s=>sectionAnchorScore(evidence,s)>-7);
   const level1=meaningful.filter(s=>(s.level||9)===1&&!isGenericLeafTitle(s.title));
   const level2=meaningful.filter(s=>(s.level||9)===2&&!isGenericLeafTitle(s.title));
-  let candidatePool=level1.length>=3?level1:(level2.length>=3?level2:meaningful.filter(s=>!isGenericLeafTitle(s.title)));
+  const coverageOf=arr=>arr.length?Math.max(...arr.map(x=>x.page_end||x.page_start||1))/docPages:0;
+  let candidatePool=level1.length>=3&&coverageOf(level1)>=.55?level1:(level2.length>=3&&coverageOf(level2)>=.55?level2:meaningful.filter(s=>!isGenericLeafTitle(s.title)));
   if(!candidatePool.length)candidatePool=meaningful.length?meaningful:raw;
   let anchors=spreadAnchors(evidence,candidatePool,max);
   anchors=anchors.filter((a,i)=>i===0||cleanHeadingTitle(a.title).toLowerCase()!==cleanHeadingTitle(anchors[i-1].title).toLowerCase());
@@ -1153,6 +1156,7 @@ function run(story,{mount,sourceUrl}){
       }
     }
   }
+  wrap._fitHeadlines=fitHeadlines;
   requestAnimationFrame(()=>requestAnimationFrame(fitHeadlines));
 
 
@@ -1203,7 +1207,7 @@ async function build(file){
     await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
     mountStory(currentStory,{mount:storyMount,sourceUrl:currentUrl});
     progress({stage:'render',progress:1,title:'Ready',detail:`${currentEvidence.stats.pages} pages → ${currentStory.chapters.reduce((n,c)=>n+c.scenes.length,0)} narrative scenes`});
-    await new Promise(r=>setTimeout(r,240));setView('story');scrollTo({top:0,behavior:'auto'});requestAnimationFrame(()=>dispatchEvent(new Event('resize')));
+    await new Promise(r=>setTimeout(r,240));setView('story');storyMount.querySelector('.storyscro')?._fitHeadlines?.();scrollTo({top:0,behavior:'auto'});requestAnimationFrame(()=>dispatchEvent(new Event('resize')));
   }catch(err){if(err?.name==='AbortError'){reset();return}fail(err)}
 }
 

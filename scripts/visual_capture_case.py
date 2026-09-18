@@ -67,6 +67,15 @@ def inspect_layout(driver, scene_id):
         totalHorizontalCopies:horizontalCopies.length,
         visibleHorizontalCopies:visibleCopies.length,
         activeHorizontalRect,
+        collisions:(()=>{
+          const visible=el=>{ if(!el) return false; const r=el.getBoundingClientRect(),cs=getComputedStyle(el); return cs.display!=='none'&&cs.visibility!=='hidden'&&Number(cs.opacity||1)>.16&&r.width>0&&r.height>0; };
+          const hit=(a,b)=>{ if(!visible(a)||!visible(b)) return false; const x=a.getBoundingClientRect(),y=b.getBoundingClientRect(); return x.left<y.right+4&&x.right+4>y.left&&x.top<y.bottom+4&&x.bottom+4>y.top; };
+          const pairs=[['.proof-title','.proof-copy'],['.horizontal-heading','.panel-copy'],['.deliverable-heading','.delivery-copy'],['.network-title','.workshop-copy']];
+          return pairs.filter(([a,b])=>scene&&hit(scene.querySelector(a),scene.querySelector(b))).map(x=>x.join(' vs '));
+        })(),
+        proofCopyOpacity:scene?.querySelector('.proof-copy')?Number(getComputedStyle(scene.querySelector('.proof-copy')).opacity):null,
+        progressiveActiveTiles:scene?.querySelectorAll('.mosaic.progressive .mosaic-tile.active').length??null,
+        sourceDeep:getComputedStyle(document.documentElement).getPropertyValue('--deep').trim(),
         offenders:offenders.slice(0,30)
       };
     """, scene_id)
@@ -82,9 +91,31 @@ def inspect_layout(driver, scene_id):
         raise RuntimeError(f'Horizontal narrative focus failure at {scene_id}: expected 1 visible panel, got {dims["visibleHorizontalCopies"]}')
     if dims['activeHorizontalRect'] and (dims['activeHorizontalRect']['left'] < -5 or dims['activeHorizontalRect']['right'] > dims['w'] + 5):
         raise RuntimeError(f'Clipped horizontal narrative copy at {scene_id}: {dims["activeHorizontalRect"]}')
+    if dims.get('collisions'):
+        raise RuntimeError(f'Visible narrative text collision at {scene_id}: {dims["collisions"]}')
     if not dims['scrubber']:
         raise RuntimeError('Generic draggable scrubber is missing')
     return dims
+
+
+def validate_external_assets(driver):
+    result = driver.execute_async_script("""
+      const done=arguments[arguments.length-1];
+      fetch('story.json').then(r=>r.json()).then(story=>{
+        const urls=(story.assets||[]).filter(a=>a.type==='image'&&/^https?:/.test(a.uri||'')).map(a=>({id:a.id,uri:a.uri}));
+        Promise.all(urls.map(a=>new Promise(resolve=>{
+          const img=new Image();
+          const timer=setTimeout(()=>resolve({id:a.id,ok:false,reason:'timeout'}),10000);
+          img.onload=()=>{clearTimeout(timer);resolve({id:a.id,ok:true,w:img.naturalWidth,h:img.naturalHeight});};
+          img.onerror=()=>{clearTimeout(timer);resolve({id:a.id,ok:false,reason:'load-error'});};
+          img.src=a.uri;
+        }))).then(done).catch(err=>done([{id:'<story>',ok:false,reason:String(err)}]));
+      }).catch(err=>done([{id:'<story>',ok:false,reason:String(err)}]));
+    """)
+    failed=[x for x in result if not x.get('ok')]
+    if failed:
+        raise RuntimeError('External image asset failure: '+json.dumps(failed,ensure_ascii=False))
+    return result
 
 
 def capture(label, width, height):
@@ -93,6 +124,7 @@ def capture(label, width, height):
     try:
         wait_ready(driver)
         ids = scene_ids(driver)
+        report['external_assets'] = validate_external_assets(driver)
         if len(ids) < MIN_SCENES:
             raise RuntimeError(f'Expected at least {MIN_SCENES} scenes, got {len(ids)}')
         for scene_id in ids:
@@ -100,15 +132,26 @@ def capture(label, width, height):
               const el=document.getElementById(arguments[0]);
               const top=el.getBoundingClientRect().top+window.scrollY;
               const span=Math.max(1,el.offsetHeight-window.innerHeight);
-              window.scrollTo({top:top+span*.5,behavior:'auto'});
-              return {top,span,height:el.offsetHeight};
+              return {top,span,height:el.offsetHeight,scrolly:el.classList.contains('scrolly')};
             """, scene_id)
-            time.sleep(.12)
-            dims = inspect_layout(driver, scene_id)
+            checks = [0.08,0.22,0.55,0.82] if result.get('scrolly') else [0.5]
+            state_checks=[]
+            for q in checks:
+                driver.execute_script("window.scrollTo({top:arguments[0]+arguments[1]*arguments[2],behavior:'auto'})",result['top'],result['span'],q)
+                time.sleep(.09)
+                dims=inspect_layout(driver,scene_id)
+                if q < .12 and dims.get('proofCopyOpacity') is not None and dims['proofCopyOpacity'] > .2:
+                    raise RuntimeError(f'Proof scene reveals step copy before settle phase at {scene_id}: opacity={dims["proofCopyOpacity"]}')
+                if q < .12 and dims.get('progressiveActiveTiles') not in (None,0):
+                    raise RuntimeError(f'Progressive mosaic spoils future items during intro at {scene_id}')
+                state_checks.append({'progress':q,'dims':dims})
+            driver.execute_script("window.scrollTo({top:arguments[0]+arguments[1]*.55,behavior:'auto'})",result['top'],result['span'])
+            time.sleep(.08)
+            dims=inspect_layout(driver,scene_id)
             out = OUT / f'{label}-{scene_id}.png'
             if not driver.save_screenshot(str(out)):
                 raise RuntimeError(f'Screenshot failed: {scene_id}')
-            report['shots'].append({'scene':scene_id,'scroll':result,'dims':dims,'file':str(out)})
+            report['shots'].append({'scene':scene_id,'scroll':result,'states':state_checks,'dims':dims,'file':str(out)})
 
         if width >= 1000:
             first_dot = driver.find_element('css selector','.micro-dot')

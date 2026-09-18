@@ -876,7 +876,7 @@
   "design_system": {
     "source_strategy": "preserve",
     "palette": {
-      "primary": "#280049",
+      "primary": "#280048",
       "secondary": "#7142ff",
       "accent": "#7142ff",
       "background": "#ffffff",
@@ -894,7 +894,9 @@
       ],
       "heading_family": "Century Gothic-like geometric sans",
       "body_family": "Century Gothic-like geometric sans",
-      "character": "geometric, institutional, high-contrast purple hierarchy"
+      "character": "geometric, institutional, high-contrast purple hierarchy",
+      "heading_stack": "\"Century Gothic\",\"Avenir Next\",\"Trebuchet MS\",sans-serif",
+      "body_stack": "\"Century Gothic\",\"Avenir Next\",\"Trebuchet MS\",sans-serif"
     },
     "branding": {
       "publisher": "Climate Change Committee"

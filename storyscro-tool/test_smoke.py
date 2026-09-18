@@ -10,6 +10,7 @@ BASE=os.environ.get("STORYSCRO_TOOL_BASE","http://127.0.0.1:4182/storyscro-tool/
 PDF=os.environ["STORYSCRO_TOOL_PDF"]
 OUT=Path(os.environ.get("STORYSCRO_TOOL_OUT","tool-artifacts")); OUT.mkdir(parents=True,exist_ok=True)
 EXPECT_CHART=os.environ.get("STORYSCRO_EXPECT_CHART","0") == "1"
+EXPECT_EXTERNAL_IMAGE=os.environ.get("STORYSCRO_EXPECT_EXTERNAL_IMAGE","0") == "1"
 
 def driver_for(width,height):
     opts=Options()
@@ -69,6 +70,8 @@ def run(label,width,height):
         assert stats["charts"] == stats["storyTables"], stats
         if EXPECT_CHART:
             assert stats["charts"] >= 1, stats
+        if EXPECT_EXTERNAL_IMAGE:
+            assert stats["externalImages"] >= 1, stats
 
         quality=d.execute_script("""
           const e=window.__storyscro?.getEvidence?.(), s=window.__storyscro?.getStory?.();

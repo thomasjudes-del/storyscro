@@ -63,6 +63,16 @@ function validateStory(path) {
   const repeated = [...usedAssetIds.entries()].filter(([,uses]) => uses.length > 1);
   if (repeated.length) console.warn(`${path} MEDIA_REUSE_WARNING`, repeated.map(([id,uses]) => `${id}:${uses.join('|')}`).join(', '));
   if (!story.navigation?.micro_navigation || !story.navigation?.reading_progress) fail(`${path}: navigation policy missing`);
+  if (path.includes('ccc-2025')) {
+    if (story.design_system?.source_strategy !== 'preserve') fail(`${path}: CCC source design system must be preserved`);
+    if (!story.design_system?.palette?.primary || !story.design_system?.palette?.accent) fail(`${path}: CCC source palette missing`);
+    const sequential = story.chapters.flatMap(c=>c.scenes).filter(s=>['assessment-mosaic','sector-tour','four-actions'].includes(s.id));
+    for (const scene of sequential) {
+      if (scene.pacing?.reveal_mode !== 'one_at_a_time') fail(`${path}: ${scene.id} must use progressive disclosure`);
+      if (!(scene.pacing?.intro_hold > 0)) fail(`${path}: ${scene.id} has no settle/intro hold`);
+    }
+    if ((story.assets||[]).length < 5) fail(`${path}: CCC should contain distinct contextual media assets`);
+  }
   console.log(`${path} OK: ${story.chapters.length} chapters, ${sceneCount} scenes, ${story.evidence.length} evidence objects, ${sourceRefCount} source refs, ${transformationCount} transformations.`);
 }
 

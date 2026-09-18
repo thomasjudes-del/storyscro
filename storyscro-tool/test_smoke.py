@@ -65,71 +65,7 @@ def run(label,width,height):
         assert stats["titleTooTall"] == 0, stats
         if stats["tables"] > 0:
             assert stats["charts"] > 0, stats
-        # Generic editorial quality gates: the StoryScro must not elevate obvious front matter/noise.
-        quality=d.execute_script("""
-          const e=window.__storyscro?.getEvidence?.(), s=window.__storyscro?.getStory?.();
-          const thesis=(s?.chapters?.flatMap(c=>c.scenes||[]).find(x=>x.id==='thesis')?.body||'');
-          const publisher=s?.document?.publisher||'';
-          const chapterTitles=(s?.chapters||[]).map(c=>c.title||'');
-          const sectionTitles=(e?.sections||[]).map(x=>x.title||'');
-          return {thesis,publisher,chapterTitles,sectionTitles,excluded:e?.editorial_excluded_pages||[],toc:e?.toc_pages||[]};
-        """)
-        bad_thesis=("contents" in quality["thesis"].lower() or "list of tables" in quality["thesis"].lower() or
-                    "list of figures" in quality["thesis"].lower() or quality["thesis"].count(".....")>0)
-        assert not bad_thesis, quality
-        pub=quality["publisher"].lower()
-        assert not any(x in pub for x in ["permission","copyright","report to parliament","presented to parliament","may be held responsible"]), quality
-        assert all(len(x) <= 150 for x in quality["chapterTitles"]), quality
-        if label == "desktop":
-            payload=d.execute_script("""
-              const e=window.__storyscro.getEvidence(), s=window.__storyscro.getStory();
-              const cleanE=JSON.parse(JSON.stringify(e,(k,v)=>k.startsWith('_')?undefined:(k==='snapshots'?Object.fromEntries(Object.keys(v||{}).map(p=>[p,'[asset]'])):v)));
-              const cleanS=JSON.parse(JSON.stringify(s,(k,v)=>k==='uri'&&String(v).startsWith('data:')?'[asset]':v));
-              return {evidence:cleanE,story:cleanS};
-            """)
-            (OUT/"browser-evidence.json").write_text(json.dumps(payload["evidence"],indent=2),encoding="utf-8")
-            (OUT/"browser-story.json").write_text(json.dumps(payload["story"],indent=2),encoding="utf-8")
-        d.save_screenshot(str(OUT/f"{label}-hero.png"))
-        chart=d.find_elements(By.CSS_SELECTOR,".trend-scene")
-        if chart:
-            d.execute_script("arguments[0].scrollIntoView({block:'start'})",chart[0])
-            time.sleep(.5)
-            d.save_screenshot(str(OUT/f"{label}-chart.png"))
-        scrolly=d.find_elements(By.CSS_SELECTOR,".story-scene.scrolly")
-        if scrolly:
-            d.execute_script("arguments[0].scrollIntoView({block:'start'}); window.scrollBy(0, arguments[0].offsetHeight*0.24)",scrolly[min(1,len(scrolly)-1)])
-            time.sleep(.7)
-            d.save_screenshot(str(OUT/f"{label}-scrolly.png"))
-        severe=[x for x in d.get_log("browser") if x.get("level")=="SEVERE" and "favicon.ico" not in x.get("message","")]
-        if severe: raise RuntimeError("Browser console errors: "+json.dumps(severe))
-        print(json.dumps({"label":label,**stats},indent=2))
-        return stats
-    finally:
-        d.quit()
 
-desktop=run("desktop",1440,1000)
-mobile=run("mobile",390,844)
-(Path(OUT/"report.json")).write_text(json.dumps({"desktop":desktop,"mobile":mobile},indent=2),encoding="utf-8")
-).test(a.textContent.trim())).length,
-            sourceBackdropRefs:(()=>{const am=new Map((s?.assets||[]).map(a=>[a.id,a]));const scenes=(s?.chapters||[]).flatMap(c=>c.scenes||[]);const ids=scenes.flatMap(sc=>[...(sc.media||[]).map(m=>m.asset_id),...((sc.data?.items)||[]).map(x=>x.asset_id),...((sc.data?.steps)||[]).map(x=>x.asset_id)]).filter(Boolean);return ids.filter(id=>am.get(id)?.origin==='source').length})(),
-            titleTooTall:[...document.querySelectorAll('.story-scene h1,.story-scene h2')].filter(el=>el.getBoundingClientRect().height>window.innerHeight*.58).length
-          }
-        """)
-        assert stats["pages"] >= 8, stats
-        assert stats["paragraphs"] >= 10, stats
-        assert stats["chapters"] >= 2 and stats["scenes"] >= 4, stats
-        assert stats["title"], stats
-        assert stats["primary"].startswith("#"), stats
-        assert stats["sourceLink"].startswith("blob:"), stats
-        assert stats["overflow"] <= 2, stats
-        assert stats["microDots"] == stats["scenes"], stats
-        assert stats["sourceButtons"] >= stats["scenes"]-1, stats
-        assert stats["numericNav"] == 0, stats
-        assert stats["sourceBackdropRefs"] == 0, stats
-        assert stats["titleTooTall"] == 0, stats
-        if stats["tables"] > 0:
-            assert stats["charts"] > 0, stats
-        # Generic editorial quality gates: the StoryScro must not elevate obvious front matter/noise.
         quality=d.execute_script("""
           const e=window.__storyscro?.getEvidence?.(), s=window.__storyscro?.getStory?.();
           const thesis=(s?.chapters?.flatMap(c=>c.scenes||[]).find(x=>x.id==='thesis')?.body||'');
@@ -144,6 +80,7 @@ mobile=run("mobile",390,844)
         pub=quality["publisher"].lower()
         assert not any(x in pub for x in ["permission","copyright","report to parliament","presented to parliament","may be held responsible"]), quality
         assert all(len(x) <= 150 for x in quality["chapterTitles"]), quality
+
         if label == "desktop":
             payload=d.execute_script("""
               const e=window.__storyscro.getEvidence(), s=window.__storyscro.getStory();
@@ -153,6 +90,7 @@ mobile=run("mobile",390,844)
             """)
             (OUT/"browser-evidence.json").write_text(json.dumps(payload["evidence"],indent=2),encoding="utf-8")
             (OUT/"browser-story.json").write_text(json.dumps(payload["story"],indent=2),encoding="utf-8")
+
         d.save_screenshot(str(OUT/f"{label}-hero.png"))
         chart=d.find_elements(By.CSS_SELECTOR,".trend-scene")
         if chart:
@@ -164,6 +102,7 @@ mobile=run("mobile",390,844)
             d.execute_script("arguments[0].scrollIntoView({block:'start'}); window.scrollBy(0, arguments[0].offsetHeight*0.24)",scrolly[min(1,len(scrolly)-1)])
             time.sleep(.7)
             d.save_screenshot(str(OUT/f"{label}-scrolly.png"))
+
         severe=[x for x in d.get_log("browser") if x.get("level")=="SEVERE" and "favicon.ico" not in x.get("message","")]
         if severe: raise RuntimeError("Browser console errors: "+json.dumps(severe))
         print(json.dumps({"label":label,**stats},indent=2))

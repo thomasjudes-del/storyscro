@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#140022">
+  <title>StoryScro - Any PDF</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <section class="upload-view" id="uploadView">
+      <header class="landing-header">
+        <a class="landing-brand" href="#" aria-label="StoryScro home"><span class="brand-mark"></span><span>StoryScro</span></a>
+        <span class="landing-tag">Any PDF engine</span>
+      </header>
+      <div class="landing-hero">
+        <div class="landing-copy">
+          <p class="eyebrow">PDF → STORYSCRO</p>
+          <h1>Turn a report into a <span>story you can scroll.</span></h1>
+          <p class="lede">Drop a professional PDF. StoryScro reads its structure, evidence, numbers and visual identity, then composes an interactive narrative with traceable sources.</p>
+        </div>
+        <div class="drop-shell">
+          <label class="drop-zone" id="dropZone" for="pdfInput">
+            <input id="pdfInput" type="file" accept="application/pdf,.pdf" hidden>
+            <span class="drop-icon" aria-hidden="true">↗</span>
+            <strong>Drop a PDF here</strong>
+            <span>or click to choose a file</span>
+            <small>Processed locally in this prototype. Your PDF is not uploaded.</small>
+          </label>
+        </div>
+      </div>
+      <footer class="landing-footer"><span>Source-grounded narrative compiler</span><span>Prototype milestone: ANY PDF → STORYSCRO</span></footer>
+    </section>
+
+    <section class="processing-view" id="processingView" hidden>
+      <div class="process-card">
+        <div class="process-brand"><span class="brand-mark"></span><span>StoryScro</span></div>
+        <p class="eyebrow">BUILDING YOUR STORY</p>
+        <h2 id="processingTitle">Reading the document</h2>
+        <p id="processingDetail">Opening the PDF and mapping its pages.</p>
+        <div class="process-track"><span id="processBar"></span></div>
+        <ol class="process-stages" id="processStages">
+          <li data-stage="ingest">Ingest PDF</li>
+          <li data-stage="evidence">Build evidence model</li>
+          <li data-stage="understand">Understand structure</li>
+          <li data-stage="plan">Plan narrative</li>
+          <li data-stage="render">Render StoryScro</li>
+        </ol>
+        <button class="quiet-button" id="cancelBtn" type="button">Cancel</button>
+      </div>
+    </section>
+
+    <section class="story-view" id="storyView" hidden>
+      <div class="tool-dock" id="toolDock">
+        <button id="newPdfBtn" type="button">New PDF</button>
+        <button id="modelBtn" type="button">Story model</button>
+        <button id="evidenceBtn" type="button">Evidence</button>
+      </div>
+      <div id="storyMount"></div>
+    </section>
+
+    <dialog class="model-dialog" id="modelDialog">
+      <form method="dialog" class="dialog-head"><strong id="dialogTitle">Story model</strong><button aria-label="Close">×</button></form>
+      <div class="dialog-actions"><button id="downloadJsonBtn" type="button">Download JSON</button><span id="dialogMeta"></span></div>
+      <pre id="modelOutput"></pre>
+    </dialog>
+
+    <div class="error-toast" id="errorToast" hidden><strong>Could not build this StoryScro.</strong><span id="errorText"></span><button id="errorClose" type="button">Close</button></div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

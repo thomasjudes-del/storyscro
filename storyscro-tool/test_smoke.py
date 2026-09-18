@@ -46,7 +46,7 @@ def run(label,width,height):
             sourceButtons:document.querySelectorAll('.source-chip').length,
             charts:document.querySelectorAll('.trend-scene').length,
             externalImages:(s?.assets||[]).filter(a=>a.origin==='external-context').length,
-            numericNav:[...document.querySelectorAll('.chapter-nav a')].filter(a=>new RegExp('^\\\\d+
+            numericNav:[...document.querySelectorAll('.chapter-nav a')].filter(a=>a.textContent.trim()!==''&&Number.isFinite(Number(a.textContent.trim()))).length,
             sourceBackdropRefs:(()=>{const am=new Map((s?.assets||[]).map(a=>[a.id,a]));const scenes=(s?.chapters||[]).flatMap(c=>c.scenes||[]);const ids=scenes.flatMap(sc=>[...(sc.media||[]).map(m=>m.asset_id),...((sc.data?.items)||[]).map(x=>x.asset_id),...((sc.data?.steps)||[]).map(x=>x.asset_id)]).filter(Boolean);return ids.filter(id=>am.get(id)?.origin==='source').length})(),
             titleTooTall:[...document.querySelectorAll('.story-scene h1,.story-scene h2')].filter(el=>el.getBoundingClientRect().height>window.innerHeight*.58).length
           }

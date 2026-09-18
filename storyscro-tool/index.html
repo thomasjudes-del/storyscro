@@ -791,7 +791,7 @@ function run(evidence,onProgress=()=>{}){
     id:'hero',nav_label:'Opening',primitive:'hero',semantic_role:'opening',
     message:evidence.document.title,title:evidence.document.title,body:evidence.document.subtitle||'',
     source_evidence_ids:[],source_refs:[pageRef(file,1)],transformations:[{type:'none',description:'Document title retained from the source.'}],
-    media:[{asset_id:'page-1',role:'background'}]
+    media:[]
   };
   chapters.push({id:'opening',title:evidence.document.title,nav_label:'Opening',purpose:'positioning',scenes:[hero]});
   if(statement){
@@ -801,36 +801,41 @@ function run(evidence,onProgress=()=>{}){
 
   let sceneCounter=0;
   for(const sec of sourceSections){
-    const ps=sectionParagraphs(evidence,sec);const ns=sectionNumbers(evidence,sec);const bs=sectionBullets(evidence,sec);const years=sectionYears(evidence,sec);const chosen=pickParagraphs(ps,5);
-    const chapter={id:`chapter-${chapters.length}`,title:sec.title,nav_label:safeNav(sec.title),purpose:'source-section',source_evidence_ids:[],scenes:[]};
-    const page=sec.page_start;const mediaId=evidence.snapshots[page]?`page-${page}`:'page-1';
-    const strongNums=topNumbers(ns.filter(n=>n.strong),4);
+    const ps=sectionParagraphs(evidence,sec);const ns=sectionNumbers(evidence,sec);const bs=sectionBullets(evidence,sec);const years=sectionYears(evidence,sec);const tables=sectionTables(evidence,sec);const chosen=pickParagraphs(ps,3);
+    const chapterTitle=cleanHeadingTitle(sec.title)||sec.title;
+    const chapter={id:`chapter-${chapters.length}`,title:chapterTitle,nav_label:safeNav(chapterTitle),purpose:'source-section',source_evidence_ids:[],scenes:[]};
+    const page=sec.page_start;const strongNums=topNumbers(ns.filter(n=>n.strong),4);const table=tables[0];
 
-    if(strongNums.length>=2){
-      const evs=strongNums.map(n=>addEv(evidenceForNumber(n,file)));
-      chapter.scenes.push({id:`scene-${++sceneCounter}`,nav_label:'Key figures',primitive:'metric_sequence',semantic_role:'quantitative_evidence',message:`Key figures from ${sec.title}`,title:sec.title,data:{items:strongNums.map((n,i)=>({id:n.id,value:n.raw,text:trimAtSentence(n.context,240),page:n.page,asset_id:evidence.snapshots[n.page]?`page-${n.page}`:mediaId}))},source_evidence_ids:evs,source_refs:[...new Set(strongNums.map(n=>n.page))].map(p=>pageRef(file,p)),transformations:[{type:'group',description:'Decision-relevant source numbers grouped without changing their wording.'}],pacing:{intro_hold:.18,outro_hold:.07,reveal_mode:'one_at_a_time',title_behavior:'fade_before_steps',focus_mode:'active_only'}});
+    if(table&&table.rows?.length>=2&&table.years?.length>=3){
+      const tableEv=addEv(evidenceForTable(table,file));const rows=chartRows(table,3);
+      chapter.scenes.push({id:`scene-${++sceneCounter}`,nav_label:'Trends',primitive:'trend_grid',semantic_role:'quantitative_comparison',message:`Trends from ${chapterTitle}`,title:chapterTitle,body:'Source values compared across the periods reported in the document.',data:{years:table.years,series:rows.map(r=>({label:r.label,unit:r.unit,values:r.values}))},source_evidence_ids:[tableEv],source_refs:[pageRef(file,table.page)],transformations:[{type:'visualize',description:'Structured source table converted into small-multiple trend charts; values unchanged.'}]});
     }
 
-    if(years.length>=3){
+    if(!table&&strongNums.length>=2){
+      const evs=strongNums.map(n=>addEv(evidenceForNumber(n,file)));
+      chapter.scenes.push({id:`scene-${++sceneCounter}`,nav_label:'Key figures',primitive:'metric_sequence',semantic_role:'quantitative_evidence',message:`Key figures from ${chapterTitle}`,title:chapterTitle,data:{items:strongNums.map(n=>({id:n.id,value:n.raw,text:trimAtSentence(n.context,220),page:n.page,asset_id:null}))},source_evidence_ids:evs,source_refs:[...new Set(strongNums.map(n=>n.page))].map(p=>pageRef(file,p)),transformations:[{type:'group',description:'Decision-relevant source numbers grouped without changing their wording.'}],pacing:{intro_hold:.12,outro_hold:.05,reveal_mode:'one_at_a_time',title_behavior:'fade_before_steps',focus_mode:'active_only'}});
+    }
+
+    if(!table&&years.length>=3){
       const evs=years.map(n=>addEv(evidenceForNumber(n,file)));
       chapter.scenes.push({id:`scene-${++sceneCounter}`,nav_label:'Timeline',primitive:'timeline',semantic_role:'chronology',message:`Timeline extracted from ${sec.title}`,title:sec.title,data:{events:years.map(n=>({year:n.raw,text:trimAtSentence(n.context,150),page:n.page}))},source_evidence_ids:evs,source_refs:[...new Set(years.map(n=>n.page))].map(p=>pageRef(file,p)),transformations:[{type:'visualize',description:'Years explicitly present in the source are arranged chronologically.'}],pacing:{intro_hold:.18,outro_hold:.06,reveal_mode:'build',title_behavior:'persistent',focus_mode:'build'}});
     }else if(bs.length>=3&&bs.length<=8){
       const bulletParas=bs.slice(0,6).map((b,i)=>({id:`bullet-as-para-${sceneCounter}-${i}`,text:b.text,page:b.page}));
       const evs=bulletParas.map(p=>addEv(evidenceForParagraph(p,file)));
-      chapter.scenes.push({id:`scene-${++sceneCounter}`,nav_label:'Sequence',primitive:'sticky_narrative',semantic_role:'ordered_list',message:sec.title,title:sec.title,data:{steps:bulletParas.map((p,i)=>({n:String(i+1).padStart(2,'0'),title:trimAtSentence(p.text,90),text:p.text,page:p.page,asset_id:evidence.snapshots[p.page]?`page-${p.page}`:mediaId}))},source_evidence_ids:evs,source_refs:[...new Set(bulletParas.map(p=>p.page))].map(p=>pageRef(file,p)),transformations:[{type:'visualize',description:'Source list rendered as a progressive sequence.'}],pacing:{intro_hold:.2,outro_hold:.07,reveal_mode:'one_at_a_time',title_behavior:'fade_before_steps',focus_mode:'active_only'}});
+      chapter.scenes.push({id:`scene-${++sceneCounter}`,nav_label:'Sequence',primitive:'sticky_narrative',semantic_role:'ordered_list',message:chapterTitle,title:chapterTitle,data:{steps:bulletParas.map((p,i)=>({n:String(i+1).padStart(2,'0'),title:trimAtSentence(p.text,82),text:trimAtSentence(p.text,260),page:p.page,asset_id:null}))},source_evidence_ids:evs,source_refs:[...new Set(bulletParas.map(p=>p.page))].map(p=>pageRef(file,p)),transformations:[{type:'visualize',description:'Source list rendered as a progressive sequence.'}],pacing:{intro_hold:.15,outro_hold:.05,reveal_mode:'one_at_a_time',title_behavior:'fade_before_steps',focus_mode:'active_only'}});
     }else if(chosen.length){
       const evs=chosen.map(p=>addEv(evidenceForParagraph(p,file)));
-      chapter.scenes.push({id:`scene-${++sceneCounter}`,nav_label:'Read',primitive:'sticky_narrative',semantic_role:'evidence_sequence',message:sec.title,title:sec.title,data:{steps:chosen.map((p,i)=>({n:String(i+1).padStart(2,'0'),title:i===0?sec.title:`Evidence ${i+1}`,text:trimAtSentence(p.text,300),page:p.page,asset_id:evidence.snapshots[p.page]?`page-${p.page}`:mediaId}))},source_evidence_ids:evs,source_refs:[...new Set(chosen.map(p=>p.page))].map(p=>pageRef(file,p)),transformations:[{type:'shorten',description:'Source paragraphs shortened only when needed for scrollytelling readability.'}],pacing:{intro_hold:.2,outro_hold:.07,reveal_mode:'one_at_a_time',title_behavior:'fade_before_steps',focus_mode:'active_only'}});
+      chapter.scenes.push({id:`scene-${++sceneCounter}`,nav_label:'Read',primitive:'sticky_narrative',semantic_role:'evidence_sequence',message:chapterTitle,title:chapterTitle,data:{steps:chosen.map((p,i)=>({n:String(i+1).padStart(2,'0'),title:i===0?chapterTitle:`Evidence ${i+1}`,text:trimAtSentence(p.text,260),page:p.page,asset_id:null}))},source_evidence_ids:evs,source_refs:[...new Set(chosen.map(p=>p.page))].map(p=>pageRef(file,p)),transformations:[{type:'shorten',description:'Source paragraphs shortened only when needed for scrollytelling readability.'}],pacing:{intro_hold:.15,outro_hold:.05,reveal_mode:'one_at_a_time',title_behavior:'fade_before_steps',focus_mode:'active_only'}});
     }
 
     if(!chapter.scenes.length&&ps[0]){
-      const id=addEv(evidenceForParagraph(ps[0],file));chapter.scenes.push({id:`scene-${++sceneCounter}`,nav_label:'Section',primitive:'text_section',semantic_role:'explanation',message:sec.title,title:sec.title,body:trimAtSentence(ps[0].text,620),source_evidence_ids:[id],source_refs:[pageRef(file,ps[0].page)],transformations:[{type:'shorten',description:'Source paragraph shortened for readability.'}]});
+      const id=addEv(evidenceForParagraph(ps[0],file));chapter.scenes.push({id:`scene-${++sceneCounter}`,nav_label:'Section',primitive:'text_section',semantic_role:'explanation',message:chapterTitle,title:chapterTitle,body:trimAtSentence(ps[0].text,460),source_evidence_ids:[id],source_refs:[pageRef(file,ps[0].page)],transformations:[{type:'shorten',description:'Source paragraph shortened for readability.'}]});
     }
     chapter.source_evidence_ids=[...new Set(chapter.scenes.flatMap(s=>s.source_evidence_ids||[]))];if(chapter.scenes.length)chapters.push(chapter);
   }
 
-  const lastPara=chooseConclusion(evidence,sourceSections);
-  if(lastPara){const id=addEv(evidenceForParagraph(lastPara,file));chapters.push({id:'conclusion',title:'Closing',nav_label:'Closing',purpose:'conclusion',source_evidence_ids:[id],scenes:[{id:'conclusion-scene',nav_label:'Closing',primitive:'conclusion',semantic_role:'synthesis',message:trimAtSentence(lastPara.text,400),title:trimAtSentence(lastPara.text,260),body:'',source_evidence_ids:[id],source_refs:[pageRef(file,lastPara.page)],transformations:[{type:lastPara.text===trimAtSentence(lastPara.text,400)?'none':'shorten',description:'Late source statement retained as the closing scene.'}],emphasis:[]} ]});}
+  const closing=chooseConclusion(evidence,sourceSections);
+  if(closing){const lastPara=closing.paragraph;const id=addEv(evidenceForParagraph(lastPara,file));chapters.push({id:'conclusion',title:closing.title||'Closing',nav_label:'Closing',purpose:'conclusion',source_evidence_ids:[id],scenes:[{id:'conclusion-scene',nav_label:'Closing',primitive:'conclusion',semantic_role:'synthesis',message:trimAtSentence(lastPara.text,300),title:closing.title||trimAtSentence(lastPara.text,120),body:trimAtSentence(lastPara.text,320),source_evidence_ids:[id],source_refs:[pageRef(file,lastPara.page)],transformations:[{type:lastPara.text===trimAtSentence(lastPara.text,320)?'none':'shorten',description:'Explicit concluding source statement retained as the closing scene.'}],emphasis:[]} ]});}
 
   const assets=Object.entries(evidence.snapshots).map(([page,uri])=>({id:`page-${page}`,type:'image',uri,origin:'source',source_page:Number(page),caption:`Source page ${page} rendered from ${file}.`,source_refs:[pageRef(file,Number(page))]}));
   const story={

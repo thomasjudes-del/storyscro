@@ -854,6 +854,54 @@ function run(evidence,onProgress=()=>{}){
 
 return run;
 })();
+
+const enrichStoryMedia = (()=>{
+const normalize=s=>String(s||'').replace(/\s+/g,' ').trim();
+const stop=/\b(?:actualisation|update|report|rapport|study|étude|synthèse|summary|impact|socio|économique|economic|local|locale|the|and|of|de|du|des|la|le|les|sur|pour|en|dans)\b/gi;
+function cleanQuery(text,maxWords=10){return normalize(text).replace(/^\d{1,2}(?:\.\d+){0,4}\.?\s*/,'').replace(stop,' ').replace(/\s+/g,' ').trim().split(' ').filter(Boolean).slice(0,maxWords).join(' ')}
+function placeHint(title){
+  const hits=[...String(title||'').matchAll(/\b(?:de|du|à|sur)\s+(?:l['’])?([A-ZÀ-Ý][A-Za-zÀ-ÿ'’.-]+(?:\s+[A-ZÀ-Ý][A-Za-zÀ-ÿ'’.-]+){0,2})/g)];
+  return hits.length?hits[hits.length-1][1]:'';
+}
+async function commonsImage(query,signal){
+  if(!query)return null;
+  const params=new URLSearchParams({action:'query',format:'json',origin:'*',generator:'search',gsrsearch:query,gsrnamespace:'6',gsrlimit:'8',prop:'imageinfo',iiprop:'url|extmetadata|size|mime',iiurlwidth:'1800'});
+  try{
+    const res=await fetch('https://commons.wikimedia.org/w/api.php?'+params.toString(),{signal});
+    if(!res.ok)return null;const data=await res.json();const pages=Object.values(data?.query?.pages||{});
+    const candidates=pages.map(p=>({p,ii:p.imageinfo?.[0]})).filter(x=>x.ii&&/^image\/(?:jpeg|png|webp)$/i.test(x.ii.mime||'')&&(x.ii.width||0)>=900&&(x.ii.height||0)>=500);
+    const picked=candidates.sort((a,b)=>((b.ii.width||0)*(b.ii.height||0))-((a.ii.width||0)*(a.ii.height||0)))[0];if(!picked)return null;
+    const ii=picked.ii,m=ii.extmetadata||{};
+    return{uri:ii.thumburl||ii.url,original_url:ii.url,description_url:ii.descriptionurl||'',width:ii.thumbwidth||ii.width,height:ii.thumbheight||ii.height,license:m.LicenseShortName?.value||m.License?.value||'',attribution:m.Artist?.value?.replace(/<[^>]*>/g,'')||'',credit:m.Credit?.value?.replace(/<[^>]*>/g,'')||'',search_query:query};
+  }catch(err){if(err?.name==='AbortError')throw err;return null}
+}
+async function run(story,evidence,onProgress=()=>{},signal){
+  const title=story.document?.title||'';const place=placeHint(title);const targets=[];
+  const hero=story.chapters?.[0]?.scenes?.find(s=>s.primitive==='hero');if(hero)targets.push({scene:hero,query:cleanQuery(title,12),fallback:place?place:''});
+  for(const chapter of (story.chapters||[]).slice(1)){
+    const scene=(chapter.scenes||[]).find(s=>s.primitive==='sticky_narrative');
+    if(!scene)continue;
+    const q=normalize([cleanQuery(chapter.title,7),place].filter(Boolean).join(' '));targets.push({scene,query:q,fallback:cleanQuery(chapter.title,7)});
+    if(targets.length>=5)break;
+  }
+  let done=0;
+  for(const target of targets){
+    if(signal?.aborted)throw new DOMException('Cancelled','AbortError');
+    onProgress({stage:'plan',progress:.92+.035*(done/Math.max(1,targets.length)),title:'Selecting contextual imagery',detail:target.query||target.fallback||''});
+    let img=await commonsImage(target.query,signal);if(!img&&target.fallback&&target.fallback!==target.query)img=await commonsImage(target.fallback,signal);
+    if(img){
+      const id=`external-media-${story.assets.filter(a=>a.origin==='external-context').length+1}`;
+      story.assets.push({id,type:'image',...img,origin:'external-context',caption:'Contextual image selected from Wikimedia Commons. It is illustrative and does not add a factual claim.',source_refs:[]});
+      target.scene.media=[{asset_id:id,role:'background'}];
+      if(target.scene.primitive==='sticky_narrative')for(const step of target.scene.data?.steps||[])step.asset_id=id;
+    }
+    done++;
+  }
+  return story;
+}
+return run;
+})();
+
 const mountStory = (()=>{
 const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n));
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -945,7 +993,8 @@ async function build(file){
     currentEvidence=await ingestPdf(file,progress,abortController.signal);
     if(abortController.signal.aborted)return;
     currentStory=planStory(currentEvidence,progress);
-    progress({stage:'render',progress:.97,title:'Rendering the StoryScro',detail:'Building responsive scenes and source navigation'});
+    currentStory=await enrichStoryMedia(currentStory,currentEvidence,progress,abortController.signal);
+    progress({stage:'render',progress:.97,title:'Rendering the StoryScro',detail:'Building responsive scenes, charts and source navigation'});
     await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
     mountStory(currentStory,{mount:storyMount,sourceUrl:currentUrl});
     progress({stage:'render',progress:1,title:'Ready',detail:`${currentEvidence.stats.pages} pages → ${currentStory.chapters.reduce((n,c)=>n+c.scenes.length,0)} narrative scenes`});

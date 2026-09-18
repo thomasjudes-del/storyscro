@@ -10,7 +10,8 @@
     "audience": "Government, Parliament and climate-resilience decision-makers",
     "purpose": "Assess whether the UK is preparing effectively for current and future climate impacts under the Third National Adaptation Programme.",
     "core_question": "Is adaptation moving from plans to effective delivery quickly enough?",
-    "publisher": "Climate Change Committee"
+    "publisher": "Climate Change Committee",
+    "source_url": "https://www.theccc.org.uk/wp-content/uploads/2025/04/Progress-in-adapting-to-climate-change-2025.pdf"
   },
   "editorial_policy": {
     "fidelity": "restructured",
@@ -393,7 +394,15 @@
                 "ev-core"
               ]
             }
-          ]
+          ],
+          "pacing": {
+            "intro_hold": 0.2,
+            "outro_hold": 0.08,
+            "step_transition": 0.08,
+            "reveal_mode": "build",
+            "title_behavior": "persistent",
+            "focus_mode": "active_only"
+          }
         }
       ]
     },
@@ -542,7 +551,15 @@
               "text": "Not one",
               "style": "marker_highlight"
             }
-          ]
+          ],
+          "pacing": {
+            "intro_hold": 0.18,
+            "outro_hold": 0.08,
+            "step_transition": 0.08,
+            "reveal_mode": "build",
+            "title_behavior": "persistent",
+            "focus_mode": "active_only"
+          }
         },
         {
           "id": "assessment-mosaic",
@@ -933,5 +950,16 @@
       157
     ],
     "notes": "Source identity extracted from the CCC PDF: dominant deep purple #280049, bright violet heading/rule colour around #7142ff, white page field and Century Gothic family. StoryScro preserves this identity while changing composition and motion."
+  },
+  "presentation_profile": {
+    "preset": "dynamic",
+    "density": 0.58,
+    "motion": 0.58,
+    "image_weight": 0.72,
+    "type_scale": 1,
+    "compression": 0.78,
+    "contrast": 0.72,
+    "source_identity": 0.92,
+    "notes": "Current working view: source-branded executive narrative with progressive disclosure and moderate motion."
   }
 }

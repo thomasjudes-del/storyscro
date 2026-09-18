@@ -87,8 +87,8 @@ def inspect_layout(driver, scene_id):
         raise RuntimeError(f'Micro-navigation lag at {scene_id}: active target is {dims["activeTarget"]}: {json.dumps(dims)}')
     if dims['activeChapter'] != dims['expectedChapter']:
         raise RuntimeError(f'Chapter navigation lag at {scene_id}: expected {dims["expectedChapter"]}, got {dims["activeChapter"]}: {json.dumps(dims)}')
-    if dims['totalHorizontalCopies'] and dims['visibleHorizontalCopies'] != 1:
-        raise RuntimeError(f'Horizontal narrative focus failure at {scene_id}: expected 1 visible panel, got {dims["visibleHorizontalCopies"]}')
+    if dims['totalHorizontalCopies'] and dims['visibleHorizontalCopies'] > 1:
+        raise RuntimeError(f'Horizontal narrative focus failure at {scene_id}: more than one panel copy visible ({dims["visibleHorizontalCopies"]})')
     if dims['activeHorizontalRect'] and (dims['activeHorizontalRect']['left'] < -5 or dims['activeHorizontalRect']['right'] > dims['w'] + 5):
         raise RuntimeError(f'Clipped horizontal narrative copy at {scene_id}: {dims["activeHorizontalRect"]}')
     if dims.get('collisions'):
@@ -144,6 +144,8 @@ def capture(label, width, height):
                     raise RuntimeError(f'Proof scene reveals step copy before settle phase at {scene_id}: opacity={dims["proofCopyOpacity"]}')
                 if q < .12 and dims.get('progressiveActiveTiles') not in (None,0):
                     raise RuntimeError(f'Progressive mosaic spoils future items during intro at {scene_id}')
+                if q >= .22 and dims.get('totalHorizontalCopies') and dims.get('visibleHorizontalCopies') != 1:
+                    raise RuntimeError(f'Horizontal narrative must reveal exactly one panel after settle phase at {scene_id}: got {dims.get("visibleHorizontalCopies")}')
                 state_checks.append({'progress':q,'dims':dims})
             driver.execute_script("window.scrollTo({top:arguments[0]+arguments[1]*.55,behavior:'auto'})",result['top'],result['span'])
             time.sleep(.08)

@@ -729,7 +729,7 @@ function editorialParagraphScore(evidence,group,p){
   if(t.length>=80&&t.length<=520)score+=2;
   if(t.length<55)score-=4;if(t.length>760)score-=2;
   if((t.match(/\d/g)||[]).length>28)score-=4;
-  if(NOISE_RX.test(t)||isCitationLike(t))score-=20;
+  if(NOISE_RX.test(t)||/^\s*\[\d+\]/.test(t)||/\bdoi\s*:/i.test(t)||/\b(?:et al\.|vol\.|pp?\.)\b/i.test(t))score-=20;
   return score;
 }
 function pickEditorialParagraphs(evidence,group,ps,count=3){

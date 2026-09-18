@@ -1,5 +1,5 @@
 {
-  "version": "0.3.0",
+  "version": "0.4.0",
   "principles": {
     "semantic_first": true,
     "effects_are_not_decoration": true,
@@ -44,8 +44,8 @@
     },
     "micro_navigation": {
       "purpose": "Move between chapters and significant scenes without losing orientation.",
-      "desktop": "right-side rail with chapter markers, nested scene dots, active label, previous/next controls",
-      "mobile": "compact previous/next controls plus current chapter label",
+      "desktop": "right-side rail with chapter markers, nested scene dots and active label",
+      "mobile": "compact current-scene/chapter indication; no redundant up/down buttons",
       "keyboard": [
         "ArrowUp",
         "ArrowDown",
@@ -971,5 +971,86 @@
       "Use click/tap for optional drill-down, source detail, lightbox expansion or a temporary focus state.",
       "The reader must be able to return to the narrative without losing scroll position."
     ]
-  }
+  },
+  "presentation_dimensions": {
+    "density": "How much information is held in each scene. 0 = very sparse/breathing, 1 = dense/executive information load.",
+    "motion": "Overall motion intensity. 0 = mostly static, 1 = frequent semantic scroll animation.",
+    "image_weight": "Share of the narrative carried by photography/source visuals rather than flat colour or text-only scenes.",
+    "type_scale": "Global typography scale multiplier.",
+    "compression": "Editorial compression. 0 = extensive, 1 = TLDR/executive.",
+    "contrast": "Strength of visual contrast, inversions and focal emphasis.",
+    "source_identity": "How strongly the source document's visual identity is preserved. 0 = reinterpreted, 1 = highly recognisable."
+  },
+  "presentation_presets": {
+    "source_faithful": {
+      "density": 0.62,
+      "motion": 0.28,
+      "image_weight": 0.5,
+      "type_scale": 0.98,
+      "compression": 0.35,
+      "contrast": 0.48,
+      "source_identity": 1
+    },
+    "consulting": {
+      "density": 0.68,
+      "motion": 0.34,
+      "image_weight": 0.46,
+      "type_scale": 0.94,
+      "compression": 0.52,
+      "contrast": 0.55,
+      "source_identity": 0.82
+    },
+    "executive": {
+      "density": 0.52,
+      "motion": 0.38,
+      "image_weight": 0.55,
+      "type_scale": 1.05,
+      "compression": 0.82,
+      "contrast": 0.68,
+      "source_identity": 0.86
+    },
+    "dynamic": {
+      "density": 0.56,
+      "motion": 0.62,
+      "image_weight": 0.72,
+      "type_scale": 1,
+      "compression": 0.68,
+      "contrast": 0.72,
+      "source_identity": 0.88
+    },
+    "cinematic": {
+      "density": 0.38,
+      "motion": 0.86,
+      "image_weight": 0.9,
+      "type_scale": 1.12,
+      "compression": 0.74,
+      "contrast": 0.92,
+      "source_identity": 0.72
+    },
+    "data_heavy": {
+      "density": 0.8,
+      "motion": 0.42,
+      "image_weight": 0.32,
+      "type_scale": 0.9,
+      "compression": 0.48,
+      "contrast": 0.64,
+      "source_identity": 0.9
+    },
+    "minimal": {
+      "density": 0.42,
+      "motion": 0.18,
+      "image_weight": 0.48,
+      "type_scale": 1.02,
+      "compression": 0.62,
+      "contrast": 0.42,
+      "source_identity": 0.9
+    }
+  },
+  "presentation_rules": [
+    "A preset is a starting point, not a rigid template.",
+    "Preserve evidence and chapter logic while changing treatment.",
+    "The same scene may later expose multiple valid visual variants; presentation preset does not change factual content.",
+    "High cinematicity should be reserved for a few semantically important scenes, especially key metrics, turning points and transitions.",
+    "Mix-and-match is allowed at scene level later, but each selected variant must still conform to the same source evidence and message."
+  ]
 }

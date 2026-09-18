@@ -9,7 +9,8 @@
     "page_count": 170,
     "audience": "Government, Parliament and climate-resilience decision-makers",
     "purpose": "Assess whether the UK is preparing effectively for current and future climate impacts under the Third National Adaptation Programme.",
-    "core_question": "Is adaptation moving from plans to effective delivery quickly enough?"
+    "core_question": "Is adaptation moving from plans to effective delivery quickly enough?",
+    "publisher": "Climate Change Committee"
   },
   "editorial_policy": {
     "fidelity": "restructured",
@@ -22,14 +23,86 @@
     "micro_navigation": true,
     "keyboard_navigation": true
   },
-  "assets": [],
+  "assets": [
+    {
+      "id": "ccc-hero-barrier",
+      "type": "image",
+      "uri": "https://images.pexels.com/photos/19623433/pexels-photo-19623433.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "alt": "Thames Barrier and London skyline under an overcast sky",
+      "caption": "Context image: Thames Barrier, London. Not source evidence.",
+      "origin": "external",
+      "credit": "Anna Rynkowska / Pexels",
+      "license": "Pexels free to use",
+      "license_url": "https://www.pexels.com/photo/structure-of-the-thames-river-barrier-and-modern-architecture-skyline-19623433/"
+    },
+    {
+      "id": "ccc-land",
+      "type": "image",
+      "uri": "https://images.pexels.com/photos/34239427/pexels-photo-34239427.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "alt": "Green fields and dry stone walls in England",
+      "caption": "Context image: English rural landscape. Not source evidence.",
+      "origin": "external",
+      "credit": "Mike Norris / Pexels",
+      "license": "Pexels free to use",
+      "license_url": "https://www.pexels.com/photo/scenic-green-fields-and-stone-walls-in-england-34239427/"
+    },
+    {
+      "id": "ccc-infrastructure",
+      "type": "image",
+      "uri": "https://images.pexels.com/photos/31407835/pexels-photo-31407835.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "alt": "Train arriving at a London railway station",
+      "caption": "Context image: London rail infrastructure. Not source evidence.",
+      "origin": "external",
+      "credit": "Eliezer Muller / Pexels",
+      "license": "Pexels free to use",
+      "license_url": "https://www.pexels.com/photo/train-arriving-at-a-busy-london-railway-station-31407835/"
+    },
+    {
+      "id": "ccc-built",
+      "type": "image",
+      "uri": "https://images.pexels.com/photos/35244166/pexels-photo-35244166.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "alt": "Urban flooding at Woodsmill Quay in York",
+      "caption": "Context image: flooding in York. Not the evidence image used by the CCC report.",
+      "origin": "external",
+      "credit": "Mike Norris / Pexels",
+      "license": "Pexels free to use",
+      "license_url": "https://www.pexels.com/photo/historic-woodsmill-quay-flooded-in-york-35244166/"
+    },
+    {
+      "id": "ccc-health",
+      "type": "image",
+      "uri": "https://images.pexels.com/photos/9703033/pexels-photo-9703033.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "alt": "London Bridge Hospital illuminated at night",
+      "caption": "Context image: London hospital. Not source evidence.",
+      "origin": "external",
+      "credit": "Jennifer Latham / Pexels",
+      "license": "Pexels free to use",
+      "license_url": "https://www.pexels.com/photo/illuminated-hospital-at-night-9703033/"
+    },
+    {
+      "id": "ccc-economy",
+      "type": "image",
+      "uri": "https://images.pexels.com/photos/35026697/pexels-photo-35026697.jpeg?auto=compress&cs=tinysrgb&w=2000",
+      "alt": "London skyline and River Thames",
+      "caption": "Context image: London economy and urban system. Not source evidence.",
+      "origin": "external",
+      "credit": "David Allen / Pexels",
+      "license": "Pexels free to use",
+      "license_url": "https://www.pexels.com/photo/london-city-skyline-with-river-thames-view-35026697/"
+    }
+  ],
   "evidence": [
     {
       "id": "ev-core",
       "type": "conclusion",
       "status": "VERIFIED",
       "text": "The report concludes that the UK's preparations for climate change are inadequate and that effective adaptation delivery remains limited.",
-      "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":10}]
+      "source_refs": [
+        {
+          "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+          "page": 10
+        }
+      ]
     },
     {
       "id": "ev-wettest",
@@ -38,7 +111,12 @@
       "text": "October 2022 to March 2024 was the wettest 18-month period on record for England.",
       "value": 18,
       "unit": "months",
-      "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":11}]
+      "source_refs": [
+        {
+          "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+          "page": 11
+        }
+      ]
     },
     {
       "id": "ev-40c",
@@ -47,7 +125,12 @@
       "text": "Summer 2022 saw temperatures exceed 40°C for the first time in many places in England.",
       "value": 40,
       "unit": "°C",
-      "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":11}]
+      "source_refs": [
+        {
+          "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+          "page": 11
+        }
+      ]
     },
     {
       "id": "ev-deaths",
@@ -56,7 +139,12 @@
       "text": "The 2022 heatwaves were associated with a record level of nearly 3,000 heat-related deaths recorded in England.",
       "value": 3000,
       "unit": "heat-related deaths (nearly)",
-      "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":11}]
+      "source_refs": [
+        {
+          "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+          "page": 11
+        }
+      ]
     },
     {
       "id": "ev-calls",
@@ -65,7 +153,12 @@
       "text": "Fire and rescue services saw a 500% increase in 999 calls during major wildfire incidents in July 2022.",
       "value": 500,
       "unit": "% increase",
-      "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":11}]
+      "source_refs": [
+        {
+          "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+          "page": 11
+        }
+      ]
     },
     {
       "id": "ev-zero-good-delivery",
@@ -74,7 +167,12 @@
       "text": "The Committee did not find evidence to score a single assessed outcome as 'good' for adaptation delivery and implementation.",
       "value": 0,
       "unit": "good delivery outcomes",
-      "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":10}]
+      "source_refs": [
+        {
+          "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+          "page": 10
+        }
+      ]
     },
     {
       "id": "ev-12-insufficient",
@@ -83,7 +181,12 @@
       "text": "12 out of 46 assessed outcomes were scored as insufficient for delivery and implementation.",
       "value": 12,
       "unit": "of 46 outcomes",
-      "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":46}]
+      "source_refs": [
+        {
+          "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+          "page": 46
+        }
+      ]
     },
     {
       "id": "ev-three-good-plans",
@@ -92,7 +195,12 @@
       "text": "Only three out of 46 outcomes achieved a good policies-and-plans score.",
       "value": 3,
       "unit": "of 46 outcomes",
-      "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":102}]
+      "source_refs": [
+        {
+          "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+          "page": 102
+        }
+      ]
     },
     {
       "id": "ev-60-plans",
@@ -101,42 +209,76 @@
       "text": "27 outcomes, or 60%, showed limited or insufficient progress in policies and plans.",
       "value": 60,
       "unit": "%",
-      "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":102}]
+      "source_refs": [
+        {
+          "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+          "page": 102
+        }
+      ]
     },
     {
       "id": "ev-flood-properties",
       "type": "number",
       "status": "VERIFIED",
       "text": "6.3 million properties in England are currently in areas at risk of flooding from rivers, the sea and surface water; this could rise to around 8 million, or 25% of all properties, by 2050.",
-      "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":37}]
+      "source_refs": [
+        {
+          "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+          "page": 37
+        }
+      ]
     },
     {
       "id": "ev-health",
       "type": "claim",
       "status": "VERIFIED",
       "text": "Both assessed health and wellbeing delivery outcomes were scored insufficient.",
-      "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":79}]
+      "source_refs": [
+        {
+          "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+          "page": 79
+        }
+      ]
     },
     {
       "id": "ev-sector-areas",
       "type": "claim",
       "status": "VERIFIED",
       "text": "The assessment spans land, nature and food; infrastructure; built environment and communities; health and wellbeing; and the economy.",
-      "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":45}]
+      "source_refs": [
+        {
+          "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+          "page": 45
+        }
+      ]
     },
     {
       "id": "ev-four-actions",
       "type": "recommendation",
       "status": "VERIFIED",
       "text": "The report calls for four cross-government actions: improve objectives and targets; improve coordination; integrate adaptation into relevant policies; and implement monitoring, evaluation and learning across sectors.",
-      "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":10},{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":11}]
+      "source_refs": [
+        {
+          "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+          "page": 10
+        },
+        {
+          "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+          "page": 11
+        }
+      ]
     },
     {
       "id": "ev-turning-point",
       "type": "conclusion",
       "status": "VERIFIED",
       "text": "The report says the halfway point of NAP3 must become a turning point for a fresh approach to national climate resilience.",
-      "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":22}]
+      "source_refs": [
+        {
+          "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+          "page": 22
+        }
+      ]
     }
   ],
   "chapters": [
@@ -145,7 +287,9 @@
       "title": "The adaptation gap",
       "nav_label": "Opening",
       "purpose": "positioning",
-      "source_evidence_ids": ["ev-core"],
+      "source_evidence_ids": [
+        "ev-core"
+      ],
       "scenes": [
         {
           "id": "ccc-hero",
@@ -156,10 +300,44 @@
           "kicker": "Climate Change Committee | April 2025",
           "title": "The climate is changing. Adaptation is not keeping pace.",
           "body": "A source-grounded executive narrative from the CCC's 2025 progress report to Parliament.",
-          "effects": [{"id":"fade","intensity":"subtle","target":"text","trigger":"load"}],
-          "source_evidence_ids": ["ev-core"],
-          "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":10}],
-          "transformations": [{"type":"reframe","description":"The report's headline assessment is condensed into a single opening proposition.","source_evidence_ids":["ev-core"]}]
+          "effects": [
+            {
+              "id": "fade",
+              "intensity": "subtle",
+              "target": "text",
+              "trigger": "load"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-core"
+          ],
+          "source_refs": [
+            {
+              "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+              "page": 10
+            }
+          ],
+          "transformations": [
+            {
+              "type": "reframe",
+              "description": "The report's headline assessment is condensed into a single opening proposition.",
+              "source_evidence_ids": [
+                "ev-core"
+              ]
+            }
+          ],
+          "media": [
+            {
+              "asset_id": "ccc-hero-barrier",
+              "role": "background"
+            }
+          ],
+          "emphasis": [
+            {
+              "text": "Adaptation is not keeping pace.",
+              "style": "accent_color"
+            }
+          ]
         },
         {
           "id": "ccc-thesis",
@@ -168,11 +346,38 @@
           "semantic_role": "thesis",
           "message": "The UK's preparations for climate change are inadequate.",
           "body": "The UK's preparations for climate change are inadequate. Effective adaptation delivery remains limited, and progress is still too slow, stalled or moving in the wrong direction.",
-          "emphasis": [{"text":"are inadequate","style":"scroll_highlight"}],
-          "effects": [{"id":"line_by_line_fade","intensity":"subtle","target":"text","trigger":"scroll"}],
-          "source_evidence_ids": ["ev-core"],
-          "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":10}],
-          "transformations": [{"type":"shorten","description":"The executive-summary conclusion is isolated as the thesis of the story.","source_evidence_ids":["ev-core"]}]
+          "emphasis": [
+            {
+              "text": "are inadequate",
+              "style": "scroll_highlight"
+            }
+          ],
+          "effects": [
+            {
+              "id": "line_by_line_fade",
+              "intensity": "subtle",
+              "target": "text",
+              "trigger": "scroll"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-core"
+          ],
+          "source_refs": [
+            {
+              "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+              "page": 10
+            }
+          ],
+          "transformations": [
+            {
+              "type": "shorten",
+              "description": "The executive-summary conclusion is isolated as the thesis of the story.",
+              "source_evidence_ids": [
+                "ev-core"
+              ]
+            }
+          ]
         }
       ]
     },
@@ -181,7 +386,12 @@
       "title": "Climate impacts are already visible",
       "nav_label": "Climate now",
       "purpose": "evidence",
-      "source_evidence_ids": ["ev-wettest","ev-40c","ev-deaths","ev-calls"],
+      "source_evidence_ids": [
+        "ev-wettest",
+        "ev-40c",
+        "ev-deaths",
+        "ev-calls"
+      ],
       "scenes": [
         {
           "id": "recent-extremes",
@@ -192,16 +402,73 @@
           "title": "The evidence is already here.",
           "data": {
             "items": [
-              {"id":"wet","title":"18 months","text":"October 2022 to March 2024 was England's wettest 18-month period on record."},
-              {"id":"heat","title":">40°C","text":"Summer 2022 exceeded 40°C for the first time in many places."},
-              {"id":"deaths","title":"Nearly 3,000","text":"Heat-related deaths recorded in England during the 2022 heatwaves reached a record level."},
-              {"id":"wildfire","title":"+500%","text":"999 calls rose sharply during major wildfire incidents in July 2022."}
+              {
+                "id": "wet",
+                "title": "18 months",
+                "text": "October 2022 to March 2024 was England's wettest 18-month period on record."
+              },
+              {
+                "id": "heat",
+                "title": ">40°C",
+                "text": "Summer 2022 exceeded 40°C for the first time in many places."
+              },
+              {
+                "id": "deaths",
+                "title": "Nearly 3,000",
+                "text": "Heat-related deaths recorded in England during the 2022 heatwaves reached a record level."
+              },
+              {
+                "id": "wildfire",
+                "title": "+500%",
+                "text": "999 calls rose sharply during major wildfire incidents in July 2022."
+              }
             ]
           },
-          "effects": [{"id":"blur_to_focus","intensity":"medium","target":"visual","trigger":"step"}],
-          "source_evidence_ids": ["ev-wettest","ev-40c","ev-deaths","ev-calls"],
-          "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":11}],
-          "transformations": [{"type":"group","description":"Four examples from the executive summary are grouped as a compact evidence mosaic.","source_evidence_ids":["ev-wettest","ev-40c","ev-deaths","ev-calls"]}]
+          "effects": [
+            {
+              "id": "blur_to_focus",
+              "intensity": "medium",
+              "target": "visual",
+              "trigger": "step"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-wettest",
+            "ev-40c",
+            "ev-deaths",
+            "ev-calls"
+          ],
+          "source_refs": [
+            {
+              "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+              "page": 11
+            }
+          ],
+          "transformations": [
+            {
+              "type": "group",
+              "description": "Four examples from the executive summary are grouped as a compact evidence mosaic.",
+              "source_evidence_ids": [
+                "ev-wettest",
+                "ev-40c",
+                "ev-deaths",
+                "ev-calls"
+              ]
+            }
+          ],
+          "pacing": {
+            "intro_hold": 0.2,
+            "outro_hold": 0.06,
+            "step_transition": 0.08,
+            "reveal_mode": "one_at_a_time",
+            "title_behavior": "fade_before_steps",
+            "focus_mode": "active_only"
+          },
+          "interaction": {
+            "hover": "focus",
+            "click": "none",
+            "keyboard": true
+          }
         }
       ]
     },
@@ -210,7 +477,12 @@
       "title": "The delivery problem",
       "nav_label": "Delivery",
       "purpose": "assessment",
-      "source_evidence_ids": ["ev-zero-good-delivery","ev-12-insufficient","ev-three-good-plans","ev-60-plans"],
+      "source_evidence_ids": [
+        "ev-zero-good-delivery",
+        "ev-12-insufficient",
+        "ev-three-good-plans",
+        "ev-60-plans"
+      ],
       "scenes": [
         {
           "id": "zero-good",
@@ -220,11 +492,41 @@
           "message": "0",
           "title": "Not one assessed outcome was scored 'good' for adaptation delivery.",
           "body": "The central weakness is not the absence of plans. It is the failure to translate planning into effective implementation at sufficient pace.",
-          "data": {"value":"0"},
-          "effects": [{"id":"scale_reveal","intensity":"medium","target":"number","trigger":"scroll"}],
-          "source_evidence_ids": ["ev-zero-good-delivery"],
-          "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":10}],
-          "transformations": [{"type":"visualize","description":"A source value of zero is elevated as the dominant metric because it captures the report's delivery conclusion.","source_evidence_ids":["ev-zero-good-delivery"]}]
+          "data": {
+            "value": "0"
+          },
+          "effects": [
+            {
+              "id": "scale_reveal",
+              "intensity": "medium",
+              "target": "number",
+              "trigger": "scroll"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-zero-good-delivery"
+          ],
+          "source_refs": [
+            {
+              "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+              "page": 10
+            }
+          ],
+          "transformations": [
+            {
+              "type": "visualize",
+              "description": "A source value of zero is elevated as the dominant metric because it captures the report's delivery conclusion.",
+              "source_evidence_ids": [
+                "ev-zero-good-delivery"
+              ]
+            }
+          ],
+          "emphasis": [
+            {
+              "text": "Not one",
+              "style": "marker_highlight"
+            }
+          ]
         },
         {
           "id": "assessment-mosaic",
@@ -235,16 +537,83 @@
           "title": "A system still dominated by low scores.",
           "data": {
             "items": [
-              {"id":"delivery-insufficient","title":"12 / 46","text":"Outcomes scored insufficient for delivery and implementation."},
-              {"id":"planning-good","title":"3 / 46","text":"Outcomes with good policies and plans."},
-              {"id":"planning-low","title":"60%","text":"27 outcomes show limited or insufficient progress in policies and plans."},
-              {"id":"pace","title":"Little movement","text":"The vast majority of assessment outcomes remain at the same low scores as in 2023."}
+              {
+                "id": "delivery-insufficient",
+                "title": "12 / 46",
+                "text": "Outcomes scored insufficient for delivery and implementation."
+              },
+              {
+                "id": "planning-good",
+                "title": "3 / 46",
+                "text": "Outcomes with good policies and plans."
+              },
+              {
+                "id": "planning-low",
+                "title": "60%",
+                "text": "27 outcomes show limited or insufficient progress in policies and plans."
+              },
+              {
+                "id": "pace",
+                "title": "Little movement",
+                "text": "The vast majority of assessment outcomes remain at the same low scores as in 2023."
+              }
             ]
           },
-          "effects": [{"id":"progressive_build","intensity":"medium","target":"data","trigger":"scroll"}],
-          "source_evidence_ids": ["ev-12-insufficient","ev-three-good-plans","ev-60-plans","ev-core"],
-          "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":46},{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":102}],
-          "transformations": [{"type":"group","description":"Headline assessment metrics from delivery and policy sections are presented together to expose the overall pattern.","source_evidence_ids":["ev-12-insufficient","ev-three-good-plans","ev-60-plans","ev-core"]}]
+          "effects": [
+            {
+              "id": "progressive_build",
+              "intensity": "medium",
+              "target": "data",
+              "trigger": "scroll"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-12-insufficient",
+            "ev-three-good-plans",
+            "ev-60-plans",
+            "ev-core"
+          ],
+          "source_refs": [
+            {
+              "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+              "page": 46
+            },
+            {
+              "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+              "page": 102
+            }
+          ],
+          "transformations": [
+            {
+              "type": "group",
+              "description": "Headline assessment metrics from delivery and policy sections are presented together to expose the overall pattern.",
+              "source_evidence_ids": [
+                "ev-12-insufficient",
+                "ev-three-good-plans",
+                "ev-60-plans",
+                "ev-core"
+              ]
+            }
+          ],
+          "pacing": {
+            "intro_hold": 0.22,
+            "outro_hold": 0.06,
+            "step_transition": 0.08,
+            "reveal_mode": "one_at_a_time",
+            "title_behavior": "fade_before_steps",
+            "focus_mode": "active_only"
+          },
+          "interaction": {
+            "hover": "focus",
+            "click": "none",
+            "keyboard": true
+          },
+          "emphasis": [
+            {
+              "text": "low scores",
+              "style": "underline"
+            }
+          ]
         }
       ]
     },
@@ -253,7 +622,11 @@
       "title": "Risk is spread across systems",
       "nav_label": "Sectors",
       "purpose": "sector-evidence",
-      "source_evidence_ids": ["ev-sector-areas","ev-flood-properties","ev-health"],
+      "source_evidence_ids": [
+        "ev-sector-areas",
+        "ev-flood-properties",
+        "ev-health"
+      ],
       "scenes": [
         {
           "id": "sector-tour",
@@ -264,17 +637,101 @@
           "title": "Five connected systems. No isolated solution.",
           "data": {
             "steps": [
-              {"meta":"Land, nature and food","title":"Ecological resilience and production are under pressure.","text":"The assessment covers nature, working land and seas, and food security, with multiple low delivery scores."},
-              {"meta":"Infrastructure","title":"Water, energy, telecoms and transport are interdependent.","text":"The report assesses resilience across critical infrastructure systems and highlights gaps in delivery evidence and indicators."},
-              {"meta":"Built environment and communities","title":"Flood and heat risks are scaling up.","text":"6.3 million properties in England are already in areas at risk of flooding; this could rise to around 8 million, or one in four properties, by 2050."},
-              {"meta":"Health and wellbeing","title":"Both assessed health delivery outcomes are insufficient.","text":"Heat-related deaths are rising, while the full picture of extreme-weather disruption across health and care services remains incomplete."},
-              {"meta":"Economy","title":"Business and finance depend on the same resilience system.","text":"The report treats business and finance as adaptation outcomes rather than separate from physical climate risk."}
+              {
+                "meta": "Land, nature and food",
+                "title": "Ecological resilience and production are under pressure.",
+                "text": "The assessment covers nature, working land and seas, and food security, with multiple low delivery scores.",
+                "asset_id": "ccc-land"
+              },
+              {
+                "meta": "Infrastructure",
+                "title": "Water, energy, telecoms and transport are interdependent.",
+                "text": "The report assesses resilience across critical infrastructure systems and highlights gaps in delivery evidence and indicators.",
+                "asset_id": "ccc-infrastructure"
+              },
+              {
+                "meta": "Built environment and communities",
+                "title": "Flood and heat risks are scaling up.",
+                "text": "6.3 million properties in England are already in areas at risk of flooding; this could rise to around 8 million, or one in four properties, by 2050.",
+                "asset_id": "ccc-built"
+              },
+              {
+                "meta": "Health and wellbeing",
+                "title": "Both assessed health delivery outcomes are insufficient.",
+                "text": "Heat-related deaths are rising, while the full picture of extreme-weather disruption across health and care services remains incomplete.",
+                "asset_id": "ccc-health"
+              },
+              {
+                "meta": "Economy",
+                "title": "Business and finance depend on the same resilience system.",
+                "text": "The report treats business and finance as adaptation outcomes rather than separate from physical climate risk.",
+                "asset_id": "ccc-economy"
+              }
             ]
           },
-          "effects": [{"id":"sticky_step_change","intensity":"medium","target":"text","trigger":"step"}],
-          "source_evidence_ids": ["ev-sector-areas","ev-flood-properties","ev-health"],
-          "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":45},{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":37},{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":79}],
-          "transformations": [{"type":"reorder","description":"Sector evidence is condensed into a system-by-system sequence rather than reproducing the report's full assessment tables.","source_evidence_ids":["ev-sector-areas","ev-flood-properties","ev-health"]}]
+          "effects": [
+            {
+              "id": "sticky_step_change",
+              "intensity": "medium",
+              "target": "text",
+              "trigger": "step"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-sector-areas",
+            "ev-flood-properties",
+            "ev-health"
+          ],
+          "source_refs": [
+            {
+              "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+              "page": 45
+            },
+            {
+              "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+              "page": 37
+            },
+            {
+              "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+              "page": 79
+            }
+          ],
+          "transformations": [
+            {
+              "type": "reorder",
+              "description": "Sector evidence is condensed into a system-by-system sequence rather than reproducing the report's full assessment tables.",
+              "source_evidence_ids": [
+                "ev-sector-areas",
+                "ev-flood-properties",
+                "ev-health"
+              ]
+            }
+          ],
+          "media": [
+            {
+              "asset_id": "ccc-hero-barrier",
+              "role": "intro_background"
+            }
+          ],
+          "pacing": {
+            "intro_hold": 0.2,
+            "outro_hold": 0.07,
+            "step_transition": 0.08,
+            "reveal_mode": "one_at_a_time",
+            "title_behavior": "fade_before_steps",
+            "focus_mode": "active_only"
+          },
+          "interaction": {
+            "hover": "none",
+            "click": "none",
+            "keyboard": true
+          },
+          "emphasis": [
+            {
+              "text": "Five connected systems",
+              "style": "accent_color"
+            }
+          ]
         }
       ]
     },
@@ -283,7 +740,9 @@
       "title": "What changes the trajectory",
       "nav_label": "Response",
       "purpose": "recommendations",
-      "source_evidence_ids": ["ev-four-actions"],
+      "source_evidence_ids": [
+        "ev-four-actions"
+      ],
       "scenes": [
         {
           "id": "four-actions",
@@ -294,16 +753,76 @@
           "title": "Four moves from fragmented planning to delivery.",
           "data": {
             "steps": [
-              {"n":"01","title":"Objectives and targets","headline":"Make resilience measurable.","text":"Set actionable objectives and targets, and clarify the roles of government, the private sector and households."},
-              {"n":"02","title":"Coordination","headline":"Treat adaptation as a cross-government priority.","text":"Connect adaptation with resilience planning, spending decisions, sectors and departments."},
-              {"n":"03","title":"Policy integration","headline":"Build climate resilience into mainstream decisions.","text":"Integrate adaptation into relevant strategies, public assets, services, infrastructure and spending."},
-              {"n":"04","title":"Monitoring and learning","headline":"Know whether adaptation is working.","text":"Establish regular data collection, monitoring, evaluation and learning across sectors."}
+              {
+                "n": "01",
+                "title": "Objectives and targets",
+                "headline": "Make resilience measurable.",
+                "text": "Set actionable objectives and targets, and clarify the roles of government, the private sector and households."
+              },
+              {
+                "n": "02",
+                "title": "Coordination",
+                "headline": "Treat adaptation as a cross-government priority.",
+                "text": "Connect adaptation with resilience planning, spending decisions, sectors and departments."
+              },
+              {
+                "n": "03",
+                "title": "Policy integration",
+                "headline": "Build climate resilience into mainstream decisions.",
+                "text": "Integrate adaptation into relevant strategies, public assets, services, infrastructure and spending."
+              },
+              {
+                "n": "04",
+                "title": "Monitoring and learning",
+                "headline": "Know whether adaptation is working.",
+                "text": "Establish regular data collection, monitoring, evaluation and learning across sectors."
+              }
             ]
           },
-          "effects": [{"id":"horizontal_track","intensity":"medium","target":"visual","trigger":"scroll"}],
-          "source_evidence_ids": ["ev-four-actions"],
-          "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":10},{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":11}],
-          "transformations": [{"type":"visualize","description":"The four action areas are preserved and rendered as an ordered horizontal sequence.","source_evidence_ids":["ev-four-actions"]}]
+          "effects": [
+            {
+              "id": "horizontal_track",
+              "intensity": "medium",
+              "target": "visual",
+              "trigger": "scroll"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-four-actions"
+          ],
+          "source_refs": [
+            {
+              "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+              "page": 10
+            },
+            {
+              "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+              "page": 11
+            }
+          ],
+          "transformations": [
+            {
+              "type": "visualize",
+              "description": "The four action areas are preserved and rendered as an ordered horizontal sequence.",
+              "source_evidence_ids": [
+                "ev-four-actions"
+              ]
+            }
+          ],
+          "pacing": {
+            "intro_hold": 0.18,
+            "outro_hold": 0.06,
+            "step_transition": 0.08,
+            "reveal_mode": "one_at_a_time",
+            "title_behavior": "fade_before_steps",
+            "focus_mode": "active_only"
+          },
+          "emphasis": [
+            {
+              "text": "Four moves",
+              "style": "marker_highlight"
+            }
+          ]
         }
       ]
     },
@@ -312,7 +831,9 @@
       "title": "The halfway point has to become a turning point",
       "nav_label": "Turning point",
       "purpose": "conclusion",
-      "source_evidence_ids": ["ev-turning-point"],
+      "source_evidence_ids": [
+        "ev-turning-point"
+      ],
       "scenes": [
         {
           "id": "ccc-conclusion",
@@ -322,12 +843,77 @@
           "message": "NAP3 is near its halfway point. The report argues that this must become a turning point for delivery.",
           "kicker": "CCC 2025",
           "title": "The halfway point has to become a turning point.",
-          "effects": [{"id":"fade","intensity":"subtle","target":"text","trigger":"scroll"}],
-          "source_evidence_ids": ["ev-turning-point"],
-          "source_refs": [{"file":"Progress-in-adapting-to-climate-change-2025-1.pdf","page":22}],
-          "transformations": [{"type":"shorten","description":"The report's own turning-point framing is retained as the closing synthesis.","source_evidence_ids":["ev-turning-point"]}]
+          "effects": [
+            {
+              "id": "fade",
+              "intensity": "subtle",
+              "target": "text",
+              "trigger": "scroll"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-turning-point"
+          ],
+          "source_refs": [
+            {
+              "file": "Progress-in-adapting-to-climate-change-2025-1.pdf",
+              "page": 22
+            }
+          ],
+          "transformations": [
+            {
+              "type": "shorten",
+              "description": "The report's own turning-point framing is retained as the closing synthesis.",
+              "source_evidence_ids": [
+                "ev-turning-point"
+              ]
+            }
+          ],
+          "emphasis": [
+            {
+              "text": "turning point",
+              "style": "underline"
+            }
+          ]
         }
       ]
     }
-  ]
+  ],
+  "design_system": {
+    "source_strategy": "preserve",
+    "palette": {
+      "primary": "#280049",
+      "secondary": "#7142ff",
+      "accent": "#7142ff",
+      "background": "#ffffff",
+      "surface": "#f7f4ff",
+      "text": "#280049",
+      "muted": "#72667d",
+      "signal_orange": "#f59a23",
+      "signal_coral": "#c87383"
+    },
+    "typography": {
+      "source_fonts": [
+        "CenturyGothic",
+        "CenturyGothic-Bold",
+        "CenturyGothic-Italic"
+      ],
+      "heading_family": "Century Gothic-like geometric sans",
+      "body_family": "Century Gothic-like geometric sans",
+      "character": "geometric, institutional, high-contrast purple hierarchy"
+    },
+    "branding": {
+      "publisher": "Climate Change Committee"
+    },
+    "source_pages": [
+      1,
+      2,
+      3,
+      4,
+      43,
+      101,
+      157
+    ],
+    "notes": "Source identity extracted from the CCC PDF: dominant deep purple #280049, bright violet heading/rule colour around #7142ff, white page field and Century Gothic family. StoryScro preserves this identity while changing composition and motion."
+  }
 }

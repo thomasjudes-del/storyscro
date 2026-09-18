@@ -251,7 +251,10 @@ function groupLines(rawItems,pageWidth,pageHeight){
       const gap=last?it.x-(last.x+last.width):0;
       const prefixOnly=seg.length===1&&/^\d{1,2}(?:\.\d+){0,3}\.?$/.test(normalize(seg[0].text));
       const nextStartsTitle=/^[A-ZÀ-Ý]/.test(normalize(it.text));
-      const split=last && gap>Math.max(34,pageWidth*.055,Math.min(last.size,it.size)*4.2) && !(prefixOnly&&nextStartsTitle);
+      const lastText=normalize(last?.text),curText=normalize(it.text);
+      const compactCell=t=>/^(?:(?:19|20)\d{2}|[-+]?\d+(?:[.,]\d+)?(?:\s*(?:ETP|%|M€|k€|€))?)$/i.test(t);
+      const numericColumnBreak=last&&compactCell(lastText)&&compactCell(curText)&&gap>Math.max(7,Math.min(last.size,it.size)*.8);
+      const split=last && (numericColumnBreak || gap>Math.max(34,pageWidth*.055,Math.min(last.size,it.size)*4.2)) && !(prefixOnly&&nextStartsTitle);
       if(split&&seg.length){segments.push(seg);seg=[]}
       seg.push(it);last=it;
     }

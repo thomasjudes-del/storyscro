@@ -99,6 +99,12 @@ def run(label,width,height):
             (OUT/"browser-story.json").write_text(json.dumps(payload["story"],indent=2),encoding="utf-8")
 
         d.save_screenshot(str(OUT/f"{label}-hero.png"))
+        d.execute_script("document.documentElement.style.scrollBehavior='auto'")
+        synthesis=d.find_elements(By.CSS_SELECTOR,".synthesis-scene")
+        if synthesis:
+            d.execute_script("arguments[0].scrollIntoView({block:'start'})",synthesis[0])
+            time.sleep(.35)
+            d.save_screenshot(str(OUT/f"{label}-synthesis.png"))
         chart=d.find_elements(By.CSS_SELECTOR,".trend-scene")
         if chart:
             d.execute_script("arguments[0].scrollIntoView({block:'start'})",chart[0])

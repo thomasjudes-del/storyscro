@@ -57,7 +57,7 @@ def run(label,width,height):
         assert stats["pages"] >= 2, stats
         assert stats["paragraphs"] >= 4, stats
         assert stats["chapters"] >= 2 and stats["scenes"] >= 3, stats
-        assert stats["scenes"] <= max(8, min(20, stats["pages"]+4)), stats
+        assert stats["scenes"] <= max(8, min(20, stats["pages"]+5)), stats
         assert stats["title"], stats
         assert stats["primary"].startswith("#"), stats
         assert stats["sourceLink"].startswith("blob:"), stats

@@ -28,6 +28,8 @@
     evidence = new Map((STORY.evidence||[]).map(x => [x.id,x]));
     document.title = `${STORY.document.title} | StoryScro`;
     applyDesignSystem();
+    applyPresentationProfile();
+    configureSourcePdfLink();
     renderStory();
     installGlobalInteractions();
     loading.remove();
@@ -146,6 +148,26 @@
     document.body.dataset.sourceDesign=ds.source_strategy||'adapt';
   }
 
+  function applyPresentationProfile(){
+    const profile=STORY.presentation_profile||{};
+    const rootStyle=document.documentElement.style;
+    const set=(name,value)=>{ if(value!==undefined && value!==null) rootStyle.setProperty(name,String(value)); };
+    set('--story-density',profile.density??.5);
+    set('--story-motion',profile.motion??.5);
+    set('--story-image-weight',profile.image_weight??.5);
+    set('--story-type-scale',profile.type_scale??1);
+    set('--story-contrast',profile.contrast??.5);
+    document.body.dataset.presentationPreset=profile.preset||'source_faithful';
+  }
+
+  function configureSourcePdfLink(){
+    const link=$('#sourcePdfLink');
+    const url=STORY.document?.source_url;
+    if(!link) return;
+    if(url){ link.href=url; link.hidden=false; }
+    else link.hidden=true;
+  }
+
   function pacing(scene){
     return {...(GRAMMAR.scene_lifecycle?.default||{}),...(scene.pacing||{})};
   }
@@ -214,11 +236,17 @@
   }
 
   function renderStatement(scene){
-    const section=document.createElement('section'); section.className='statement';
+    const section=document.createElement('section'); section.className='scrolly statement statement-scrolly';
     const text=String(scene.body||scene.message);
     const first=text.split('. ')[0] + (text.includes('. ')?'.':'');
     const rest=text.slice(first.length).trim();
-    section.innerHTML=`<div class="statement-inner"><p>${applyEmphasis(first,scene.emphasis)}</p><h2>${applyEmphasis(rest||text,scene.emphasis)}</h2>${sourceButton(scene)}</div>`;
+    section.innerHTML=`<div class="sticky-stage statement-stage"><div class="statement-inner"><p>${applyEmphasis(first,scene.emphasis)}</p><h2>${applyEmphasis(rest||text,scene.emphasis)}</h2>${sourceButton(scene)}</div></div><div class="scroll-space short"></div>`;
+    section._update=p=>{
+      const cfg=pacing(scene), intro=clamp(Number(cfg.intro_hold??.2),0,.45);
+      const q=clamp((p-intro)/Math.max(.08,.72-intro));
+      section.style.setProperty('--emphasis-progress',q.toFixed(3));
+      section.classList.toggle('emphasis-complete',q>.92);
+    };
     return section;
   }
 
@@ -338,7 +366,18 @@
   }
   function renderGeneric(scene,chapter){ const section=document.createElement('section'); section.className='generic-section'; const body=Array.isArray(scene.body)?scene.body.join('\n'):scene.body||scene.message; section.innerHTML=`<div class="generic-inner"><p class="kicker">${esc(chapter.nav_label||'')}</p><h2>${applyEmphasis(scene.title||scene.message,scene.emphasis)}</h2><p>${applyEmphasis(body,scene.emphasis)}</p>${sourceButton(scene)}</div>`; return section; }
   function renderGenericMedia(scene,chapter){ const section=renderGeneric(scene,chapter); const a=asset(scene.media?.[0]?.asset_id); if(a?.uri) section.style.background=`linear-gradient(rgba(255,255,255,.88),rgba(255,255,255,.88)),url('${a.uri}') center/cover`; return section; }
-  function renderBigNumber(scene,chapter){ const section=document.createElement('section'); section.className='generic-section'; section.innerHTML=`<div class="generic-inner"><p class="kicker">${esc(chapter.nav_label||'')}</p><div class="big-number-value">${esc(scene.data?.value||scene.message)}</div><h2>${applyEmphasis(scene.title||'',scene.emphasis)}</h2><p>${applyEmphasis(scene.body||'',scene.emphasis)}</p>${sourceButton(scene)}</div>`; return section; }
+  function renderBigNumber(scene,chapter){
+    const section=document.createElement('section'); section.className='scrolly metric-scrolly';
+    section.innerHTML=`<div class="sticky-stage metric-stage"><div class="metric-backdrop" aria-hidden="true"></div><div class="metric-inner"><p class="kicker">${esc(chapter.nav_label||'')}</p><div class="big-number-value">${esc(scene.data?.value||scene.message)}</div><h2>${applyEmphasis(scene.title||'',scene.emphasis)}</h2><p>${applyEmphasis(scene.body||'',scene.emphasis)}</p>${sourceButton(scene)}</div></div><div class="scroll-space short"></div>`;
+    section._update=p=>{
+      const cfg=pacing(scene), intro=clamp(Number(cfg.intro_hold??.18),0,.45);
+      const q=clamp((p-intro)/Math.max(.08,.78-intro));
+      section.style.setProperty('--metric-progress',q.toFixed(3));
+      section.style.setProperty('--emphasis-progress',clamp((q-.18)/.62).toFixed(3));
+      section.classList.toggle('metric-inverted',q>.58);
+    };
+    return section;
+  }
 
   function buildNavigation(){
     chapterNav.innerHTML=''; microTrack.innerHTML='';
@@ -357,8 +396,8 @@
       const src=e.target.closest('[data-scene-source]'); if(src){ showSceneSource(src.dataset.sceneSource); return; }
       const dot=e.target.closest('.micro-dot'); if(dot){ document.getElementById(dot.dataset.target)?.scrollIntoView({behavior:motionReduced?'auto':'smooth',block:'start'}); }
     });
-    $('#sourceClose').addEventListener('click',closeDrawer); $('#allSourcesBtn').addEventListener('click',showAllSources);
-    $('#prevScene').addEventListener('click',()=>moveScene(-1)); $('#nextScene').addEventListener('click',()=>moveScene(1));
+    $('#sourceClose')?.addEventListener('click',closeDrawer); $('#allSourcesBtn')?.addEventListener('click',showAllSources);
+    $('#prevScene')?.addEventListener('click',()=>moveScene(-1)); $('#nextScene')?.addEventListener('click',()=>moveScene(1));
     document.addEventListener('keydown',e=>{
       if(!STORY.navigation.keyboard_navigation || ['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)) return;
       if((e.key==='ArrowDown' || e.key==='PageDown') && (e.altKey||e.ctrlKey)){e.preventDefault();moveScene(1)}

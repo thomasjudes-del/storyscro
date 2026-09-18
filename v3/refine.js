@@ -14,18 +14,22 @@
   function applyHorizontalState(scene, p, itemSelector, copySelector, headingSelector, trackSelector){
     const items = [...scene.querySelectorAll(itemSelector)];
     if(!items.length) return;
-    const pos = clamp(p) * Math.max(1, items.length - 1);
-    const active = Math.round(pos);
+    const cfg = scene._storyScene?.pacing || {};
+    const intro = clamp(Number(cfg.intro_hold ?? .16), 0, .45);
+    const outro = clamp(Number(cfg.outro_hold ?? .06), 0, .35);
+    const inIntro = p < intro;
+    const q = inIntro ? 0 : clamp((p - intro) / Math.max(.001, 1 - intro - outro));
+    const pos = q * Math.max(1, items.length - 1);
+    const active = inIntro ? -1 : Math.round(pos);
     const narrow = matchMedia('(max-width:820px)').matches;
     const track = scene.querySelector(trackSelector);
     const heading = scene.querySelector(headingSelector);
 
-    if(track) track.style.setProperty('transform',`translate3d(${-active*innerWidth}px,0,0)`,'important');
+    if(track) track.style.setProperty('transform',`translate3d(${-Math.max(0,active)*innerWidth}px,0,0)`,'important');
 
     if(heading){
-      const fade = narrow
-        ? (p < .055 ? 1 : clamp(1 - (p - .055) / .07))
-        : (p < .08 ? 1 : clamp(1 - (p - .08) / .13));
+      const titleBehavior = cfg.title_behavior || 'fade_before_steps';
+      const fade = titleBehavior === 'persistent' ? 1 : (inIntro ? 1 : clamp(1 - (p - intro) / (narrow ? .07 : .11)));
       heading.style.opacity = String(fade);
       heading.style.transform = `translate3d(0,${(1-fade)*-10}px,0)`;
       heading.style.pointerEvents = fade < .08 ? 'none' : 'auto';
@@ -37,7 +41,7 @@
       }
       const copy = item.querySelector(copySelector);
       if(!copy) return;
-      const isActive = i === active;
+      const isActive = !inIntro && i === active;
       copy.style.opacity = isActive ? '1' : '0';
       copy.style.transform = `translate3d(${isActive ? 0 : (i < active ? -22 : 22)}px,0,0)`;
       copy.style.pointerEvents = isActive ? 'auto' : 'none';

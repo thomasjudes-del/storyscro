@@ -3,157 +3,550 @@
   "$id": "https://storyscro.dev/schema/story.schema.json",
   "title": "StoryScro Story Model",
   "type": "object",
-  "required": ["version", "document", "editorial_policy", "navigation", "chapters"],
+  "required": [
+    "version",
+    "document",
+    "editorial_policy",
+    "navigation",
+    "chapters"
+  ],
   "properties": {
-    "version": {"type": "string"},
+    "version": {
+      "type": "string"
+    },
     "document": {
       "type": "object",
-      "required": ["id", "title", "source_file", "language"],
+      "required": [
+        "id",
+        "title",
+        "source_file",
+        "language"
+      ],
       "properties": {
-        "id": {"type": "string"},
-        "title": {"type": "string"},
-        "subtitle": {"type": "string"},
-        "source_file": {"type": "string"},
-        "language": {"type": "string"},
-        "page_count": {"type": ["integer", "null"]},
-        "audience": {"type": ["string", "null"]},
-        "purpose": {"type": ["string", "null"]},
-        "core_question": {"type": ["string", "null"]}
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "subtitle": {
+          "type": "string"
+        },
+        "source_file": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string"
+        },
+        "page_count": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "audience": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "purpose": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "core_question": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "publisher": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       },
       "additionalProperties": true
     },
     "editorial_policy": {
       "type": "object",
-      "required": ["fidelity", "compression"],
+      "required": [
+        "fidelity",
+        "compression"
+      ],
       "properties": {
-        "fidelity": {"enum": ["faithful", "adaptive", "restructured"]},
-        "compression": {"enum": ["none", "light", "balanced", "high"]},
-        "notes": {"type": "string"}
+        "fidelity": {
+          "enum": [
+            "faithful",
+            "adaptive",
+            "restructured"
+          ]
+        },
+        "compression": {
+          "enum": [
+            "none",
+            "light",
+            "balanced",
+            "high"
+          ]
+        },
+        "notes": {
+          "type": "string"
+        }
       },
       "additionalProperties": false
     },
     "navigation": {
       "type": "object",
       "properties": {
-        "chapter_header": {"type": "boolean", "default": true},
-        "reading_progress": {"type": "boolean", "default": true},
-        "micro_navigation": {"type": "boolean", "default": true},
-        "keyboard_navigation": {"type": "boolean", "default": true}
+        "chapter_header": {
+          "type": "boolean",
+          "default": true
+        },
+        "reading_progress": {
+          "type": "boolean",
+          "default": true
+        },
+        "micro_navigation": {
+          "type": "boolean",
+          "default": true
+        },
+        "keyboard_navigation": {
+          "type": "boolean",
+          "default": true
+        }
       },
       "additionalProperties": false
     },
     "assets": {
       "type": "array",
-      "items": {"$ref": "#/$defs/asset"}
+      "items": {
+        "$ref": "#/$defs/asset"
+      }
     },
     "evidence": {
       "type": "array",
-      "items": {"$ref": "#/$defs/evidence"}
+      "items": {
+        "$ref": "#/$defs/evidence"
+      }
     },
     "chapters": {
       "type": "array",
       "minItems": 1,
-      "items": {"$ref": "#/$defs/chapter"}
+      "items": {
+        "$ref": "#/$defs/chapter"
+      }
+    },
+    "design_system": {
+      "type": "object",
+      "properties": {
+        "source_strategy": {
+          "enum": [
+            "preserve",
+            "adapt",
+            "replace"
+          ],
+          "default": "preserve"
+        },
+        "palette": {
+          "type": "object",
+          "properties": {
+            "primary": {
+              "type": "string"
+            },
+            "secondary": {
+              "type": "string"
+            },
+            "accent": {
+              "type": "string"
+            },
+            "background": {
+              "type": "string"
+            },
+            "surface": {
+              "type": "string"
+            },
+            "text": {
+              "type": "string"
+            },
+            "muted": {
+              "type": "string"
+            },
+            "danger": {
+              "type": "string"
+            },
+            "success": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "typography": {
+          "type": "object",
+          "properties": {
+            "source_fonts": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "heading_family": {
+              "type": "string"
+            },
+            "body_family": {
+              "type": "string"
+            },
+            "character": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "branding": {
+          "type": "object",
+          "properties": {
+            "publisher": {
+              "type": "string"
+            },
+            "logo_asset_id": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        "source_pages": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
     }
   },
   "$defs": {
     "sourceRef": {
       "type": "object",
-      "required": ["file", "page"],
+      "required": [
+        "file",
+        "page"
+      ],
       "properties": {
-        "file": {"type": "string"},
-        "page": {"type": "integer", "minimum": 1},
+        "file": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1
+        },
         "bbox": {
           "type": "array",
-          "items": {"type": "number"},
+          "items": {
+            "type": "number"
+          },
           "minItems": 4,
           "maxItems": 4
         },
-        "element_id": {"type": "string"},
-        "quote": {"type": "string"}
+        "element_id": {
+          "type": "string"
+        },
+        "quote": {
+          "type": "string"
+        }
       },
       "additionalProperties": true
     },
     "asset": {
       "type": "object",
-      "required": ["id", "type"],
+      "required": [
+        "id",
+        "type"
+      ],
       "properties": {
-        "id": {"type": "string"},
-        "type": {"enum": ["image", "video", "audio", "svg", "embed", "data"]},
-        "uri": {"type": "string"},
-        "alt": {"type": "string"},
-        "caption": {"type": "string"},
-        "source_refs": {"type": "array", "items": {"$ref": "#/$defs/sourceRef"}},
-        "license": {"type": "string"},
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "image",
+            "video",
+            "audio",
+            "svg",
+            "embed",
+            "data"
+          ]
+        },
+        "uri": {
+          "type": "string"
+        },
+        "alt": {
+          "type": "string"
+        },
+        "caption": {
+          "type": "string"
+        },
+        "source_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sourceRef"
+          }
+        },
+        "license": {
+          "type": "string"
+        },
         "focal_point": {
           "type": "object",
-          "properties": {"x": {"type": "number"}, "y": {"type": "number"}}
+          "properties": {
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            }
+          }
         },
-        "portrait_uri": {"type": "string"},
-        "perceptual_hash": {"type": "string"}
+        "portrait_uri": {
+          "type": "string"
+        },
+        "perceptual_hash": {
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "source",
+            "external",
+            "generated",
+            "derived"
+          ]
+        },
+        "credit": {
+          "type": "string"
+        },
+        "license_url": {
+          "type": "string"
+        },
+        "source_page": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "crop_bbox": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 4,
+          "maxItems": 4
+        }
       },
       "additionalProperties": true
     },
     "evidence": {
       "type": "object",
-      "required": ["id", "type", "status", "source_refs"],
+      "required": [
+        "id",
+        "type",
+        "status",
+        "source_refs"
+      ],
       "properties": {
-        "id": {"type": "string"},
-        "type": {"enum": ["claim", "number", "quote", "table", "chart", "image", "method", "recommendation", "conclusion", "timeline", "relationship", "geography", "definition", "other"]},
-        "status": {"enum": ["VERIFIED", "INFERENCE", "HYPOTHESIS", "TO_CONFIRM", "NOT_FOUND"]},
-        "text": {"type": "string"},
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "claim",
+            "number",
+            "quote",
+            "table",
+            "chart",
+            "image",
+            "method",
+            "recommendation",
+            "conclusion",
+            "timeline",
+            "relationship",
+            "geography",
+            "definition",
+            "other"
+          ]
+        },
+        "status": {
+          "enum": [
+            "VERIFIED",
+            "INFERENCE",
+            "HYPOTHESIS",
+            "TO_CONFIRM",
+            "NOT_FOUND"
+          ]
+        },
+        "text": {
+          "type": "string"
+        },
         "value": {},
-        "unit": {"type": "string"},
-        "source_refs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/sourceRef"}},
-        "tags": {"type": "array", "items": {"type": "string"}}
+        "unit": {
+          "type": "string"
+        },
+        "source_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/sourceRef"
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       },
       "additionalProperties": true
     },
     "emphasis": {
       "type": "object",
-      "required": ["text", "style"],
+      "required": [
+        "text",
+        "style"
+      ],
       "properties": {
-        "text": {"type": "string"},
-        "style": {"enum": ["bold", "accent_color", "underline", "marker_highlight", "scroll_highlight"]}
+        "text": {
+          "type": "string"
+        },
+        "style": {
+          "enum": [
+            "bold",
+            "accent_color",
+            "underline",
+            "marker_highlight",
+            "scroll_highlight"
+          ]
+        }
       },
       "additionalProperties": false
     },
     "transformation": {
       "type": "object",
-      "required": ["type", "description"],
+      "required": [
+        "type",
+        "description"
+      ],
       "properties": {
-        "type": {"enum": ["paraphrase", "shorten", "reorder", "group", "aggregate", "visualize", "restructure", "translate", "none"]},
-        "description": {"type": "string"},
-        "source_evidence_ids": {"type": "array", "items": {"type": "string"}}
+        "type": {
+          "enum": [
+            "paraphrase",
+            "shorten",
+            "reorder",
+            "group",
+            "aggregate",
+            "visualize",
+            "restructure",
+            "translate",
+            "none"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "source_evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       },
       "additionalProperties": false
     },
     "scene": {
       "type": "object",
-      "required": ["id", "primitive", "semantic_role", "message", "source_evidence_ids"],
+      "required": [
+        "id",
+        "primitive",
+        "semantic_role",
+        "message",
+        "source_evidence_ids"
+      ],
       "properties": {
-        "id": {"type": "string"},
-        "nav_label": {"type": "string"},
+        "id": {
+          "type": "string"
+        },
+        "nav_label": {
+          "type": "string"
+        },
         "primitive": {
           "enum": [
-            "hero", "text_section", "full_screen_statement", "text_over_media", "reveal", "scrollmation", "background_scrollmation", "scrollpoints", "chart", "big_number", "timeline", "gantt", "matrix", "comparison", "mosaic", "process_flow", "network", "map", "gallery", "media", "data_table", "quote", "evidence_panel", "conclusion", "custom"
+            "hero",
+            "text_section",
+            "full_screen_statement",
+            "text_over_media",
+            "reveal",
+            "scrollmation",
+            "background_scrollmation",
+            "scrollpoints",
+            "chart",
+            "big_number",
+            "timeline",
+            "gantt",
+            "matrix",
+            "comparison",
+            "mosaic",
+            "process_flow",
+            "network",
+            "map",
+            "gallery",
+            "media",
+            "data_table",
+            "quote",
+            "evidence_panel",
+            "conclusion",
+            "custom"
           ]
         },
-        "semantic_role": {"type": "string"},
-        "message": {"type": "string"},
-        "kicker": {"type": "string"},
-        "title": {"type": "string"},
-        "body": {"type": ["string", "array"]},
-        "emphasis": {"type": "array", "items": {"$ref": "#/$defs/emphasis"}},
+        "semantic_role": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "kicker": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "body": {
+          "type": [
+            "string",
+            "array"
+          ]
+        },
+        "emphasis": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/emphasis"
+          }
+        },
         "data": {},
         "media": {
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["asset_id"],
+            "required": [
+              "asset_id"
+            ],
             "properties": {
-              "asset_id": {"type": "string"},
-              "role": {"type": "string"}
+              "asset_id": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string"
+              }
             },
             "additionalProperties": true
           }
@@ -163,43 +556,186 @@
           "maxItems": 2,
           "items": {
             "type": "object",
-            "required": ["id"],
+            "required": [
+              "id"
+            ],
             "properties": {
-              "id": {"type": "string"},
-              "intensity": {"enum": ["subtle", "medium", "strong"]},
-              "target": {"enum": ["section", "background", "text", "visual", "data", "media"]},
-              "trigger": {"enum": ["enter", "scroll", "step", "exit"]}
+              "id": {
+                "type": "string"
+              },
+              "intensity": {
+                "enum": [
+                  "subtle",
+                  "medium",
+                  "strong"
+                ]
+              },
+              "target": {
+                "enum": [
+                  "section",
+                  "background",
+                  "text",
+                  "visual",
+                  "data",
+                  "media"
+                ]
+              },
+              "trigger": {
+                "enum": [
+                  "enter",
+                  "scroll",
+                  "step",
+                  "exit"
+                ]
+              }
             },
             "additionalProperties": true
           }
         },
-        "source_evidence_ids": {"type": "array", "items": {"type": "string"}},
-        "source_refs": {"type": "array", "items": {"$ref": "#/$defs/sourceRef"}},
-        "transformations": {"type": "array", "items": {"$ref": "#/$defs/transformation"}},
+        "source_evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sourceRef"
+          }
+        },
+        "transformations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/transformation"
+          }
+        },
         "renderer": {
           "type": "object",
           "properties": {
-            "height_vh": {"type": "number"},
-            "theme_hint": {"type": "string"},
-            "text_position": {"type": "string"},
-            "mobile_fallback": {"type": "string"}
+            "height_vh": {
+              "type": "number"
+            },
+            "theme_hint": {
+              "type": "string"
+            },
+            "text_position": {
+              "type": "string"
+            },
+            "mobile_fallback": {
+              "type": "string"
+            }
           },
           "additionalProperties": true
+        },
+        "pacing": {
+          "type": "object",
+          "properties": {
+            "intro_hold": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 0.45
+            },
+            "outro_hold": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 0.35
+            },
+            "step_transition": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 0.25
+            },
+            "reveal_mode": {
+              "enum": [
+                "overview_then_focus",
+                "one_at_a_time",
+                "build",
+                "static"
+              ]
+            },
+            "title_behavior": {
+              "enum": [
+                "persistent",
+                "compact",
+                "fade_before_steps",
+                "hidden"
+              ]
+            },
+            "focus_mode": {
+              "enum": [
+                "active_only",
+                "dim_others",
+                "build"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "interaction": {
+          "type": "object",
+          "properties": {
+            "hover": {
+              "enum": [
+                "none",
+                "focus",
+                "tooltip",
+                "expand"
+              ]
+            },
+            "click": {
+              "enum": [
+                "none",
+                "focus",
+                "expand",
+                "source"
+              ]
+            },
+            "keyboard": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": true
     },
     "chapter": {
       "type": "object",
-      "required": ["id", "title", "scenes"],
+      "required": [
+        "id",
+        "title",
+        "scenes"
+      ],
       "properties": {
-        "id": {"type": "string"},
-        "title": {"type": "string"},
-        "nav_label": {"type": "string"},
-        "summary": {"type": "string"},
-        "purpose": {"type": "string"},
-        "source_evidence_ids": {"type": "array", "items": {"type": "string"}},
-        "scenes": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/scene"}}
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "nav_label": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "source_evidence_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scenes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/scene"
+          }
+        }
       },
       "additionalProperties": false
     }

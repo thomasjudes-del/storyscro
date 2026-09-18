@@ -372,7 +372,7 @@ function detectBullets(lines){
   return lines.filter(l=>/^(?:[•▪◦‣–—-]|\d+[.)])\s+/.test(l.text)).map((l,i)=>({id:`bullet-${i+1}`,text:l.text.replace(/^(?:[•▪◦‣–—-]|\d+[.)])\s+/,''),page:l.page}));
 }
 
-function detectTables(allLines,headings=[]){
+function detectTables(allLines,headings=[],paragraphs=[]){
   const out=[];const byPage=new Map();
   for(const l of allLines){if(l.isRepeated||l.rotated)continue;if(!byPage.has(l.page))byPage.set(l.page,[]);byPage.get(l.page).push(l)}
   const numRx=/[-+]?\d+(?:[ \u00a0.]\d{3})*(?:[.,]\d+)?/g;
@@ -437,7 +437,22 @@ function detectTables(allLines,headings=[]){
       out.push({id:`table-${out.length+1}`,page,title:near?.text||'Data table',years,rows,_sig:sig});
     }
   }
-  return out.map(({_sig,...x})=>x);
+  const tables=out.map(({_sig,...x})=>x);
+  for(const table of tables){
+    const ps=paragraphs.filter(p=>p.page===table.page).sort((a,b)=>b.y-a.y);
+    for(let i=0;i<ps.length-1;i++){
+      const label=normalize(ps[i].text),valsText=normalize(ps[i+1].text);
+      if(!label||label.split(/\s+/).length>12||!/[A-Za-zÀ-ÿ]/.test(label))continue;
+      if(!/(?:chiffre|revenue|turnover|emplois?|employment|valeur ajoutée|value added|tonnage|traffic|trafic|volume)/i.test(label))continue;
+      const vals=[...valsText.matchAll(numRx)].map(m=>({raw:m[0],value:parseValue(m[0])})).filter(x=>x.value!==null);
+      if(vals.length!==table.years.length)continue;
+      const key=label.toLowerCase().replace(/[^a-zà-ÿ0-9 ]/gi,'').trim();
+      if(table.rows.some(r=>r.label.toLowerCase().replace(/[^a-zà-ÿ0-9 ]/gi,'').trim()===key))continue;
+      let unit='';if(/million/i.test(valsText)&&/[€£$]/.test(valsText))unit='M€';else if(/\bETP\b/i.test(valsText))unit='ETP';else if(/%/.test(valsText))unit='%';
+      table.rows.push({label,unit,values:vals.map((x,k)=>({year:table.years[k],raw:x.raw,value:x.value}))});
+    }
+  }
+  return tables;
 }
 
 function detectTocPages(allLines){
@@ -669,7 +684,7 @@ async function ingestPdf(file,onProgress=()=>{},signal){
   const headingIds=new Set(headings.map(h=>`${h.page}|${h.text}|${h.y}`));
   for(const l of allLines)l.isHeading=headingIds.has(`${l.page}|${l.text}|${l.y}`);
   const paragraphs=mergeParagraphs(allLines,bodySize).map((p,i)=>({...p,id:`para-${i+1}`}));
-  const bullets=detectBullets(allLines);const numbers=detectNumbers(paragraphs);const quotes=detectQuotes(paragraphs);const tables=detectTables(allLines,headings);const tocPages=detectTocPages(allLines);const editorialExcludedPages=detectEditorialExcludedPages(allLines,tocPages);const sections=buildSections(allLines,paragraphs,headings,bodySize);
+  const bullets=detectBullets(allLines);const numbers=detectNumbers(paragraphs);const quotes=detectQuotes(paragraphs);const tables=detectTables(allLines,headings,paragraphs);const tocPages=detectTocPages(allLines);const editorialExcludedPages=detectEditorialExcludedPages(allLines,tocPages);const sections=buildSections(allLines,paragraphs,headings,bodySize);
   onProgress({stage:'evidence',progress:.52,title:'Building the evidence model',detail:`${headings.length} headings · ${tables.length} data tables · ${numbers.length} numeric references · ${paragraphs.length} text blocks`});
 
   const samplePages=[1,Math.max(1,Math.round(pdf.numPages*.34)),Math.max(1,Math.round(pdf.numPages*.67)),pdf.numPages].filter((v,i,a)=>a.indexOf(v)===i);

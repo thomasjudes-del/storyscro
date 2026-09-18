@@ -732,8 +732,12 @@ function editorialParagraphScore(evidence,group,p){
   if(NOISE_RX.test(t)||/^\s*\[\d+\]/.test(t)||/\bdoi\s*:/i.test(t)||/\b(?:et al\.|vol\.|pp?\.)\b/i.test(t))score-=20;
   return score;
 }
+function isTableLikeParagraph(text){
+  const t=normalize(text);const nums=(t.match(/\d+(?:[.,]\d+)?/g)||[]).length;const words=(t.match(/[A-Za-zÀ-ÿ]{3,}/g)||[]).length;
+  return nums>=3&&words<=10;
+}
 function pickEditorialParagraphs(evidence,group,ps,count=3){
-  const ranked=ps.filter(p=>p.text.length>50&&usefulText(p.text)).map(p=>({p,score:editorialParagraphScore(evidence,group,p)})).sort((a,b)=>b.score-a.score||a.p.page-b.p.page);
+  const ranked=ps.filter(p=>p.text.length>50&&usefulText(p.text)&&!isTableLikeParagraph(p.text)).map(p=>({p,score:editorialParagraphScore(evidence,group,p)})).sort((a,b)=>b.score-a.score||a.p.page-b.p.page);
   const out=[];for(const x of ranked){if(out.some(y=>normalize(y.text).slice(0,80)===normalize(x.p.text).slice(0,80)))continue;out.push({...x.p,_editorialScore:x.score});if(out.length>=count)break}
   return out;
 }
@@ -847,7 +851,7 @@ function run(evidence,onProgress=()=>{}){
 
   let sceneCounter=0;
   for(const sec of sourceSections){
-    const ps=sectionParagraphs(evidence,sec);const ns=sectionNumbers(evidence,sec);const bs=sectionBullets(evidence,sec);const years=sectionYears(evidence,sec);const tables=sectionTables(evidence,sec);const chosen=pickEditorialParagraphs(evidence,sec,ps,3);
+    const ps=sectionParagraphs(evidence,sec);const ns=sectionNumbers(evidence,sec);const bs=sectionBullets(evidence,sec);const years=sectionYears(evidence,sec);const tables=sectionTables(evidence,sec);const chosen=pickEditorialParagraphs(evidence,sec,ps,tables.length?2:3);
     const chapterTitle=cleanHeadingTitle(sec.title)||sec.title;
     const chapter={id:`chapter-${chapters.length}`,title:chapterTitle,nav_label:safeNav(chapterTitle),purpose:'source-section',source_evidence_ids:[],scenes:[]};
     const page=sec.page_start;const strongNums=topNumbers(ns.filter(n=>n.strong),4);const table=tables[0];
@@ -862,7 +866,7 @@ function run(evidence,onProgress=()=>{}){
       chapter.scenes.push({id:`scene-${++sceneCounter}`,nav_label:'Key figures',primitive:'metric_sequence',semantic_role:'quantitative_evidence',message:`Key figures from ${chapterTitle}`,title:chapterTitle,data:{items:strongNums.map(n=>({id:n.id,value:n.raw,text:trimAtSentence(n.context,220),page:n.page,asset_id:null}))},source_evidence_ids:evs,source_refs:[...new Set(strongNums.map(n=>n.page))].map(p=>pageRef(file,p)),transformations:[{type:'group',description:'Decision-relevant source numbers grouped without changing their wording.'}],pacing:{intro_hold:.12,outro_hold:.05,reveal_mode:'one_at_a_time',title_behavior:'fade_before_steps',focus_mode:'active_only'}});
     }
 
-    if(!table&&years.length>=3){
+    if(!table&&years.length>=3&&!/method|méthod/i.test(chapterTitle)){
       const evs=years.map(n=>addEv(evidenceForNumber(n,file)));
       chapter.scenes.push({id:`scene-${++sceneCounter}`,nav_label:'Timeline',primitive:'timeline',semantic_role:'chronology',message:`Timeline extracted from ${sec.title}`,title:sec.title,data:{events:years.map(n=>({year:n.raw,text:trimAtSentence(n.context,150),page:n.page}))},source_evidence_ids:evs,source_refs:[...new Set(years.map(n=>n.page))].map(p=>pageRef(file,p)),transformations:[{type:'visualize',description:'Years explicitly present in the source are arranged chronologically.'}],pacing:{intro_hold:.18,outro_hold:.06,reveal_mode:'build',title_behavior:'persistent',focus_mode:'build'}});
     }else if(bs.length>=3&&bs.length<=8){

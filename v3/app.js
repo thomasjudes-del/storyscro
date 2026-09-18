@@ -181,6 +181,12 @@
   }
   function sourceButton(scene,label='Source'){ return `<button class="source-button" type="button" data-scene-source="${esc(scene.id)}">${esc(label)}</button>`; }
   function sceneEvidence(scene){ return (scene.source_evidence_ids||[]).map(id=>evidence.get(id)).filter(Boolean); }
+  function sceneAssets(scene){
+    const ids=new Set((scene.media||[]).map(x=>x.asset_id).filter(Boolean));
+    for(const item of scene.data?.items||[]) if(item.asset_id) ids.add(item.asset_id);
+    for(const step of scene.data?.steps||[]) if(step.asset_id) ids.add(step.asset_id);
+    return [...ids].map(id=>asset(id)).filter(Boolean);
+  }
 
   function mediaMarkup(a,cls='hero-media'){
     if(!a) return `<div class="${cls}"></div>`;
@@ -210,7 +216,7 @@
     const text=String(scene.body||scene.message);
     const first=text.split('. ')[0] + (text.includes('. ')?'.':'');
     const rest=text.slice(first.length).trim();
-    section.innerHTML=`<div class="statement-inner"><p>${esc(first)}</p><h2>${applyEmphasis(rest||text,scene.emphasis)}</h2>${sourceButton(scene)}</div>`;
+    section.innerHTML=`<div class="statement-inner"><p>${applyEmphasis(first,scene.emphasis)}</p><h2>${applyEmphasis(rest||text,scene.emphasis)}</h2>${sourceButton(scene)}</div>`;
     return section;
   }
 
@@ -269,7 +275,7 @@
 
   function renderHorizontalPanels(scene,chapter,kind='generic'){
     const steps=scene.data?.steps||[]; const section=document.createElement('section'); section.className='scrolly scene-dark';
-    section.innerHTML=`<div class="sticky-stage horizontal-stage"><div class="horizontal-heading"><span class="chapter-no">${esc(chapter.nav_label||'')}</span><h2>${esc(scene.title||chapter.title)}</h2></div><div class="horizontal-track">${steps.map((s,i)=>`<article class="horizontal-panel"><div class="panel-bg" style="${bgStyle(s.asset_id)}"></div><div class="panel-copy"><b>${esc(s.n||String(i+1).padStart(2,'0'))}</b><p>${esc(s.title||'')}</p><h3>${esc(s.headline||s.title||'')}</h3><span>${esc(s.text||'')}</span></div></article>`).join('')}</div><div class="horizontal-source">${sourceButton(scene)}</div></div><div class="scroll-space ${steps.length>4?'long':''}"></div>`;
+    section.innerHTML=`<div class="sticky-stage horizontal-stage"><div class="horizontal-heading"><span class="chapter-no">${esc(chapter.nav_label||'')}</span><h2>${applyEmphasis(scene.title||chapter.title,scene.emphasis)}</h2></div><div class="horizontal-track">${steps.map((s,i)=>`<article class="horizontal-panel"><div class="panel-bg" style="${bgStyle(s.asset_id)}"></div><div class="panel-copy"><b>${esc(s.n||String(i+1).padStart(2,'0'))}</b><p>${applyEmphasis(s.title||'',s.emphasis||scene.emphasis)}</p><h3>${applyEmphasis(s.headline||s.title||'',s.emphasis||scene.emphasis)}</h3><span>${applyEmphasis(s.text||'',s.emphasis||scene.emphasis)}</span></div></article>`).join('')}</div><div class="horizontal-source">${sourceButton(scene)}</div></div><div class="scroll-space ${steps.length>4?'long':''}"></div>`;
     section._update=p=>{ const track=$('.horizontal-track',section); const pos=clamp(p)*(Math.max(1,steps.length-1)); const x=pos*innerWidth; track.style.transform=`translate3d(${-x}px,0,0)`; $$('.panel-bg',section).forEach((bg,i)=>{if(!motionReduced) bg.style.transform=`scale(1.08) translate3d(${(i-pos)*1.2}%,0,0)`;}); };
     return section;
   }
@@ -320,7 +326,7 @@
 
   function renderConclusion(scene){
     const section=document.createElement('section'); section.className='finale';
-    section.innerHTML=`<div class="finale-inner"><p class="kicker">${esc(scene.kicker||'')}</p><h2>${esc(scene.title||scene.message).replace(/\. /g,'.<br>')}</h2>${sourceButton(scene)}</div>`;
+    section.innerHTML=`<div class="finale-inner"><p class="kicker">${esc(scene.kicker||'')}</p><h2>${applyEmphasis(scene.title||scene.message,scene.emphasis).replace(/\. /g,'.<br>')}</h2>${sourceButton(scene)}</div>`;
     return section;
   }
 
@@ -371,8 +377,8 @@
   function showSceneSource(sceneId){
     const scene = STORY.chapters.flatMap(c=>c.scenes).find(s=>s.id===sceneId); if(!scene) return;
     const evs=sceneEvidence(scene); sourceTitle.textContent=scene.title||scene.message||'Sources';
-    const refs=scene.source_refs||[];
-    sourceBody.innerHTML=`${refs.map(r=>`<div class="source-card"><b>${esc(r.file)} | page ${esc(r.page)}</b>${r.quote?`<p>${esc(r.quote)}</p>`:''}</div>`).join('')}${evs.map(ev=>`<div class="source-card"><b>${esc(ev.status)} | ${esc(ev.type)}</b><p>${esc(ev.text||String(ev.value??''))}</p><div class="source-evidence">${(ev.source_refs||[]).map(r=>`<span>p.${esc(r.page)}</span>`).join('')}</div></div>`).join('')}${(scene.transformations||[]).length?`<div class="source-card"><b>Transformations éditoriales</b>${scene.transformations.map(t=>`<p><strong>${esc(t.type)}</strong> - ${esc(t.description)}</p>`).join('')}</div>`:''}`;
+    const refs=scene.source_refs||[], media=sceneAssets(scene);
+    sourceBody.innerHTML=`${refs.map(r=>`<div class="source-card"><b>${esc(r.file)} | page ${esc(r.page)}</b>${r.quote?`<p>${esc(r.quote)}</p>`:''}</div>`).join('')}${evs.map(ev=>`<div class="source-card"><b>${esc(ev.status)} | ${esc(ev.type)}</b><p>${esc(ev.text||String(ev.value??''))}</p><div class="source-evidence">${(ev.source_refs||[]).map(r=>`<span>p.${esc(r.page)}</span>`).join('')}</div></div>`).join('')}${media.map(a=>`<div class="source-card asset-credit"><b>${esc((a.origin||'media').toUpperCase())} | visuel</b><p>${esc(a.caption||a.alt||'')}</p>${a.credit?`<p><strong>Crédit:</strong> ${esc(a.credit)}</p>`:''}${a.license?`<div class="source-evidence"><span>${esc(a.license)}</span></div>`:''}</div>`).join('')}${(scene.transformations||[]).length?`<div class="source-card"><b>Transformations éditoriales</b>${scene.transformations.map(t=>`<p><strong>${esc(t.type)}</strong> - ${esc(t.description)}</p>`).join('')}</div>`:''}`;
     openDrawer();
   }
   function showAllSources(){ sourceTitle.textContent='Sources du récit'; sourceBody.innerHTML=(STORY.evidence||[]).map(ev=>`<div class="source-card"><b>${esc(ev.status)} | ${esc(ev.type)}</b><p>${esc(ev.text||String(ev.value??''))}</p><div class="source-evidence">${(ev.source_refs||[]).map(r=>`<span>${esc(r.file)} p.${esc(r.page)}</span>`).join('')}</div></div>`).join(''); openDrawer(); }

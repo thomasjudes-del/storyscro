@@ -562,7 +562,7 @@ async function samplePalette(pdf,pageNumbers){
 }
 
 function inferDocumentTitle(lines,metadata){
-  if(metadata?.info?.Title&&normalize(metadata.info.Title).length>3&&!/untitled/i.test(metadata.info.Title))return normalize(metadata.info.Title);
+  if(metadata?.info?.Title&&normalize(metadata.info.Title).length>3&&!/^(?:untitled|\(?anonymous\)?|none|null)$/i.test(normalize(metadata.info.Title)))return normalize(metadata.info.Title);
   const first=lines.filter(x=>x.page===1&&!x.isRepeated).sort((a,b)=>b.maxSize-a.maxSize||b.y-a.y);
   const candidates=first.filter(x=>x.text.length>=3&&x.text.length<=160&&x.topRatio<.65).slice(0,5);
   if(!candidates.length)return 'Untitled report';
@@ -700,9 +700,9 @@ function sectionYears(evidence,section){const arr=sectionNumbers(evidence,sectio
 function sectionTables(evidence,section){
   const titles=new Set((section.grouped_titles||[section.title]).map(cleanHeadingTitle).map(x=>x.toLowerCase()).filter(Boolean));
   const all=evidence.tables||[];
-  const exact=all.filter(t=>titles.has(cleanHeadingTitle(t.title).toLowerCase()));
-  if(exact.length)return exact;
   const inRange=all.filter(t=>t.page>=section.page_start&&t.page<=section.page_end);
+  const exact=inRange.filter(t=>titles.has(cleanHeadingTitle(t.title).toLowerCase()));
+  if(exact.length)return exact;
   if(inRange.length===1)return inRange;
   return inRange.filter(t=>{const tt=cleanHeadingTitle(t.title).toLowerCase();return [...titles].some(st=>st&&tt&&(st.includes(tt)||tt.includes(st)))});
 }

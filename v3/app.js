@@ -136,6 +136,8 @@
     set('--paper',p.surface||p.background);
     set('--white',p.background);
     set('--muted',p.muted);
+    set('--font-heading',ds.typography?.heading_stack);
+    set('--font-body',ds.typography?.body_stack);
     const brand=ds.branding?.publisher||STORY.document.publisher;
     const brandText=$('.brand span:last-child');
     if(brand && brandText) brandText.textContent=brand;

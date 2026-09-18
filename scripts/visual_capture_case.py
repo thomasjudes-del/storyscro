@@ -75,6 +75,7 @@ def inspect_layout(driver, scene_id):
         })(),
         proofCopyOpacity:scene?.querySelector('.proof-copy')?Number(getComputedStyle(scene.querySelector('.proof-copy')).opacity):null,
         progressiveActiveTiles:scene?.querySelectorAll('.mosaic.progressive .mosaic-tile.active').length??null,
+        progressiveVisibleTiles:scene?.querySelector('.mosaic.progressive')?[...scene.querySelectorAll('.mosaic.progressive .mosaic-tile')].filter(el=>Number(getComputedStyle(el).opacity)>.16).length:null,
         sourceDeep:getComputedStyle(document.documentElement).getPropertyValue('--deep').trim(),
         offenders:offenders.slice(0,30)
       };
@@ -93,6 +94,8 @@ def inspect_layout(driver, scene_id):
         raise RuntimeError(f'Clipped horizontal narrative copy at {scene_id}: {dims["activeHorizontalRect"]}')
     if dims.get('collisions'):
         raise RuntimeError(f'Visible narrative text collision at {scene_id}: {dims["collisions"]}')
+    if dims.get('progressiveVisibleTiles') is not None and dims['progressiveVisibleTiles'] > 1:
+        raise RuntimeError(f'Progressive scene visually overlaps states at {scene_id}: {dims["progressiveVisibleTiles"]} visible tiles')
     if not dims['scrubber']:
         raise RuntimeError('Generic draggable scrubber is missing')
     return dims

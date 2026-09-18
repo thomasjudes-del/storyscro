@@ -707,12 +707,6 @@
               ]
             }
           ],
-          "media": [
-            {
-              "asset_id": "ccc-hero-barrier",
-              "role": "intro_background"
-            }
-          ],
           "pacing": {
             "intro_hold": 0.2,
             "outro_hold": 0.07,

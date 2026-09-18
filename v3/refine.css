@@ -67,8 +67,8 @@ html,body{max-width:100%;overflow-x:clip}
 .story-scene mark.em-underline{background:none;text-decoration:none;box-shadow:inset 0 -.12em 0 color-mix(in srgb,var(--brand-accent) 68%,transparent)}
 .story-scene mark.em-marker_highlight,
 .story-scene mark.scroll-highlight{background:linear-gradient(transparent 56%,color-mix(in srgb,var(--brand-accent) 46%,transparent) 56%);background-size:0 100%;background-repeat:no-repeat;transition:background-size .5s var(--ease)}
-.story-scene.in-view mark.em-marker_highlight,
-.story-scene.in-view mark.scroll-highlight{background-size:100% 100%}
+.story-scene:not(.scrolly).in-view mark.em-marker_highlight,
+.story-scene:not(.scrolly).in-view mark.scroll-highlight{background-size:100% 100%}
 
 /* Scene lifecycle: arrive, settle, reveal, hold, exit */
 .mosaic-intro,.proof-title,.proof-copy{transition:opacity .28s var(--ease),transform .28s var(--ease)}
@@ -128,3 +128,68 @@ h1,h2,h3,.brand,.chapter-nav,.micro-nav{font-family:var(--font-heading,var(--fon
 .mosaic.progressive .mosaic-tile.active{animation:storyscro-state-in .28s var(--ease) both}
 @keyframes storyscro-state-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.mosaic.progressive .mosaic-tile.active{animation:none!important}}
+
+
+/* Semantic slide rhythm: one-screen scenes settle cleanly; oversized scrolly scenes remain freely scrollable inside. */
+html{scroll-snap-type:y proximity}
+.story-scene{scroll-snap-align:start;scroll-snap-stop:normal}
+.header-actions{display:flex;align-items:center;gap:8px;min-width:max-content}
+.source-pdf-link{display:inline-flex;align-items:center;text-decoration:none;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:8px 12px;font-size:12px;backdrop-filter:blur(8px)}
+.source-pdf-link:hover{background:rgba(255,255,255,.16)}
+.source-pdf-link[hidden]{display:none!important}
+.micro-controls{display:none!important}
+
+/* Desktop hero safe area: the fixed header must never crop the opening line. */
+@media(min-width:821px){
+  .hero{align-items:flex-start;min-height:100svh;height:auto}
+  .hero-copy{width:min(1120px,90vw);padding:calc(var(--header-h) + 6vh) 7vw 8vh}
+  .hero h1{font-size:clamp(54px,7.35vw,118px);line-height:.87}
+  .hero-deck{margin:22px 0}
+}
+
+/* Scroll-linked emphasis behaves like a real marker/underline being drawn while the reader is held in the scene. */
+.story-scene mark.em-underline{
+  background:linear-gradient(transparent 78%,color-mix(in srgb,var(--brand-accent) 76%,transparent) 78%);
+  background-size:calc(var(--emphasis-progress,0) * 100%) 100%;
+  background-repeat:no-repeat;
+  box-shadow:none;
+  transition:none
+}
+.story-scene mark.em-marker_highlight,
+.story-scene mark.scroll-highlight{
+  background:linear-gradient(transparent 56%,color-mix(in srgb,var(--brand-accent) 46%,transparent) 56%);
+  background-size:calc(var(--emphasis-progress,0) * 100%) 100%;
+  background-repeat:no-repeat;
+  transition:none
+}
+.story-scene:not(.scrolly).in-view mark.em-underline,
+.story-scene:not(.scrolly).in-view mark.em-marker_highlight,
+.story-scene:not(.scrolly).in-view mark.scroll-highlight{background-size:100% 100%}
+
+/* Full-screen statements now have a held frame so the highlight can visibly draw itself. */
+.statement-scrolly{padding:0;background:var(--paper)}
+.statement-stage{display:grid;place-items:center;padding:calc(var(--header-h) + 7vh) 8vw 8vh;background:var(--paper)}
+.statement-stage .statement-inner{width:min(1180px,100%)}
+
+/* Key metric scene: hold, enlarge, highlight, then invert the field around the evidence. */
+.metric-stage{background:var(--white);color:var(--ink);isolation:isolate;transition:color .34s var(--ease)}
+.metric-backdrop{position:absolute;inset:0;background:var(--brand-primary);opacity:var(--metric-progress,0);transition:opacity .12s linear;z-index:-1}
+.metric-inner{position:relative;z-index:2;width:min(1180px,88vw);height:100%;display:grid;align-content:center;grid-template-columns:minmax(210px,.78fr) minmax(0,1.25fr);grid-template-areas:"kicker copy" "number title" "number body" "number source";column-gap:7vw;padding:calc(var(--header-h) + 6vh) 0 7vh}
+.metric-inner .kicker{grid-area:kicker;align-self:end;margin-bottom:12px}
+.metric-stage .big-number-value{grid-area:number;align-self:center;font-size:clamp(210px,31vw,480px);line-height:.68;color:var(--brand-accent);transform:scale(calc(.78 + var(--metric-progress,0) * .25));transform-origin:45% 55%;transition:none;letter-spacing:-.09em}
+.metric-stage h2{grid-area:title;align-self:end;font-size:clamp(44px,5.3vw,78px);line-height:.94;letter-spacing:-.05em;margin:0 0 18px;max-width:720px}
+.metric-stage p:not(.kicker){grid-area:body;font-size:19px;line-height:1.5;max-width:650px;margin:0;color:color-mix(in srgb,var(--ink) 70%,#fff)}
+.metric-stage .source-button{grid-area:source;justify-self:start;margin-top:24px;color:var(--ink);border-color:color-mix(in srgb,var(--ink) 28%,transparent);background:rgba(255,255,255,.5)}
+.metric-inverted .metric-stage{color:#fff}
+.metric-inverted .metric-stage p:not(.kicker){color:rgba(255,255,255,.78)}
+.metric-inverted .metric-stage .source-button{color:#fff;border-color:rgba(255,255,255,.3);background:rgba(0,0,0,.12)}
+
+@media(max-width:820px){
+  html{scroll-snap-type:y proximity}
+  .header-actions{gap:5px}
+  .source-pdf-link{padding:7px 9px;font-size:11px}
+  .metric-inner{width:88vw;grid-template-columns:1fr;grid-template-areas:"kicker" "number" "title" "body" "source";align-content:center;padding:calc(var(--header-h) + 5vh) 0 7vh}
+  .metric-stage .big-number-value{font-size:clamp(180px,58vw,300px);line-height:.7;margin:4vh 0}
+  .metric-stage h2{font-size:clamp(36px,9.5vw,54px)}
+  .metric-stage p:not(.kicker){font-size:16px}
+}

@@ -89,6 +89,22 @@
       "credit": "David Allen / Pexels",
       "license": "Pexels free to use",
       "license_url": "https://www.pexels.com/photo/london-city-skyline-with-river-thames-view-35026697/"
+    },
+    {
+      "id": "ccc-source-assessment-figure",
+      "type": "image",
+      "uri": "https://shattered-dragons-enigma.thomas-judes.workers.dev/assets/storyscro/ccc-2025/source/figure-1-assessment.png",
+      "alt": "Climate Change Committee assessment summary figure showing outcome ratings",
+      "caption": "Source visual extracted from the CCC PDF assessment summary figure.",
+      "origin": "source",
+      "source_page": 16,
+      "credit": "Climate Change Committee",
+      "source_refs": [
+        {
+          "file": "Progress-in-adapting-to-climate-change-2025.pdf",
+          "page": 16
+        }
+      ]
     }
   ],
   "evidence": [
@@ -612,6 +628,12 @@
             {
               "text": "low scores",
               "style": "underline"
+            }
+          ],
+          "media": [
+            {
+              "asset_id": "ccc-source-assessment-figure",
+              "role": "source_visual"
             }
           ]
         }

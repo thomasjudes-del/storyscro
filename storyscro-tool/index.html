@@ -298,15 +298,30 @@ function titleCaseRatio(text){
   return good/words.length;
 }
 
+function numberedHeadingQuality(line,bodySize){
+  const text=normalize(line.text);
+  const m=text.match(/^(\d{1,2}(?:\.\d+){0,3})\.?\s+(.+)/);
+  if(!m)return false;
+  const rest=normalize(m[2]),words=rest.split(/\s+/).length;
+  if(!rest||rest.length>92||words>13||/[:;].{32,}/.test(rest)||/[.!?]$/.test(rest))return false;
+  if(/^(?:project|deliverable)\s+\d+/i.test(rest)||isCitationLike(text))return false;
+  const firstAlpha=(rest.match(/[A-Za-zÀ-ÿ]/)||[''])[0];
+  const titleish=firstAlpha&&firstAlpha===firstAlpha.toUpperCase()&&titleCaseRatio(rest)>=.54;
+  const canonical=/^(?:introduction|background|related work|method(?:s|ology)?|approach|model architecture|experiments?|results?|discussion|limitations?|recommendations?|conclusions?|summary|outlook|policy priorities|comparison|contexte|méthode|résultats?|conclusion|recommandations?)\b/i.test(rest);
+  const visual=line.maxSize>=bodySize*1.08 || line.bold;
+  return line.maxSize>=bodySize*.86 && (canonical||titleish||visual);
+}
+
 function isHeadingLike(line,bodySize){
   const text=normalize(line.text); if(!text||line.isRepeated||line.rotated)return false;
   if(isBoilerplateText(text)||isCitationLike(text)||/^(?:figure|fig\.?|table|algorithm)\s*\d+/i.test(text))return false;
   const words=text.split(/\s+/).length;
   if(words>18&&line.page!==1)return false;
   if(line.x>line.pageWidth*.82)return false;
-  const numbered=/^\d{1,2}(?:\.\d+){0,3}\.?\s+[A-Za-zÀ-ÿ]/.test(text);
-  const canonical=/^(?:abstract|introduction|background|related work|method(?:s|ology)?|approach|model(?: architecture)?|experiments?|results?|discussion|limitations?|recommendations?|conclusions?|summary|outlook|references|appendix|annex|overview|executive summary|context|méthode|résultats?|discussion|conclusion|recommandations?|synthèse|introduction|contexte|policies|policy priorities|crosscurrents)\b/i.test(text);
-  const titleish=words>=2&&words<=12&&line.maxSize>=bodySize*1.12&&titleCaseRatio(text)>=.68&&!/[.!?;]$/.test(text);
+  const numbered=numberedHeadingQuality(line,bodySize);
+  const canonical=/^(?:abstract|introduction|background|related work|method(?:s|ology)?|approach|model architecture|experiments?|results?|discussion|limitations?|recommendations?|conclusions?|summary|outlook|references|appendix|annex|overview|executive summary|context|méthode|résultats?|conclusion|recommandations?|synthèse|contexte|policies|policy priorities|crosscurrents|comparison)\b/i.test(text);
+  const firstAlpha=(text.match(/[A-Za-zÀ-ÿ]/)||[''])[0];
+  const titleish=words>=2&&words<=12&&firstAlpha&&firstAlpha===firstAlpha.toUpperCase()&&line.maxSize>=bodySize*1.12&&titleCaseRatio(text)>=.68&&!/[.!?;]$/.test(text);
   const sizeSignal=line.maxSize>=bodySize*1.34 || (line.bold&&line.maxSize>=bodySize*1.05&&words<=12);
   return numbered||canonical||titleish||sizeSignal;
 }
@@ -353,6 +368,18 @@ function detectTocPages(allLines){
   return out;
 }
 
+function detectEditorialExcludedPages(allLines,tocPages=new Set()){
+  const out=new Set(tocPages);
+  const byPage=new Map();
+  for(const l of allLines){if(!byPage.has(l.page))byPage.set(l.page,[]);byPage.get(l.page).push(l)}
+  const frontRx=/^(?:list of tables|list of figures|acronyms?(?: and abbreviations)?|abbreviations?|glossary|disclaimer|legal notice)$/i;
+  for(const [page,lines] of byPage){
+    const early=lines.filter(l=>l.topRatio<.42).map(l=>normalize(l.text));
+    if(early.some(t=>frontRx.test(t)))out.add(page);
+  }
+  return out;
+}
+
 function sectionKind(text){
   const t=normalize(text);
   if(/^(?:endnotes?|references?|bibliography|références|bibliographie)\b/i.test(t)||/^\d+\s+references?\b/i.test(t))return 'references';
@@ -361,32 +388,43 @@ function sectionKind(text){
   return 'core';
 }
 
-function structuralHeading(h,bodySize){
+function structuralHeading(h,bodySize,denseNumberedPages=new Set()){
   const t=normalize(h.text);
   if(!t||isBoilerplateText(t)||isCitationLike(t)||/\.{5,}/.test(t)||/^(?:figure|fig\.?|table|algorithm)\s*\d+/i.test(t))return false;
   if(/^(?:endnotes?|references?|bibliography|références|bibliographie|annex|appendix)\b/i.test(t))return true;
   if(/^chapter\s+\d+\b/i.test(t))return true;
-  if(/^(?:abstract|executive summary|résumé exécutif|introduction|background|related work|method(?:s|ology)?|approach|model(?: architecture)?|experiments?|results?|discussion|limitations?|recommendations?|conclusions?|summary|outlook|policy priorities|policies to|synthèse|conclusion|recommandations?)\b/i.test(t))return true;
-  const m=t.match(/^(\d{1,2})(?:\.)?\s+(.+)/);
-  if(m){
-    const n=Number(m[1]),rest=m[2];
-    if(n<=9&&rest.length<=115&&!/^(?:project\s+\d+|deliverable\s+\d+)/i.test(rest)&&!isCitationLike(t)&&!/:.{55,}/.test(rest))return true;
+  if(/^(?:abstract|executive summary|résumé exécutif|introduction|background|related work|method(?:s|ology)?|approach|model architecture|experiments?|results?|discussion|limitations?|recommendations?|conclusions?|summary|outlook|policy priorities|policies to|synthèse|conclusion|recommandations?|comparison)\b/i.test(t))return h.maxSize>=bodySize*.92||h.bold;
+  const numbered=t.match(/^(\d{1,2}(?:\.\d+){0,3})\.?\s+(.+)/);
+  if(numbered){
+    const prefix=numbered[1],rest=normalize(numbered[2]),depth=prefix.split('.').length;
+    if(/^\d+$/.test(prefix)&&denseNumberedPages.has(h.page)&&h.maxSize<bodySize*1.18)return false;
+    if(rest.length>92||/:.{32,}/.test(rest)||/[.!?]$/.test(rest)||/^(?:project|deliverable)\s+\d+/i.test(rest))return false;
+    const firstAlpha=(rest.match(/[A-Za-zÀ-ÿ]/)||[''])[0];
+    const titleish=firstAlpha&&firstAlpha===firstAlpha.toUpperCase()&&titleCaseRatio(rest)>=.54;
+    const visual=h.maxSize>=bodySize*1.08||h.bold;
+    return depth>1 ? (h.maxSize>=bodySize*1.04&&(titleish||visual)) : (titleish||visual);
   }
-  return false;
+  const words=t.split(/\s+/).length,firstAlpha=(t.match(/[A-Za-zÀ-ÿ]/)||[''])[0];
+  return words>=2&&words<=11&&firstAlpha&&firstAlpha===firstAlpha.toUpperCase()&&h.maxSize>=bodySize*1.22&&titleCaseRatio(t)>=.64&&!/[.!?;:]$/.test(t);
 }
 
 function fallbackEditorialHeading(h,bodySize){
   const t=normalize(h.text),words=t.split(/\s+/).length;
   if(h.page<=1||words<2||words>12||t.length>100||isBoilerplateText(t)||isCitationLike(t)||/\.{4,}/.test(t))return false;
   if(/^(?:july|april|may|june|202\d|world|economic|outlook|update|international monetary fund)$/i.test(t))return false;
-  return h.maxSize>=bodySize*1.1&&titleCaseRatio(t)>=.62&&!/[.!?;]$/.test(t);
+  const firstAlpha=(t.match(/[A-Za-zÀ-ÿ]/)||[''])[0];
+  return firstAlpha&&firstAlpha===firstAlpha.toUpperCase()&&h.maxSize>=bodySize*1.14&&titleCaseRatio(t)>=.66&&!/[.!?;:]$/.test(t);
 }
 
 function buildSections(allLines,paragraphs,headings,bodySize){
   const order=(page,y)=>page*100000-y;
   const tocPages=detectTocPages(allLines);
-  const clean=headings.filter(h=>!tocPages.has(h.page)&&!isBoilerplateText(h.text)&&!isCitationLike(h.text)&&!/^(?:figure|fig\.?|table|algorithm)\s*\d+/i.test(h.text));
-  let structural=clean.filter(h=>structuralHeading(h,bodySize));
+  const excludedPages=detectEditorialExcludedPages(allLines,tocPages);
+  const clean=headings.filter(h=>!excludedPages.has(h.page)&&!isBoilerplateText(h.text)&&!isCitationLike(h.text)&&!/^(?:figure|fig\.?|table|algorithm)\s*\d+/i.test(h.text));
+  const simpleNumberCounts=new Map();
+  for(const h of clean){if(/^\d{1,2}\.?\s+/.test(normalize(h.text))&&h.maxSize<bodySize*1.18)simpleNumberCounts.set(h.page,(simpleNumberCounts.get(h.page)||0)+1)}
+  const denseNumberedPages=new Set([...simpleNumberCounts.entries()].filter(([,n])=>n>=4).map(([page])=>page));
+  let structural=clean.filter(h=>structuralHeading(h,bodySize,denseNumberedPages));
 
   // If the report exposes explicit "Chapter N" openers, use those as the backbone and keep only summary/front matter before them.
   const chapterHeads=structural.filter(h=>/^chapter\s+\d+\b/i.test(normalize(h.text)));
@@ -483,14 +521,15 @@ function inferSubtitle(lines,title,bodySize){
 
 function safePublisher(info,lines,bodySize){
   const institutionRx=/\b(?:commission|committee|fund|bank|agency|ministry|department|council|organisation|organization|institute|university|authority|government|parliament|office)\b/i;
-  const proseNoise=/\b(?:reuse|reproduction|publication|permission|copyright|acknowledged|responsible|disclaimer|shall not|may be held|source of the)\b/i;
+  const proseNoise=/\b(?:reuse|reproduction|publication|permission|copyright|acknowledged|responsible|disclaimer|shall not|may be held|source of the|report to|report for|presented to|pursuant to)\b/i;
   const plausible=t=>{
     t=normalize(t);const words=t.split(/\s+/).length;
     return t.length>=4&&t.length<=82&&words<=11&&institutionRx.test(t)&&!proseNoise.test(t)&&!/[.!?;:]$/.test(t);
   };
+  const namedInstitution=/climate change committee|international monetary fund|european commission|world bank|world health organization|organisation for economic co-operation|organization for economic cooperation/i;
   const early=lines.filter(l=>l.page<=3&&!l.isRepeated&&plausible(l.text))
-    .sort((a,b)=>(b.maxSize/bodySize)-(a.maxSize/bodySize)||a.page-b.page||a.text.length-b.text.length);
-  const strong=early.find(l=>l.maxSize>=bodySize*1.02||/climate change committee|international monetary fund|european commission|world bank/i.test(l.text));
+    .sort((a,b)=>(namedInstitution.test(b.text)?6:0)-(namedInstitution.test(a.text)?6:0)+(b.maxSize/bodySize)-(a.maxSize/bodySize)||a.page-b.page||a.text.length-b.text.length);
+  const strong=early.find(l=>namedInstitution.test(l.text)||l.maxSize>=bodySize*1.08);
   if(strong)return normalize(strong.text).replace(/\s*[|·-]\s*(?:April|July|June|May|September|October|November|December)\b.*$/i,'').slice(0,82);
   const author=normalize(info?.Author||'');
   if(plausible(author))return author;
@@ -536,7 +575,7 @@ async function ingestPdf(file,onProgress=()=>{},signal){
   const headingIds=new Set(headings.map(h=>`${h.page}|${h.text}|${h.y}`));
   for(const l of allLines)l.isHeading=headingIds.has(`${l.page}|${l.text}|${l.y}`);
   const paragraphs=mergeParagraphs(allLines,bodySize).map((p,i)=>({...p,id:`para-${i+1}`}));
-  const bullets=detectBullets(allLines);const numbers=detectNumbers(paragraphs);const quotes=detectQuotes(paragraphs);const tocPages=detectTocPages(allLines);const sections=buildSections(allLines,paragraphs,headings,bodySize);
+  const bullets=detectBullets(allLines);const numbers=detectNumbers(paragraphs);const quotes=detectQuotes(paragraphs);const tocPages=detectTocPages(allLines);const editorialExcludedPages=detectEditorialExcludedPages(allLines,tocPages);const sections=buildSections(allLines,paragraphs,headings,bodySize);
   onProgress({stage:'evidence',progress:.52,title:'Building the evidence model',detail:`${headings.length} headings · ${numbers.length} numeric references · ${paragraphs.length} text blocks`});
 
   const samplePages=[1,Math.max(1,Math.round(pdf.numPages*.34)),Math.max(1,Math.round(pdf.numPages*.67)),pdf.numPages].filter((v,i,a)=>a.indexOf(v)===i);
@@ -568,6 +607,7 @@ async function ingestPdf(file,onProgress=()=>{},signal){
     sections:sections.map(s=>({id:s.id,title:s.title,page_start:s.pageStart,page_end:s.pageEnd,kind:s.kind||'core',paragraph_ids:s.paragraphs.map(p=>p.id)})),
     repeated_lines:[...repeatedKeys],
     toc_pages:[...tocPages],
+    editorial_excluded_pages:[...editorialExcludedPages],
     snapshots,
     stats:{pages:pdf.numPages,headings:headings.length,paragraphs:paragraphs.length,numbers:numbers.length,bullets:bullets.length,quotes:quotes.length,sections:sections.length,elapsed_ms:Math.round(performance.now()-started)}
   };
@@ -617,7 +657,7 @@ function consolidateSections(evidence,max=6){
 }
 
 function chooseStatement(evidence){
-  const tocPages=new Set(evidence.toc_pages||[]);
+  const tocPages=new Set([...(evidence.toc_pages||[]),...(evidence.editorial_excluded_pages||[])]);
   const structuralNoise=t=>/\.{5,}|^(?:contents|table of contents|list of (?:tables|figures)|sommaire)\b/i.test(normalize(t));
   const summaryIds=new Set(evidence.sections.filter(s=>s.kind==='summary'||/abstract|executive summary|résumé exécutif/i.test(s.title||'')).flatMap(s=>s.paragraph_ids||[]));
   const candidates=evidence.paragraphs.filter(p=>p.page<=Math.min(12,evidence.document.page_count)&&!tocPages.has(p.page)&&p.text.length>70&&p.text.length<1100&&usefulText(p.text)&&!structuralNoise(p.text));
@@ -629,6 +669,8 @@ function chooseStatement(evidence){
     if(p.page<=2)score+=3; else if(p.page<=5)score+=1;
     if(/^(?:abstract|executive summary)\b/i.test(t))score+=2;
     if(/\b(?:author|affiliation|members? of|chair|biography|university|conference|permission|reproduce|presented to parliament pursuant)\b/i.test(t))score-=10;
+    const acronymTokens=(t.match(/\b[A-Z]{2,7}\b/g)||[]).length;
+    if(acronymTokens>=5&&acronymTokens/Math.max(1,t.split(/\s+/).length)>.12)score-=18;
     if(NOISE_RX.test(t))score-=20;
     return{p,score};
   }).sort((a,b)=>b.score-a.score||a.p.page-b.p.page);
@@ -637,7 +679,7 @@ function chooseStatement(evidence){
 }
 
 function chooseConclusion(evidence,sections){
-  const tocPages=new Set(evidence.toc_pages||[]);
+  const tocPages=new Set([...(evidence.toc_pages||[]),...(evidence.editorial_excluded_pages||[])]);
   const core=sections.filter(s=>s.kind!=='references'&&s.kind!=='annex');
   const explicit=[...core].reverse().find(s=>/conclusion|summary|outlook|recommend|discussion|synthèse|conclusion|recommandation|policy priorities/i.test(s.title||''));
   const fromSection=s=>{

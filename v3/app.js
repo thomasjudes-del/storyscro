@@ -27,6 +27,7 @@
     assets = new Map((STORY.assets||[]).map(x => [x.id,x]));
     evidence = new Map((STORY.evidence||[]).map(x => [x.id,x]));
     document.title = `${STORY.document.title} | StoryScro`;
+    applyDesignSystem();
     renderStory();
     installGlobalInteractions();
     loading.remove();
@@ -112,12 +113,72 @@
     el.dataset.chapter = chapter.id;
     el.dataset.navLabel = scene.nav_label || scene.title || chapter.nav_label || chapter.title;
     el.dataset.primitive = scene.primitive;
+    el._storyScene = scene;
     el.classList.add('story-scene','chapter-anchor');
     return el;
   }
 
   function asset(id){ return assets.get(id); }
   function bgStyle(id){ const a=asset(id); return a?.uri ? `background-image:url('${a.uri.replace(/'/g,"%27")}')` : ''; }
+
+  function applyDesignSystem(){
+    const ds=STORY.design_system||{};
+    const p=ds.palette||{};
+    const style=document.documentElement.style;
+    const set=(name,value)=>{ if(value) style.setProperty(name,value); };
+    set('--brand-primary',p.primary);
+    set('--brand-secondary',p.secondary);
+    set('--brand-accent',p.accent);
+    set('--deep',p.primary);
+    set('--ink',p.text||p.primary);
+    set('--blue',p.secondary||p.accent);
+    set('--orange',p.accent||p.secondary);
+    set('--paper',p.surface||p.background);
+    set('--white',p.background);
+    set('--muted',p.muted);
+    const brand=ds.branding?.publisher||STORY.document.publisher;
+    const brandText=$('.brand span:last-child');
+    if(brand && brandText) brandText.textContent=brand;
+    const theme=document.querySelector('meta[name="theme-color"]');
+    if(theme && p.primary) theme.setAttribute('content',p.primary);
+    document.body.dataset.sourceDesign=ds.source_strategy||'adapt';
+  }
+
+  function pacing(scene){
+    return {...(GRAMMAR.scene_lifecycle?.default||{}),...(scene.pacing||{})};
+  }
+
+  function lifecycle(scene,p,count=1){
+    const cfg=pacing(scene);
+    const intro=clamp(Number(cfg.intro_hold??.16),0,.45);
+    const outro=clamp(Number(cfg.outro_hold??.06),0,.35);
+    if(p<intro) return {phase:'intro',index:-1,progress:0,local:0,cfg};
+    if(p>1-outro) return {phase:'outro',index:Math.max(0,count-1),progress:1,local:1,cfg};
+    const q=clamp((p-intro)/Math.max(.001,1-intro-outro));
+    const pos=q*Math.max(1,count);
+    const index=Math.min(Math.max(0,count-1),Math.floor(Math.min(.999999,q)*Math.max(1,count)));
+    return {phase:'reveal',index,progress:q,local:pos-Math.floor(pos),cfg};
+  }
+
+  function visibleEnough(el){
+    if(!el) return false;
+    const cs=getComputedStyle(el), r=el.getBoundingClientRect();
+    return cs.display!=='none' && cs.visibility!=='hidden' && Number(cs.opacity||1)>.16 && r.width>0 && r.height>0;
+  }
+  function overlaps(a,b,pad=12){
+    if(!visibleEnough(a)||!visibleEnough(b)) return false;
+    const x=a.getBoundingClientRect(), y=b.getBoundingClientRect();
+    return x.left < y.right+pad && x.right+pad > y.left && x.top < y.bottom+pad && x.bottom+pad > y.top;
+  }
+  function resolveSceneCollisions(sceneEl){
+    const guards=[['.proof-stage','.proof-title','.proof-copy'],['.horizontal-stage','.horizontal-heading','.panel-copy'],['.deliverable-stage','.deliverable-heading','.delivery-copy'],['.network-stage','.network-title','.workshop-copy']];
+    for(const [stageSel,titleSel,copySel] of guards){
+      const stage=sceneEl.querySelector(stageSel); if(!stage) continue;
+      const title=stage.querySelector(titleSel);
+      const copies=[...stage.querySelectorAll(copySel)].filter(visibleEnough);
+      stage.classList.toggle('collision-safe',copies.some(copy=>overlaps(title,copy)));
+    }
+  }
   function sourceButton(scene,label='Source'){ return `<button class="source-button" type="button" data-scene-source="${esc(scene.id)}">${esc(label)}</button>`; }
   function sceneEvidence(scene){ return (scene.source_evidence_ids||[]).map(id=>evidence.get(id)).filter(Boolean); }
 
@@ -130,7 +191,7 @@
   function renderHero(scene){
     const section=document.createElement('section'); section.className='hero';
     const a=asset(scene.media?.[0]?.asset_id);
-    section.innerHTML = `${mediaMarkup(a)}<div class="hero-copy"><p class="kicker">${esc(scene.kicker||'')}</p><h1>${esc(scene.title||scene.message)}</h1>${scene.body?`<p class="hero-deck">${esc(scene.body)}</p>`:''}${sourceButton(scene)}</div><div class="scroll-cue">Défiler</div>`;
+    section.innerHTML = `${mediaMarkup(a)}<div class="hero-copy"><p class="kicker">${esc(scene.kicker||'')}</p><h1>${applyEmphasis(scene.title||scene.message,scene.emphasis)}</h1>${scene.body?`<p class="hero-deck">${applyEmphasis(scene.body,scene.emphasis)}</p>`:''}${sourceButton(scene)}</div><div class="scroll-cue">Défiler</div>`;
     return section;
   }
 
@@ -177,12 +238,24 @@
 
   function renderMosaic(scene,chapter){
     const items=scene.data?.items||[]; const section=document.createElement('section'); section.className='scrolly scene-dark';
-    section.innerHTML=`<div class="sticky-stage mosaic-stage"><div class="mosaic">${items.map((it,i)=>`<article class="mosaic-tile" data-i="${i}"><div class="mosaic-image" style="${bgStyle(it.asset_id)}"></div><div class="mosaic-copy"><b>${String(i+1).padStart(2,'0')}</b><h3>${esc(it.title)}</h3><p>${esc(it.text)}</p></div></article>`).join('')}</div><div class="mosaic-intro"><span class="chapter-no">${esc(chapter.nav_label||'')}</span><h2>${esc(scene.title||chapter.title)}</h2>${sourceButton(scene)}</div></div><div class="scroll-space long"></div>`;
+    const mode=pacing(scene).reveal_mode||'one_at_a_time';
+    section.innerHTML=`<div class="sticky-stage mosaic-stage"><div class="mosaic ${mode==='one_at_a_time'?'progressive':''}">${items.map((it,i)=>`<article class="mosaic-tile" data-i="${i}" tabindex="${scene.interaction?.hover==='focus'?'0':'-1'}"><div class="mosaic-image" style="${bgStyle(it.asset_id)}"></div><div class="mosaic-copy"><b>${String(i+1).padStart(2,'0')}</b><h3>${applyEmphasis(it.title||'',it.emphasis||scene.emphasis)}</h3><p>${applyEmphasis(it.text||'',it.emphasis||scene.emphasis)}</p></div></article>`).join('')}</div><div class="mosaic-intro"><span class="chapter-no">${esc(chapter.nav_label||'')}</span><h2>${applyEmphasis(scene.title||chapter.title,scene.emphasis)}</h2>${sourceButton(scene)}</div></div><div class="scroll-space long"></div>`;
+    const tiles=$('.mosaic-tile',section);
+    if(scene.interaction?.hover==='focus') tiles.forEach((tile,i)=>{
+      const on=()=>{ tiles.forEach((x,j)=>x.classList.toggle('hover-active',i===j)); };
+      tile.addEventListener('pointerenter',on); tile.addEventListener('focus',on);
+      tile.addEventListener('pointerleave',()=>tiles.forEach(x=>x.classList.remove('hover-active')));
+      tile.addEventListener('blur',()=>tiles.forEach(x=>x.classList.remove('hover-active')));
+    });
     section._update=p=>{
-      const intro=$('.mosaic-intro',section), mosaic=$('.mosaic',section); const threshold=.15;
-      if(p<threshold){mosaic.classList.remove('focused'); $$('.mosaic-tile',section).forEach(x=>x.classList.remove('active')); intro.style.opacity=String(1-p/threshold); return;}
-      intro.style.opacity='0'; mosaic.classList.add('focused'); const q=clamp((p-threshold)/(1-threshold)); const idx=Math.min(items.length-1,Math.floor(q*items.length*.999));
-      $$('.mosaic-tile',section).forEach((x,i)=>x.classList.toggle('active',i===idx));
+      const intro=$('.mosaic-intro',section), mosaic=$('.mosaic',section), life=lifecycle(scene,p,items.length);
+      const isIntro=life.phase==='intro'; section.classList.toggle('scene-intro',isIntro);
+      intro.style.opacity=isIntro?'1':'0'; intro.style.pointerEvents=isIntro?'auto':'none';
+      mosaic.classList.toggle('focused',!isIntro);
+      tiles.forEach((x,i)=>{
+        x.classList.toggle('active',!isIntro && i===life.index);
+        x.classList.toggle('past',!isIntro && i<life.index);
+      });
     };
     return section;
   }
@@ -224,8 +297,24 @@
 
   function renderBackgroundScrollmation(scene,chapter){
     const steps=scene.data?.steps||[]; const section=document.createElement('section'); section.className='scrolly scene-dark';
-    section.innerHTML=`<div class="sticky-stage proof-stage"><div class="proof-bg"></div><div class="proof-title"><span class="chapter-no">${esc(chapter.nav_label||'')}</span><h2>${esc(scene.title||chapter.title)}</h2></div><div class="proof-copy"><div class="meta"></div><h3></h3><p></p>${sourceButton(scene)}</div></div><div class="scroll-space ${steps.length>3?'long':''}"></div>`;
-    section._update=p=>{ const idx=Math.min(steps.length-1,Math.floor(clamp(p*.999)*steps.length)); const s=steps[idx]||{}; const bg=$('.proof-bg',section); if(bg.dataset.asset!==s.asset_id){bg.dataset.asset=s.asset_id||''; bg.style.backgroundImage=asset(s.asset_id)?.uri?`url('${asset(s.asset_id).uri}')`:'';} $('.proof-copy .meta',section).textContent=s.meta||''; $('.proof-copy h3',section).textContent=s.title||''; $('.proof-copy p',section).textContent=s.text||''; if(!motionReduced) bg.style.transform=`scale(${1.08+p*.04})`; };
+    section.innerHTML=`<div class="sticky-stage proof-stage"><div class="proof-bg"></div><div class="proof-title"><span class="chapter-no">${esc(chapter.nav_label||'')}</span><h2>${applyEmphasis(scene.title||chapter.title,scene.emphasis)}</h2></div><div class="proof-copy" aria-live="polite"><div class="meta"></div><h3></h3><p></p>${sourceButton(scene)}</div></div><div class="scroll-space ${steps.length>3?'long':''}"></div>`;
+    section._update=p=>{
+      const life=lifecycle(scene,p,steps.length), stage=$('.proof-stage',section), title=$('.proof-title',section), copy=$('.proof-copy',section), bg=$('.proof-bg',section);
+      const isIntro=life.phase==='intro'; stage.classList.toggle('is-intro',isIntro);
+      title.style.opacity=isIntro || life.cfg.title_behavior==='persistent' ? '1' : '0';
+      title.style.pointerEvents=isIntro ? 'auto':'none';
+      copy.style.opacity=isIntro?'0':'1'; copy.style.pointerEvents=isIntro?'none':'auto';
+      if(!isIntro && steps.length){
+        const idx=Math.max(0,life.index), st=steps[idx]||{};
+        if(bg.dataset.asset!==String(st.asset_id||'')){ bg.dataset.asset=st.asset_id||''; bg.style.backgroundImage=asset(st.asset_id)?.uri?`url('${asset(st.asset_id).uri}')`:''; }
+        $('.proof-copy .meta',section).textContent=st.meta||'';
+        $('.proof-copy h3',section).innerHTML=applyEmphasis(st.title||'',st.emphasis||scene.emphasis);
+        $('.proof-copy p',section).innerHTML=applyEmphasis(st.text||'',st.emphasis||scene.emphasis);
+      } else if(isIntro){
+        bg.style.backgroundImage=asset(scene.media?.[0]?.asset_id)?.uri?`url('${asset(scene.media?.[0]?.asset_id).uri}')`:'';
+      }
+      if(!motionReduced) bg.style.transform=`scale(${1.06+life.progress*.035})`;
+    };
     return section;
   }
 
@@ -239,9 +328,9 @@
     const steps=scene.data?.steps||[]; const section=document.createElement('section'); section.className='generic-section';
     section.innerHTML=`<div class="generic-inner"><p class="kicker">${esc(chapter.nav_label||'')}</p><h2>${esc(scene.title||scene.message)}</h2><div class="generic-grid">${steps.map((s,i)=>`<article class="generic-card"><b>${esc(s.n||String(i+1).padStart(2,'0'))}</b><h3>${esc(s.title||'')}</h3><p>${esc(s.text||'')}</p></article>`).join('')}</div>${sourceButton(scene)}</div>`; return section;
   }
-  function renderGeneric(scene,chapter){ const section=document.createElement('section'); section.className='generic-section'; const body=Array.isArray(scene.body)?scene.body.join('\n'):scene.body||scene.message; section.innerHTML=`<div class="generic-inner"><p class="kicker">${esc(chapter.nav_label||'')}</p><h2>${esc(scene.title||scene.message)}</h2><p>${esc(body)}</p>${sourceButton(scene)}</div>`; return section; }
+  function renderGeneric(scene,chapter){ const section=document.createElement('section'); section.className='generic-section'; const body=Array.isArray(scene.body)?scene.body.join('\n'):scene.body||scene.message; section.innerHTML=`<div class="generic-inner"><p class="kicker">${esc(chapter.nav_label||'')}</p><h2>${applyEmphasis(scene.title||scene.message,scene.emphasis)}</h2><p>${applyEmphasis(body,scene.emphasis)}</p>${sourceButton(scene)}</div>`; return section; }
   function renderGenericMedia(scene,chapter){ const section=renderGeneric(scene,chapter); const a=asset(scene.media?.[0]?.asset_id); if(a?.uri) section.style.background=`linear-gradient(rgba(255,255,255,.88),rgba(255,255,255,.88)),url('${a.uri}') center/cover`; return section; }
-  function renderBigNumber(scene,chapter){ const section=document.createElement('section'); section.className='generic-section'; section.innerHTML=`<div class="generic-inner"><p class="kicker">${esc(chapter.nav_label||'')}</p><div class="big-number-value">${esc(scene.data?.value||scene.message)}</div><h2>${esc(scene.title||'')}</h2><p>${esc(scene.body||'')}</p>${sourceButton(scene)}</div>`; return section; }
+  function renderBigNumber(scene,chapter){ const section=document.createElement('section'); section.className='generic-section'; section.innerHTML=`<div class="generic-inner"><p class="kicker">${esc(chapter.nav_label||'')}</p><div class="big-number-value">${esc(scene.data?.value||scene.message)}</div><h2>${applyEmphasis(scene.title||'',scene.emphasis)}</h2><p>${applyEmphasis(scene.body||'',scene.emphasis)}</p>${sourceButton(scene)}</div>`; return section; }
 
   function buildNavigation(){
     chapterNav.innerHTML=''; microTrack.innerHTML='';
@@ -272,7 +361,7 @@
   }
 
   function sceneProgress(el){ const span=Math.max(1,el.offsetHeight-innerHeight); return clamp((scrollY-el.offsetTop)/span); }
-  function updateSceneEffects(){ for(const el of $$('.story-scene')) if(typeof el._update==='function') el._update(sceneProgress(el)); }
+  function updateSceneEffects(){ for(const el of $('.story-scene')) { if(typeof el._update==='function') el._update(sceneProgress(el)); resolveSceneCollisions(el); } }
   function onScroll(){ const max=Math.max(1,document.documentElement.scrollHeight-innerHeight); progress.style.width=`${clamp(scrollY/max)*100}%`; updateSceneEffects(); updateActiveNavigation(); }
 
   function currentAnchorIndex(){ const y=scrollY+innerHeight*.46; let idx=0; anchors.forEach((a,i)=>{if(a.el.offsetTop<=y) idx=i;}); return idx; }

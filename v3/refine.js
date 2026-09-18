@@ -3,6 +3,7 @@
   const clamp = (v,min=0,max=1) => Math.min(max,Math.max(min,v));
   let navEnhanced = false;
   let scrubbing = false;
+  let wheelSceneLock = false;
 
   function progress(el){
     if(!el) return 0;
@@ -197,6 +198,18 @@
     const handle = document.querySelector('.micro-scrub-handle');
     if(handle) handle.setAttribute('aria-valuenow',String(Math.round(globalProgress()*100)));
   }
+
+  addEventListener('wheel',e=>{
+    if(e.ctrlKey || e.metaKey || Math.abs(e.deltaY) < 14) return;
+    const all=scenes(); if(!all.length) return;
+    const cur=all[currentSceneIndex()];
+    if(!cur || cur.classList.contains('scrolly')) return;
+    e.preventDefault();
+    if(wheelSceneLock) return;
+    wheelSceneLock=true;
+    moveScene(e.deltaY>0?1:-1);
+    setTimeout(()=>{wheelSceneLock=false;},460);
+  },{passive:false});
 
   document.addEventListener('keydown',e=>{
     if(e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;

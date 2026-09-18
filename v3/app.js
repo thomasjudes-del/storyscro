@@ -409,7 +409,7 @@
 
   function sceneProgress(el){ const span=Math.max(1,el.offsetHeight-innerHeight); return clamp((scrollY-el.offsetTop)/span); }
   function updateSceneEffects(){
-    for(const el of $('.story-scene')) {
+    for(const el of $$('.story-scene')) {
       const p=sceneProgress(el), scene=el._storyScene||{}, cfg=pacing(scene), intro=clamp(Number(cfg.intro_hold??.14),0,.45);
       const genericEmphasis=el.classList.contains('scrolly') ? clamp((p-intro)/.18) : (el.classList.contains('in-view')?1:0);
       el.style.setProperty('--emphasis-progress',genericEmphasis.toFixed(3));

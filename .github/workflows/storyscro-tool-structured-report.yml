@@ -153,6 +153,21 @@ jobs:
           STORYSCRO_EXPECT_EXTERNAL_IMAGE: '1'
         run: python storyscro-tool/test_smoke.py
 
+      - name: Verify chart fidelity and editorial labels
+        run: |
+          python - <<'PY'
+          import json
+          s=json.load(open('structured-report-artifacts/browser-story.json',encoding='utf-8'))
+          assert s['document']['title']=='Impact socio-économique du port de Sète', s['document']['title']
+          nav=[c.get('nav_label','') for c in s['chapters']]
+          assert 'Port de pêche' in nav and 'Port de plaisance' in nav and 'Port de commerce' in nav, nav
+          charts=[sc for c in s['chapters'] for sc in c.get('scenes',[]) if sc.get('primitive')=='trend_grid']
+          assert len(charts)==4, len(charts)
+          raw=[str(v.get('raw','')) for sc in charts for series in sc.get('data',{}).get('series',[]) for v in series.get('values',[])]
+          assert '1000' in raw and '1065' in raw and '2459' in raw and '3313' in raw, raw
+          print({'chapters':nav,'charts':len(charts),'four_digit_values':'ok'})
+          PY
+
       - name: Upload QA artifacts
         if: always()
         uses: actions/upload-artifact@v4

@@ -311,8 +311,7 @@ function numberedHeadingQuality(line,bodySize){
   const firstAlpha=(rest.match(/[A-Za-zÀ-ÿ]/)||[''])[0];
   const titleish=firstAlpha&&firstAlpha===firstAlpha.toUpperCase()&&titleCaseRatio(rest)>=.54;
   const canonical=/^(?:introduction|background|related work|method(?:s|ology)?|approach|model architecture|experiments?|results?|discussion|limitations?|recommendations?|conclusions?|summary|outlook|policy priorities|comparison|contexte|méthode|résultats?|conclusion|recommandations?)\b/i.test(rest);
-  const visual=line.maxSize>=bodySize*1.08 || line.bold;
-  return line.maxSize>=bodySize*.86 && (canonical||titleish||visual);
+  return line.maxSize>=bodySize*.86 && (canonical||titleish);
 }
 
 function isHeadingLike(line,bodySize){
@@ -356,7 +355,9 @@ function recoverNumberedHeadings(rawItems,pages,bodySize){
       const fonts=[start,...same.slice(0,titleParts.length)];
       const font=fonts.sort((a,b)=>String(b.text).length-String(a.text).length)[0]?.font||start.font||'';
       const line={text,page,x:start.x,y:start.y,width:Math.max(1,lastRight-start.x),size:start.size,maxSize:Math.max(start.size,...same.map(x=>x.size)),font,bold:isBold(font),pageWidth:dims.width,pageHeight:dims.height,topRatio:1-start.y/dims.height,bottomRatio:start.y/dims.height,recovered:true};
-      if(numberedHeadingQuality(line,bodySize))out.push(line);
+      const rest=normalize(text.replace(/^\d{1,2}(?:\.\d+){0,3}\.?\s*/,'')),alphaWords=(rest.match(/[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ'’/-]*/g)||[]);
+      const editorial=alphaWords.length>=1&&titleCaseRatio(rest)>=.54&&!/[.!?;,:]$/.test(rest);
+      if(editorial&&numberedHeadingQuality(line,bodySize))out.push(line);
     }
   }
   return out;
@@ -439,8 +440,8 @@ function structuralHeading(h,bodySize,denseNumberedPages=new Set()){
     if(rest.length>92||/:.{32,}/.test(rest)||/[.!?]$/.test(rest)||/^(?:project|deliverable)\s+\d+/i.test(rest))return false;
     const firstAlpha=(rest.match(/[A-Za-zÀ-ÿ]/)||[''])[0];
     const titleish=firstAlpha&&firstAlpha===firstAlpha.toUpperCase()&&titleCaseRatio(rest)>=.54;
-    const visual=h.maxSize>=bodySize*1.08||h.bold;
-    return depth>1 ? (h.maxSize>=bodySize*1.04&&(titleish||visual)) : (titleish||visual);
+    const canonicalRest=/^(?:introduction|background|related work|method(?:s|ology)?|approach|model architecture|experiments?|results?|discussion|limitations?|recommendations?|conclusions?|summary|outlook|comparison|project management|software development methodology|software security definition|software testing|release management|inspection and code review|application authentication|incident management|problem management|licensing)\b/i.test(rest);
+    return depth>1 ? (h.maxSize>=bodySize*.98&&(titleish||canonicalRest)) : (titleish||canonicalRest);
   }
   const words=t.split(/\s+/).length,firstAlpha=(t.match(/[A-Za-zÀ-ÿ]/)||[''])[0];
   return words>=2&&words<=11&&firstAlpha&&firstAlpha===firstAlpha.toUpperCase()&&h.maxSize>=bodySize*1.22&&titleCaseRatio(t)>=.64&&!/[.!?;:]$/.test(t);

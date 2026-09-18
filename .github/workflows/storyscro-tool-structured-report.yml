@@ -161,11 +161,18 @@ jobs:
           assert s['document']['title']=='Impact socio-économique du port de Sète', s['document']['title']
           nav=[c.get('nav_label','') for c in s['chapters']]
           assert 'Port de pêche' in nav and 'Port de plaisance' in nav and 'Port de commerce' in nav, nav
-          charts=[sc for c in s['chapters'] for sc in c.get('scenes',[]) if sc.get('primitive')=='trend_grid']
+          scenes=[sc for c in s['chapters'] for sc in c.get('scenes',[])]
+          charts=[sc for sc in scenes if sc.get('primitive')=='trend_grid']
+          synth=[sc for sc in scenes if sc.get('primitive')=='synthesis_grid']
           assert len(charts)==4, len(charts)
+          assert len(synth)==1, len(synth)
+          method=[sc for c in s['chapters'] if 'méthod' in c.get('title','').lower() or 'method' in c.get('title','').lower() for sc in c.get('scenes',[])]
+          assert all(sc.get('primitive')!='timeline' for sc in method), method
           raw=[str(v.get('raw','')) for sc in charts for series in sc.get('data',{}).get('series',[]) for v in series.get('values',[])]
           assert '1000' in raw and '1065' in raw and '2459' in raw and '3313' in raw, raw
-          print({'chapters':nav,'charts':len(charts),'four_digit_values':'ok'})
+          prose=' '.join(step.get('text','') for sc in scenes if sc.get('primitive')=='sticky_narrative' for step in sc.get('data',{}).get('steps',[]))
+          assert '610 ETP 655 ETP 648 ETP 660 ETP' not in prose, prose
+          print({'chapters':nav,'charts':len(charts),'synthesis':len(synth),'four_digit_values':'ok'})
           PY
 
       - name: Upload QA artifacts

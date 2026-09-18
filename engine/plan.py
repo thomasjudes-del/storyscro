@@ -40,6 +40,9 @@ def build_input(planner_input: dict[str, Any], grammar: dict[str, Any], user_ins
         "source_design_policy": grammar.get("source_design_policy", {}),
         "scene_lifecycle": grammar.get("scene_lifecycle", {}),
         "interaction_policy": grammar.get("interaction_policy", {}),
+        "presentation_dimensions": grammar.get("presentation_dimensions", {}),
+        "presentation_presets": grammar.get("presentation_presets", {}),
+        "presentation_rules": grammar.get("presentation_rules", []),
     }
     content: list[dict[str, Any]] = [
         {

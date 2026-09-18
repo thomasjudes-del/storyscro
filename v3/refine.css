@@ -113,3 +113,7 @@ html,body{max-width:100%;overflow-x:clip}
   .proof-title{top:calc(var(--header-h) + 20px);max-width:88vw}
   .proof-copy{max-height:57vh}
 }
+
+
+.mosaic.progressive.focused .mosaic-tile:not(.active){opacity:0!important;filter:none!important;pointer-events:none!important}
+.mosaic.progressive.focused .mosaic-tile.active{opacity:1!important;filter:none!important}

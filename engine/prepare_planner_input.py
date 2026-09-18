@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-VERSION = '0.2.0'
+VERSION = '0.3.0'
 GENERIC_TITLES = {
     'memoire technique', 'mémoire technique', 'technical report', 'report', 'rapport',
     'proposal', 'proposition', 'presentation', 'présentation'
@@ -98,7 +98,8 @@ def derive_candidates(evidence: dict[str, Any]):
                 a = assets.get(item.get('asset_id'), {})
                 images.append({**{k:item.get(k) for k in ('id','page','bbox','area_ratio','asset_id','caption') if item.get(k) is not None}, 'asset':{k:a.get(k) for k in ('id','sha256','dhash','width','height','extension','file') if a.get(k) is not None}})
             elif typ == 'vector_region_candidate' and item.get('semantic_hint') == 'chart_or_diagram_candidate':
-                vectors.append({k:item.get(k) for k in ('id','page','bbox','area_ratio','semantic_hint')})
+                a = assets.get(item.get('asset_id'), {})
+                vectors.append({**{k:item.get(k) for k in ('id','page','bbox','area_ratio','semantic_hint','caption','asset_id') if item.get(k) is not None}, 'asset':{k:a.get(k) for k in ('id','origin','sha256','dhash','width','height','extension','file','kind') if a.get(k) is not None}})
     return numbers, tables, images, vectors, quotes
 
 

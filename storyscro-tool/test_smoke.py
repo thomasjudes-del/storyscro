@@ -54,6 +54,15 @@ def run(label,width,height):
         assert stats["overflow"] <= 2, stats
         assert stats["microDots"] == stats["scenes"], stats
         assert stats["sourceButtons"] >= stats["scenes"]-1, stats
+        if label == "desktop":
+            payload=d.execute_script("""
+              const e=window.__storyscro.getEvidence(), s=window.__storyscro.getStory();
+              const cleanE=JSON.parse(JSON.stringify(e,(k,v)=>k.startsWith('_')?undefined:(k==='snapshots'?Object.fromEntries(Object.keys(v||{}).map(p=>[p,'[asset]'])):v)));
+              const cleanS=JSON.parse(JSON.stringify(s,(k,v)=>k==='uri'&&String(v).startsWith('data:')?'[asset]':v));
+              return {evidence:cleanE,story:cleanS};
+            """)
+            (OUT/"browser-evidence.json").write_text(json.dumps(payload["evidence"],indent=2),encoding="utf-8")
+            (OUT/"browser-story.json").write_text(json.dumps(payload["story"],indent=2),encoding="utf-8")
         d.save_screenshot(str(OUT/f"{label}-hero.png"))
         scrolly=d.find_elements(By.CSS_SELECTOR,".story-scene.scrolly")
         if scrolly:

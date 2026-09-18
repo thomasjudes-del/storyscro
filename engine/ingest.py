@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import collections
+import colorsys
 import hashlib
 import io
 import json
@@ -21,7 +22,7 @@ from typing import Any
 import fitz  # PyMuPDF
 from PIL import Image
 
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 
 BULLET_RE = re.compile(r"^\s*(?:[•·▪◦‣⁃*-]|(?:\d{1,2}|[A-Za-z])[.)])\s+")
 NUMBER_RE = re.compile(
@@ -71,6 +72,109 @@ def image_dhash(data: bytes, size: int = 8) -> str | None:
         return f"{value:0{size*size//4}x}"
     except Exception:
         return None
+
+
+def rgb_hex(rgb: tuple[int, int, int]) -> str:
+    return "#%02x%02x%02x" % tuple(max(0, min(255, int(v))) for v in rgb)
+
+
+def color_metrics(rgb: tuple[int, int, int]) -> tuple[float, float, float]:
+    r, g, b = (v / 255.0 for v in rgb)
+    h, sat, val = colorsys.rgb_to_hsv(r, g, b)
+    lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
+    return sat, val, lum
+
+
+def infer_design_profile(doc: fitz.Document, raw_pages: list[dict[str, Any]]) -> dict[str, Any]:
+    """Infer source visual identity without editorial interpretation.
+
+    The profile is deliberately descriptive: source fonts, text colours and a
+    small palette sampled from representative rendered pages. The planner can
+    preserve or adapt these cues, but ingestion does not decide the final theme.
+    """
+    font_counts = collections.Counter()
+    text_colors = collections.Counter()
+    for page in raw_pages:
+        for block in page.get("blocks", []):
+            for span in block.get("spans", []):
+                n = max(1, len((span.get("text") or "").strip()))
+                if span.get("font"):
+                    font_counts[span["font"]] += n
+                value = int(span.get("color", 0)) & 0xFFFFFF
+                text_colors[f"#{value:06x}"] += n
+
+    page_scores = []
+    for page in raw_pages:
+        vector_count = sum(1 for x in page.get("derived", []) if x.get("type") == "vector_region_candidate")
+        score = float(page.get("image_area_ratio") or 0) * 3 + min(vector_count, 6) * .35
+        page_scores.append((score, page["number"]))
+    sample_pages = []
+    for page_num in [1, 2, 3, 4]:
+        if page_num <= len(raw_pages) and page_num not in sample_pages:
+            sample_pages.append(page_num)
+    for _, page_num in sorted(page_scores, reverse=True):
+        if page_num not in sample_pages:
+            sample_pages.append(page_num)
+        if len(sample_pages) >= 8:
+            break
+
+    palette_counts = collections.Counter()
+    for page_num in sample_pages:
+        try:
+            page = doc[page_num - 1]
+            pix = page.get_pixmap(matrix=fitz.Matrix(.38, .38), colorspace=fitz.csRGB, alpha=False)
+            img = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
+            img.thumbnail((320, 320))
+            q = img.quantize(colors=12, method=Image.Quantize.MEDIANCUT)
+            palette = q.getpalette() or []
+            for count, idx in q.getcolors(maxcolors=256) or []:
+                base = idx * 3
+                if base + 2 >= len(palette):
+                    continue
+                rgb = tuple(palette[base:base + 3])
+                # Quantise slightly so near-identical antialias colours merge.
+                rgb = tuple(int(round(v / 8) * 8) if v < 252 else 255 for v in rgb)
+                palette_counts[rgb_hex(rgb)] += int(count)
+        except Exception:
+            continue
+
+    palette = []
+    for hx, count in palette_counts.most_common(24):
+        rgb = tuple(int(hx[i:i+2], 16) for i in (1, 3, 5))
+        sat, val, lum = color_metrics(rgb)
+        if lum > .965 and sat < .06:
+            role = "background"
+        elif lum < .16 and sat < .18:
+            role = "ink"
+        elif sat > .34:
+            role = "accent"
+        else:
+            role = "neutral"
+        palette.append({"hex": hx, "weight": count, "role_guess": role, "saturation": round(sat, 3), "luminance": round(lum, 3)})
+
+    nonwhite = [c for c in palette if c["role_guess"] != "background"]
+    accents = sorted([c for c in nonwhite if c["saturation"] >= .28], key=lambda c: (c["weight"] * (.45 + c["saturation"])), reverse=True)
+    darks = sorted([c for c in nonwhite if c["luminance"] <= .42], key=lambda c: c["weight"], reverse=True)
+    backgrounds = sorted([c for c in palette if c["role_guess"] == "background"], key=lambda c: c["weight"], reverse=True)
+    text_ranked = [{"hex": hx, "character_count": n} for hx, n in text_colors.most_common(12)]
+    primary = (darks[0]["hex"] if darks else (accents[0]["hex"] if accents else "#222222"))
+    accent = (accents[0]["hex"] if accents else primary)
+    background = (backgrounds[0]["hex"] if backgrounds else "#ffffff")
+    text = text_ranked[0]["hex"] if text_ranked else primary
+
+    return {
+        "sample_pages": sample_pages,
+        "source_fonts": [{"name": name, "character_count": n} for name, n in font_counts.most_common(12)],
+        "text_colors": text_ranked,
+        "page_palette": palette[:12],
+        "suggested_tokens": {
+            "primary": primary,
+            "accent": accent,
+            "background": background,
+            "text": text,
+        },
+        "status": "descriptive_source_profile",
+    }
 
 
 def detect_language(text: str) -> str:
@@ -607,6 +711,7 @@ def ingest(
             "font_character_counts": font_weights,
             "semantic_block_counts": dict(semantic_counts),
         },
+        "design_profile": infer_design_profile(doc, raw_pages),
         "repeated_margin_elements": list(repeated.values()),
         "title_candidates": infer_title_candidates(raw_pages, body_size),
         "sections": infer_sections(raw_pages),

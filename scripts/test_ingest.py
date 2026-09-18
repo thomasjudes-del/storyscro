@@ -55,6 +55,9 @@ def main():
         assert data['document']['page_count'] == 3
         assert data['document']['language'] == 'en'
         assert data['statistics']['unique_image_assets'] >= 1
+        assert data.get('design_profile', {}).get('source_fonts')
+        assert data.get('design_profile', {}).get('page_palette')
+        assert data.get('design_profile', {}).get('suggested_tokens', {}).get('primary')
         assert data['statistics']['numbers'] >= 3
         assert any(x['kind'] == 'footer' and len(x['pages']) >= 2 for x in data['repeated_margin_elements'])
         assert any(s['level'] == 1 for s in data['sections'])

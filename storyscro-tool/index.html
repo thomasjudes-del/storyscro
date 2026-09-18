@@ -744,6 +744,7 @@ function evidenceForNumber(n,file){return{id:`ev-${n.id}`,type:'number',status:'
 function evidenceForTable(t,file){return{id:`ev-${t.id}`,type:'table',status:'VERIFIED',text:t.title,data:{years:t.years,rows:t.rows},source_refs:[pageRef(file,t.page)]}}
 function cleanHeadingTitle(s){return normalize(s).replace(/^chapter\s+\d+[:.]?\s*/i,'').replace(/^\d{1,2}(?:\.\d+){0,4}\.?\s*/,'').trim()}
 function headingRootNumber(s){return normalize(s).match(/^(\d{1,2})(?:\.|\s)/)?.[1]||''}
+function headingNumberDepth(s){const m=normalize(s).match(/^(\d{1,2}(?:\.\d+){0,4})/);return m?m[1].split('.').length:0}
 function isGenericLeafTitle(s){const t=cleanHeadingTitle(s);return /^(?:evolution|évolution|principles?|principes?|hypothèses?|hypotheses?|projection|les? principaux chiffres|principaux chiffres|main figures|key figures|points? clés?|key points?|résultats? détaillés?|detailed results?|méthode appliquée|method applied)\b/i.test(t)}
 function sectionParagraphs(evidence,section){const ids=new Set(section.paragraph_ids);return evidence.paragraphs.filter(p=>ids.has(p.id)&&usefulText(p.text))}
 function sectionNumbers(evidence,section){return evidence.numbers.filter(n=>n.page>=section.page_start&&n.page<=section.page_end)}
@@ -842,6 +843,9 @@ function consolidateSections(evidence,max=7){
   });
   raw=raw.filter(s=>!(s.page_start===1&&s.title.length>=14&&docTitle.includes(normalize(s.title).toLowerCase())));
   const docPages=Math.max(1,evidence.document?.page_count||1);
+  const titleCounts=new Map();
+  for(const s of raw){const k=cleanHeadingTitle(s.title).toLowerCase();if(k)titleCounts.set(k,(titleCounts.get(k)||0)+1)}
+  const repeatedLocal=s=>(titleCounts.get(cleanHeadingTitle(s.title).toLowerCase())||0)>=3;
   const buildGroups=anchors=>{
     const ordered=[...anchors].filter(Boolean).sort((a,b)=>a.page_start-b.page_start||(a.heading?.y||0)-(b.heading?.y||0));
     const positions=ordered.map(a=>raw.findIndex(x=>x.id===a.id)).filter(i=>i>=0).sort((a,b)=>a-b);
@@ -856,7 +860,7 @@ function consolidateSections(evidence,max=7){
     return groups;
   };
 
-  const level1Idx=raw.map((s,i)=>(s.level||9)===1?i:-1).filter(i=>i>=0);
+  const level1Idx=raw.map((s,i)=>(s.level||9)===1&&!repeatedLocal(s)?i:-1).filter(i=>i>=0);
   if(level1Idx.length>=2){
     const selected=[];
     for(let k=0;k<level1Idx.length;k++){
@@ -883,11 +887,12 @@ function consolidateSections(evidence,max=7){
     if(groups.length>=2&&(docPages<20||coverage>=.55))return groups.slice(0,max);
   }
 
-  const meaningful=raw.filter(s=>sectionAnchorScore(evidence,s)>-7);
+  const meaningful=raw.filter(s=>sectionAnchorScore(evidence,s)>-7&&!repeatedLocal(s));
+  const numbered=meaningful.filter(s=>{const d=headingNumberDepth(s.title);return d>=1&&d<=2&&!isGenericLeafTitle(s.title)});
   const level1=meaningful.filter(s=>(s.level||9)===1&&!isGenericLeafTitle(s.title));
   const level2=meaningful.filter(s=>(s.level||9)===2&&!isGenericLeafTitle(s.title));
   const coverageOf=arr=>arr.length?Math.max(...arr.map(x=>x.page_end||x.page_start||1))/docPages:0;
-  let candidatePool=level1.length>=3&&coverageOf(level1)>=.55?level1:(level2.length>=3&&coverageOf(level2)>=.55?level2:meaningful.filter(s=>!isGenericLeafTitle(s.title)));
+  let candidatePool=numbered.length>=3&&coverageOf(numbered)>=.55?numbered:(level1.length>=3&&coverageOf(level1)>=.55?level1:(level2.length>=3&&coverageOf(level2)>=.55?level2:meaningful.filter(s=>!isGenericLeafTitle(s.title))));
   if(!candidatePool.length)candidatePool=meaningful.length?meaningful:raw;
   let anchors=spreadAnchors(evidence,candidatePool,max);
   anchors=anchors.filter((a,i)=>i===0||cleanHeadingTitle(a.title).toLowerCase()!==cleanHeadingTitle(anchors[i-1].title).toLowerCase());
@@ -997,7 +1002,7 @@ function run(evidence,onProgress=()=>{}){
     chapter.source_evidence_ids=[...new Set(chapter.scenes.flatMap(s=>s.source_evidence_ids||[]))];if(chapter.scenes.length)chapters.push(chapter);
   }
 
-  const closing=chooseConclusion(evidence,sourceSections);
+  const closing=chooseConclusion(evidence,evidence.sections||sourceSections);
   if(closing){const lastPara=closing.paragraph;const id=addEv(evidenceForParagraph(lastPara,file));chapters.push({id:'conclusion',title:closing.title||'Closing',nav_label:'Closing',purpose:'conclusion',source_evidence_ids:[id],scenes:[{id:'conclusion-scene',nav_label:'Closing',primitive:'conclusion',semantic_role:'synthesis',message:trimAtSentence(lastPara.text,300),title:closing.title||trimAtSentence(lastPara.text,120),body:trimAtSentence(lastPara.text,320),source_evidence_ids:[id],source_refs:[pageRef(file,lastPara.page)],transformations:[{type:lastPara.text===trimAtSentence(lastPara.text,320)?'none':'shorten',description:'Explicit concluding source statement retained as the closing scene.'}],emphasis:[]} ]});}
 
   const assets=Object.entries(evidence.snapshots).map(([page,uri])=>({id:`page-${page}`,type:'image',uri,origin:'source',source_page:Number(page),caption:`Source page ${page} rendered from ${file}.`,source_refs:[pageRef(file,Number(page))]}));

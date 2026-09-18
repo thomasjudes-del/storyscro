@@ -1,0 +1,60 @@
+name: StoryScro Tool - Any PDF smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'storyscro-tool/**'
+      - '.github/workflows/storyscro-tool-smoke.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: storyscro-tool-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  browser-any-pdf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install browser test dependency
+        run: python -m pip install --disable-pip-version-check selenium==4.35.0
+
+      - name: Download an unseen scientific PDF
+        run: |
+          curl -L --fail --retry 3 --retry-delay 2 'https://arxiv.org/pdf/1706.03762' -o /tmp/attention.pdf
+          test -s /tmp/attention.pdf
+
+      - name: Start static server
+        run: |
+          python -m http.server 4182 --bind 127.0.0.1 > /tmp/storyscro-tool-server.log 2>&1 &
+          for i in {1..20}; do
+            curl -fsS http://127.0.0.1:4182/storyscro-tool/ >/dev/null && exit 0
+            sleep 0.5
+          done
+          cat /tmp/storyscro-tool-server.log
+          exit 1
+
+      - name: Upload PDF, render and inspect desktop/mobile
+        env:
+          STORYSCRO_TOOL_BASE: http://127.0.0.1:4182/storyscro-tool/
+          STORYSCRO_TOOL_PDF: /tmp/attention.pdf
+          STORYSCRO_TOOL_OUT: tool-artifacts
+        run: python storyscro-tool/test_smoke.py
+
+      - name: Upload QA artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: storyscro-tool-any-pdf-${{ github.sha }}
+          path: tool-artifacts/
+          if-no-files-found: warn
+          retention-days: 7

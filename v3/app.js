@@ -408,7 +408,15 @@
   }
 
   function sceneProgress(el){ const span=Math.max(1,el.offsetHeight-innerHeight); return clamp((scrollY-el.offsetTop)/span); }
-  function updateSceneEffects(){ for(const el of $$('.story-scene')) { if(typeof el._update==='function') el._update(sceneProgress(el)); resolveSceneCollisions(el); } }
+  function updateSceneEffects(){
+    for(const el of $('.story-scene')) {
+      const p=sceneProgress(el), scene=el._storyScene||{}, cfg=pacing(scene), intro=clamp(Number(cfg.intro_hold??.14),0,.45);
+      const genericEmphasis=el.classList.contains('scrolly') ? clamp((p-intro)/.18) : (el.classList.contains('in-view')?1:0);
+      el.style.setProperty('--emphasis-progress',genericEmphasis.toFixed(3));
+      if(typeof el._update==='function') el._update(p);
+      resolveSceneCollisions(el);
+    }
+  }
   function onScroll(){ const max=Math.max(1,document.documentElement.scrollHeight-innerHeight); progress.style.width=`${clamp(scrollY/max)*100}%`; updateSceneEffects(); updateActiveNavigation(); }
 
   function currentAnchorIndex(){ const y=scrollY+innerHeight*.46; let idx=0; anchors.forEach((a,i)=>{if(a.el.offsetTop<=y) idx=i;}); return idx; }

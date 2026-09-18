@@ -289,7 +289,7 @@ function isHeadingLike(line,bodySize){
   const words=text.split(/\s+/).length;
   if(words>16&&line.page!==1)return false;
   if(line.x>line.pageWidth*.82)return false;
-  const numbered=/^\d+(?:\.\d+)*\.?\s+[A-Za-zÀ-ÿ]/.test(text);
+  const numbered=/^\d{1,2}(?:\.\d+){0,3}\.?\s+[A-Za-zÀ-ÿ]/.test(text);
   const canonical=/^(?:abstract|introduction|background|related work|method(?:s|ology)?|approach|model(?: architecture)?|experiments?|results?|discussion|limitations?|recommendations?|conclusions?|summary|outlook|references|appendix|annex|overview|executive summary|context|méthode|résultats?|discussion|conclusion|recommandations?|synthèse|introduction|contexte)\b/i.test(text);
   const sizeSignal=line.maxSize>=bodySize*1.28 || (line.bold&&line.maxSize>=bodySize*1.05&&words<=12);
   return numbered||canonical||sizeSignal;
@@ -324,22 +324,28 @@ function detectBullets(lines){
 }
 
 function buildSections(allLines,paragraphs,headings){
+  const order=(page,y)=>page*100000-y;
+  const cleanHeading=h=>!isBoilerplateText(h.text)&&!/^(?:figure|fig\.?|table|algorithm)\s*\d+/i.test(h.text);
+  let top=headings.filter(h=>h.level===1&&cleanHeading(h));
+  if(top.length<3)top=headings.filter(h=>h.level<=2&&cleanHeading(h));
+  // Once formal references/bibliography begins, later visual appendix labels should not become core narrative chapters.
+  const refIdx=top.findIndex(h=>/^(?:\d+\s+)?(?:references|bibliography|références|bibliographie)\b/i.test(h.text));
+  if(refIdx>=0)top=top.slice(0,refIdx+1);
+  top=top.slice(0,32);
+  if(!top.length){
+    const byPage=new Map();for(const p of paragraphs){if(!byPage.has(p.page))byPage.set(p.page,[]);byPage.get(p.page).push(p)}
+    return [...byPage.entries()].map(([page,ps])=>({id:`section-p${page}`,title:`Page ${page}`,pageStart:page,pageEnd:page,paragraphs:ps}));
+  }
   const sections=[];
-  if(!headings.length){
-    const byPage=new Map(); for(const p of paragraphs){if(!byPage.has(p.page))byPage.set(p.page,[]);byPage.get(p.page).push(p)}
-    for(const [page,ps] of byPage.entries())sections.push({id:`section-p${page}`,title:`Page ${page}`,pageStart:page,pageEnd:page,paragraphs:ps});
-    return sections;
-  }
-  const top=headings.filter(h=>h.level<=2).slice(0,28);
+  const firstOrder=order(top[0].page,top[0].y);
+  const pre=paragraphs.filter(p=>order(p.page,p.y)<firstOrder);
+  if(pre.length)sections.push({id:'section-intro',title:'Overview',pageStart:1,pageEnd:top[0].page,paragraphs:pre});
   for(let i=0;i<top.length;i++){
-    const h=top[i]; const n=top[i+1];
-    const pageStart=h.page; const pageEnd=n?Math.max(pageStart,n.page-(n.y>h.pageHeight*.4?0:1)):Math.max(...allLines.map(x=>x.page));
-    const ps=paragraphs.filter(p=>p.page>=pageStart&&p.page<=pageEnd);
-    sections.push({id:`section-${i+1}`,title:h.text,pageStart,pageEnd,heading:h,paragraphs:ps});
+    const h=top[i],next=top[i+1];const startKey=order(h.page,h.y),endKey=next?order(next.page,next.y):Infinity;
+    const ps=paragraphs.filter(p=>{const k=order(p.page,p.y);return k>startKey&&k<endKey});
+    const lastPage=ps.length?Math.max(...ps.map(p=>p.page)):h.page;
+    sections.push({id:`section-${i+1}`,title:h.text,pageStart:h.page,pageEnd:lastPage,heading:h,paragraphs:ps});
   }
-  const first=top[0];
-  const pre=paragraphs.filter(p=>p.page<first.page || (p.page===first.page&&p.y>first.y));
-  if(pre.length)sections.unshift({id:'section-intro',title:'Overview',pageStart:1,pageEnd:first.page,paragraphs:pre});
   return sections.filter(s=>s.paragraphs.length||s.heading);
 }
 
@@ -422,7 +428,7 @@ async function run(file,onProgress=()=>{},signal){
   const sizes=[...new Set(headingCandidates.map(h=>Math.round(h.maxSize*10)/10))].sort((a,b)=>b-a);
   const thresholds=sizes.slice(0,5);
   const headings=headingCandidates.map((h,i)=>{
-    const text=normalize(h.text);const m=text.match(/^(\d+(?:\.\d+)*)\.?\s+/);let level;
+    const text=normalize(h.text);const m=text.match(/^(\d{1,2}(?:\.\d+){0,3})\.?\s+/);let level;
     if(m)level=Math.min(3,m[1].split('.').length);
     else if(/^(?:abstract|introduction|background|related work|method(?:s|ology)?|approach|model(?: architecture)?|experiments?|results?|discussion|limitations?|recommendations?|conclusions?|summary|outlook|references|appendix|annex|executive summary|méthode|résultats?|conclusion|recommandations?|synthèse|contexte)\b/i.test(text)) level=1;
     else {level=thresholds.findIndex(sz=>h.maxSize>=sz-.25)+1;if(level<1)level=3;level=Math.min(3,level)}
@@ -496,13 +502,21 @@ function safeNav(s){return normalize(s).replace(/[.:;].*$/,'').slice(0,26)||'Sec
 function bestSnapshot(evidence,page){return evidence.snapshots[page]||evidence.snapshots[1]||null}
 
 function consolidateSections(evidence,max=6){
-  const raw=evidence.sections.filter(s=>s.title&&!/^page \d+$/i.test(s.title)&&!NOISE_RX.test(s.title)&&s.title.split(/\s+/).length<=16&&!/^(?:figure|table|input-input layer)/i.test(s.title));
+  let raw=evidence.sections.filter(s=>s.title&&!/^page \d+$/i.test(s.title)&&!NOISE_RX.test(s.title)&&s.title.split(/\s+/).length<=16&&!/^(?:figure|table|input-input layer)/i.test(s.title));
+  const refIdx=raw.findIndex(s=>/references|bibliography|références|bibliographie/i.test(s.title));
+  if(refIdx>=0)raw=raw.slice(0,refIdx); // keep references in provenance, not the main story arc
+  if(raw.some(s=>/abstract|executive summary|résumé exécutif/i.test(s.title)))raw=raw.filter(s=>!/^overview$/i.test(s.title));
   if(raw.length<=max)return raw;
-  const chunk=Math.ceil(raw.length/max);const out=[];
-  for(let i=0;i<raw.length;i+=chunk){
-    const group=raw.slice(i,i+chunk);out.push({id:`group-${out.length+1}`,title:group[0].title,page_start:group[0].page_start,page_end:group[group.length-1].page_end,paragraph_ids:group.flatMap(x=>x.paragraph_ids),grouped_titles:group.map(x=>x.title)});
+  // Preserve the opening and closing sections; merge only adjacent middle sections.
+  const groups=[];const target=Math.max(1,max);let cursor=0;
+  while(cursor<raw.length){
+    const remaining=raw.length-cursor, slots=target-groups.length;
+    const take=Math.max(1,Math.ceil(remaining/Math.max(1,slots)));
+    const part=raw.slice(cursor,cursor+take);cursor+=take;
+    const title=part.length===1?part[0].title:`${part[0].title} · ${part[part.length-1].title}`;
+    groups.push({id:`group-${groups.length+1}`,title,page_start:part[0].page_start,page_end:part[part.length-1].page_end,paragraph_ids:part.flatMap(x=>x.paragraph_ids),grouped_titles:part.map(x=>x.title)});
   }
-  return out.slice(0,max);
+  return groups.slice(0,max);
 }
 
 function chooseStatement(evidence){

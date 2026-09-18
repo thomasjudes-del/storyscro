@@ -317,17 +317,49 @@ function numberedHeadingQuality(line,bodySize){
 
 function isHeadingLike(line,bodySize){
   const text=normalize(line.text); if(!text||line.isRepeated||line.rotated)return false;
-  if(isBoilerplateText(text)||isCitationLike(text)||/^(?:figure|fig\.?|table|algorithm)\s*\d+/i.test(text))return false;
+  if(isBoilerplateText(text)||isCitationLike(text)||/^(?:figure|fig\.?|table|algorithm)\s*\d+/i.test(text)||^[\d\s,.$€£%°+−-]+$/.test(text))return false;
   const words=text.split(/\s+/).length;
   if(words>18&&line.page!==1)return false;
   if(line.x>line.pageWidth*.82)return false;
   const numbered=numberedHeadingQuality(line,bodySize);
   const canonicalRaw=/^(?:abstract|introduction|background|related work|method(?:s|ology)?|approach|model architecture|experiments?|results?|discussion|limitations?|recommendations?|conclusions?|summary|outlook|references|appendix|annex|overview|executive summary|context|méthode|résultats?|conclusion|recommandations?|synthèse|contexte|policies|policy priorities|crosscurrents|comparison)\b/i.test(text);
-  const canonical=canonicalRaw&&words<=11&&text.length<=100&&!/[.!?;]$/.test(text)&&!/[,:].{22,}/.test(text);
+  const canonical=canonicalRaw&&words<=11&&text.length<=100&&!/[.!?;,:]$/.test(text)&&!/[,:].{22,}/.test(text);
   const firstAlpha=(text.match(/[A-Za-zÀ-ÿ]/)||[''])[0];
   const titleish=words>=2&&words<=12&&firstAlpha&&firstAlpha===firstAlpha.toUpperCase()&&line.maxSize>=bodySize*1.12&&titleCaseRatio(text)>=.68&&!/[.!?;]$/.test(text);
   const sizeSignal=line.maxSize>=bodySize*1.34 || (line.bold&&line.maxSize>=bodySize*1.05&&words<=12);
   return numbered||canonical||titleish||sizeSignal;
+}
+
+function recoverNumberedHeadings(rawItems,pages,bodySize){
+  const pageDims=new Map(pages.map(p=>[p.number,p]));
+  const byPage=new Map();
+  for(const it of rawItems){if(it.rotated)continue;if(!byPage.has(it.page))byPage.set(it.page,[]);byPage.get(it.page).push(it)}
+  const out=[];
+  for(const [page,items] of byPage){
+    const dims=pageDims.get(page); if(!dims)continue;
+    const sorted=[...items].sort((a,b)=>b.y-a.y||a.x-b.x);
+    for(let i=0;i<sorted.length;i++){
+      const start=sorted[i],st=normalize(start.text);
+      if(!/^\d{1,2}(?:\.\d+){0,3}\.?$/.test(st))continue;
+      const same=sorted.filter(x=>x.x>start.x&&Math.abs(x.y-start.y)<=Math.max(2.5,start.size*.45))
+        .sort((a,b)=>a.x-b.x).slice(0,6);
+      if(!same.length)continue;
+      const titleParts=[];let lastRight=start.x+start.width;
+      for(const x of same){
+        const gap=x.x-lastRight;
+        if(titleParts.length&&gap>Math.max(70,dims.width*.13))break;
+        const tx=normalize(x.text); if(!tx)continue;
+        titleParts.push(tx);lastRight=x.x+x.width;
+        if(titleParts.join(' ').length>105)break;
+      }
+      const text=normalize(st+' '+titleParts.join(' '));
+      const fonts=[start,...same.slice(0,titleParts.length)];
+      const font=fonts.sort((a,b)=>String(b.text).length-String(a.text).length)[0]?.font||start.font||'';
+      const line={text,page,x:start.x,y:start.y,width:Math.max(1,lastRight-start.x),size:start.size,maxSize:Math.max(start.size,...same.map(x=>x.size)),font,bold:isBold(font),pageWidth:dims.width,pageHeight:dims.height,topRatio:1-start.y/dims.height,bottomRatio:start.y/dims.height,recovered:true};
+      if(numberedHeadingQuality(line,bodySize))out.push(line);
+    }
+  }
+  return out;
 }
 
 function detectNumbers(paragraphs){
@@ -398,7 +430,7 @@ function structuralHeading(h,bodySize,denseNumberedPages=new Set()){
   if(/^(?:endnotes?|references?|bibliography|références|bibliographie|annex|appendix)\b/i.test(t))return true;
   if(/^chapter\s+\d+\b/i.test(t))return true;
   const canonical=/^(?:abstract|executive summary|résumé exécutif|introduction|background|related work|method(?:s|ology)?|approach|model architecture|experiments?|results?|discussion|limitations?|recommendations?|conclusions?|summary|outlook|policy priorities|policies to|synthèse|conclusion|recommandations?|comparison)\b/i.test(t);
-  if(canonical&&t.split(/\s+/).length<=11&&t.length<=100&&!/[.!?;]$/.test(t)&&!/[,:].{22,}/.test(t))return h.maxSize>=bodySize*.92||h.bold;
+  if(canonical&&t.split(/\s+/).length<=11&&t.length<=100&&!/[.!?;,:]$/.test(t)&&!/[,:].{22,}/.test(t))return h.maxSize>=bodySize*.92||h.bold;
   const numbered=t.match(/^(\d{1,2}(?:\.\d+){0,3})\.?\s*(.+)/);
   if(numbered){
     const prefix=numbered[1],rest=normalize(numbered[2]),depth=prefix.split('.').length,firstNum=Number(prefix.split('.')[0]);
@@ -568,7 +600,13 @@ async function ingestPdf(file,onProgress=()=>{},signal){
   }
   const repeatedKeys=new Set([...repeated.entries()].filter(([,set])=>set.size>=Math.max(2,Math.ceil(pdf.numPages*.28))).map(([k])=>k));
   for(const l of allLines)l.isRepeated=repeatedKeys.has(normalizeKey(l.text));
-  const headingCandidates=allLines.filter(l=>l.text.length>=3&&l.text.length<=170&&isHeadingLike(l,bodySize));
+  const recoveredHeadings=recoverNumberedHeadings(rawItemsAll,pages,bodySize);
+  const candidatePool=[...allLines.filter(l=>l.text.length>=3&&l.text.length<=170&&isHeadingLike(l,bodySize)),...recoveredHeadings];
+  const headingCandidates=[];
+  for(const h of candidatePool){
+    const duplicate=headingCandidates.some(x=>x.page===h.page&&normalize(x.text).toLowerCase()===normalize(h.text).toLowerCase()&&Math.abs(x.y-h.y)<bodySize*1.4);
+    if(!duplicate)headingCandidates.push(h);
+  }
   const sizes=[...new Set(headingCandidates.map(h=>Math.round(h.maxSize*10)/10))].sort((a,b)=>b-a);
   const thresholds=sizes.slice(0,5);
   const headings=headingCandidates.map((h,i)=>{

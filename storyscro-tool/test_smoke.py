@@ -51,7 +51,12 @@ def run(label,width,height):
             externalImages:(s?.assets||[]).filter(a=>a.origin==='external-context').length,
             numericNav:[...document.querySelectorAll('.chapter-nav a')].filter(a=>a.textContent.trim()!==''&&Number.isFinite(Number(a.textContent.trim()))).length,
             sourceBackdropRefs:(()=>{const am=new Map((s?.assets||[]).map(a=>[a.id,a]));const scenes=(s?.chapters||[]).flatMap(c=>c.scenes||[]);const ids=scenes.flatMap(sc=>[...(sc.media||[]).map(m=>m.asset_id),...((sc.data?.items)||[]).map(x=>x.asset_id),...((sc.data?.steps)||[]).map(x=>x.asset_id)]).filter(Boolean);return ids.filter(id=>am.get(id)?.origin==='source').length})(),
-            titleTooTall:[...document.querySelectorAll('.story-scene h1,.story-scene h2')].filter(el=>el.getBoundingClientRect().height>window.innerHeight*.58).length
+            titleTooTall:[...document.querySelectorAll('.story-scene h1,.story-scene h2')].filter(el=>el.getBoundingClientRect().height>window.innerHeight*.58).length,
+            synthesisScenes:document.querySelectorAll('.synthesis-scene').length,
+            methodologyTimelines:(s?.chapters||[]).filter(c=>/method|méthod/i.test(c.title||'')).flatMap(c=>c.scenes||[]).filter(sc=>sc.primitive==='timeline').length,
+            badChartLabels:(s?.chapters||[]).flatMap(c=>c.scenes||[]).filter(sc=>sc.primitive==='trend_grid').flatMap(sc=>sc.data?.series||[]).filter(sr=>/^https?:|www\.|.{90,}/i.test(sr.label||'')).length,
+            badNav:(s?.chapters||[]).filter(c=>/\bbox\s*\d+\b|^(?:january|february|march|april|may|june|july|august|september|october|november|december|world|economic|outlook|update|\d+)$/i.test((c.nav_label||'').trim())||/(?:\bde|\bdu|\bdes|\bà|\bau|\bpour|\bavec|\bsur|\ben|\bof|\band|\bto|\bfor)$/i.test((c.nav_label||'').trim())).length,
+            storyMaxPage:Math.max(1,...(s?.chapters||[]).flatMap(c=>c.scenes||[]).flatMap(sc=>sc.source_refs||[]).map(r=>Number(r.page)||1))
           }
         """)
         assert stats["pages"] >= 2, stats
@@ -67,6 +72,11 @@ def run(label,width,height):
         assert stats["numericNav"] == 0, stats
         assert stats["sourceBackdropRefs"] == 0, stats
         assert stats["titleTooTall"] == 0, stats
+        assert stats["methodologyTimelines"] == 0, stats
+        assert stats["badChartLabels"] == 0, stats
+        assert stats["badNav"] == 0, stats
+        if stats["pages"] >= 20:
+            assert stats["storyMaxPage"] >= stats["pages"] * .55, stats
         assert stats["charts"] == stats["storyTables"], stats
         if EXPECT_CHART:
             assert stats["charts"] >= 1, stats

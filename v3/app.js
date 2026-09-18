@@ -246,7 +246,7 @@
     const items=scene.data?.items||[]; const section=document.createElement('section'); section.className='scrolly scene-dark';
     const mode=pacing(scene).reveal_mode||'one_at_a_time';
     section.innerHTML=`<div class="sticky-stage mosaic-stage"><div class="mosaic ${mode==='one_at_a_time'?'progressive':''}">${items.map((it,i)=>`<article class="mosaic-tile" data-i="${i}" tabindex="${scene.interaction?.hover==='focus'?'0':'-1'}"><div class="mosaic-image" style="${bgStyle(it.asset_id)}"></div><div class="mosaic-copy"><b>${String(i+1).padStart(2,'0')}</b><h3>${applyEmphasis(it.title||'',it.emphasis||scene.emphasis)}</h3><p>${applyEmphasis(it.text||'',it.emphasis||scene.emphasis)}</p></div></article>`).join('')}</div><div class="mosaic-intro"><span class="chapter-no">${esc(chapter.nav_label||'')}</span><h2>${applyEmphasis(scene.title||chapter.title,scene.emphasis)}</h2>${sourceButton(scene)}</div></div><div class="scroll-space long"></div>`;
-    const tiles=$('.mosaic-tile',section);
+    const tiles=$$('.mosaic-tile',section);
     if(scene.interaction?.hover==='focus') tiles.forEach((tile,i)=>{
       const on=()=>{ tiles.forEach((x,j)=>x.classList.toggle('hover-active',i===j)); };
       tile.addEventListener('pointerenter',on); tile.addEventListener('focus',on);
@@ -367,7 +367,7 @@
   }
 
   function sceneProgress(el){ const span=Math.max(1,el.offsetHeight-innerHeight); return clamp((scrollY-el.offsetTop)/span); }
-  function updateSceneEffects(){ for(const el of $('.story-scene')) { if(typeof el._update==='function') el._update(sceneProgress(el)); resolveSceneCollisions(el); } }
+  function updateSceneEffects(){ for(const el of $$('.story-scene')) { if(typeof el._update==='function') el._update(sceneProgress(el)); resolveSceneCollisions(el); } }
   function onScroll(){ const max=Math.max(1,document.documentElement.scrollHeight-innerHeight); progress.style.width=`${clamp(scrollY/max)*100}%`; updateSceneEffects(); updateActiveNavigation(); }
 
   function currentAnchorIndex(){ const y=scrollY+innerHeight*.46; let idx=0; anchors.forEach((a,i)=>{if(a.el.offsetTop<=y) idx=i;}); return idx; }

@@ -77,6 +77,11 @@ def inspect_layout(driver, scene_id):
         progressiveActiveTiles:scene?.querySelectorAll('.mosaic.progressive .mosaic-tile.active').length??null,
         progressiveVisibleTiles:scene?.querySelector('.mosaic.progressive')?[...scene.querySelectorAll('.mosaic.progressive .mosaic-tile')].filter(el=>Number(getComputedStyle(el).opacity)>.16).length:null,
         sourceDeep:getComputedStyle(document.documentElement).getPropertyValue('--deep').trim(),
+        originalPdfVisible:!!document.querySelector('#sourcePdfLink:not([hidden])'),
+        originalPdfHref:document.querySelector('#sourcePdfLink')?.href||'',
+        arrowControls:document.querySelectorAll('.micro-controls button').length,
+        heroCopyTop:document.querySelector('.hero-copy')?.getBoundingClientRect().top??null,
+        headerBottom:document.querySelector('.story-header')?.getBoundingClientRect().bottom??null,
         offenders:offenders.slice(0,30)
       };
     """, scene_id)
@@ -96,6 +101,10 @@ def inspect_layout(driver, scene_id):
         raise RuntimeError(f'Visible narrative text collision at {scene_id}: {dims["collisions"]}')
     if dims.get('progressiveVisibleTiles') is not None and dims['progressiveVisibleTiles'] > 1:
         raise RuntimeError(f'Progressive scene visually overlaps states at {scene_id}: {dims["progressiveVisibleTiles"]} visible tiles')
+    if dims.get('arrowControls'):
+        raise RuntimeError('Redundant up/down arrow controls should not be rendered')
+    if scene_id == 'ccc-hero' and dims.get('heroCopyTop') is not None and dims.get('headerBottom') is not None and dims['heroCopyTop'] < dims['headerBottom'] + 10:
+        raise RuntimeError(f'Hero copy collides with fixed header: top={dims["heroCopyTop"]}, headerBottom={dims["headerBottom"]}')
     if not dims['scrubber']:
         raise RuntimeError('Generic draggable scrubber is missing')
     return dims
@@ -128,6 +137,10 @@ def capture(label, width, height):
         wait_ready(driver)
         ids = scene_ids(driver)
         report['external_assets'] = validate_external_assets(driver)
+        source_link = driver.execute_script("const a=document.getElementById('sourcePdfLink'); return {visible:!!a&&!a.hidden, href:a?.href||''};")
+        if not source_link['visible'] or 'Progress-in-adapting-to-climate-change-2025.pdf' not in source_link['href']:
+            raise RuntimeError(f'Original source PDF link missing or wrong: {source_link}')
+        report['source_pdf_link'] = source_link
         if len(ids) < MIN_SCENES:
             raise RuntimeError(f'Expected at least {MIN_SCENES} scenes, got {len(ids)}')
         for scene_id in ids:

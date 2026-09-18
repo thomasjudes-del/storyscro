@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.3.0",
   "principles": {
     "semantic_first": true,
     "effects_are_not_decoration": true,
@@ -10,7 +10,12 @@
     "preserve_provenance": true,
     "forbid_near_duplicate_media": true,
     "respect_reduced_motion": true,
-    "mobile_must_have_explicit_fallback": true
+    "mobile_must_have_explicit_fallback": true,
+    "preserve_source_visual_identity_when_coherent": true,
+    "no_text_or_title_overlap": true,
+    "no_spoiler_reveal_by_default": true,
+    "scene_arrival_must_settle_before_progression": true,
+    "use_interaction_only_when_it_adds_information": true
   },
   "editorial_policy": {
     "fidelity_modes": {
@@ -18,7 +23,12 @@
       "adaptive": "Preserve all material claims and evidence while allowing consolidation, reordering and compression to improve the narrative. Default mode.",
       "restructured": "Rebuild the narrative around the document's core question and evidence rather than its original section order. Must record every structural transformation and retain all important source claims."
     },
-    "compression_levels": ["none", "light", "balanced", "high"],
+    "compression_levels": [
+      "none",
+      "light",
+      "balanced",
+      "high"
+    ],
     "default_fidelity": "adaptive",
     "default_compression": "balanced"
   },
@@ -36,7 +46,12 @@
       "purpose": "Move between chapters and significant scenes without losing orientation.",
       "desktop": "right-side rail with chapter markers, nested scene dots, active label, previous/next controls",
       "mobile": "compact previous/next controls plus current chapter label",
-      "keyboard": ["ArrowUp", "ArrowDown", "PageUp", "PageDown"],
+      "keyboard": [
+        "ArrowUp",
+        "ArrowDown",
+        "PageUp",
+        "PageDown"
+      ],
       "behavior": "scroll to semantic scene anchors, not arbitrary viewport offsets"
     }
   },
@@ -62,201 +77,846 @@
     ]
   },
   "effects": {
-    "none": {"motion": "none", "use": "Default when motion adds no explanatory value."},
-    "fade": {"motion": "low", "use": "Change context without implying direction."},
-    "crossfade": {"motion": "low", "use": "Transition between related images, states or time periods."},
-    "wipe_left": {"motion": "medium", "use": "Reveal a next state or compare layers with a directional reading."},
-    "wipe_right": {"motion": "medium", "use": "Reveal a previous/alternate state or directional comparison."},
-    "wipe_up": {"motion": "medium", "use": "Progress upward through stages, layers or chronology."},
-    "wipe_down": {"motion": "medium", "use": "Reveal a descending sequence or remove a layer."},
-    "parallax": {"motion": "low", "use": "Add depth to contextual photography or chapter transitions."},
-    "fixed_background": {"motion": "low", "use": "Hold context while narrative text progresses."},
-    "zoom_in": {"motion": "medium", "use": "Move from overview to detail; maps, images, diagrams, evidence."},
-    "zoom_out": {"motion": "medium", "use": "Move from detail to system view or conclusion."},
-    "pan": {"motion": "medium", "use": "Travel across a large map, image, timeline or diagram."},
-    "blur_to_focus": {"motion": "low", "use": "Shift attention to a key claim or selected element."},
-    "focus_to_blur": {"motion": "low", "use": "De-emphasise a departing idea."},
-    "grayscale_to_color": {"motion": "low", "use": "Signal activation, selection or before/after state when semantically justified."},
-    "color_to_grayscale": {"motion": "low", "use": "Signal deactivation, loss or backgrounding when semantically justified."},
-    "scale_reveal": {"motion": "medium", "use": "Introduce a quantified result, object or focal visual."},
-    "draw_path": {"motion": "medium", "use": "Show routes, dependencies, sequences, processes or trajectories."},
-    "progressive_build": {"motion": "medium", "use": "Build a chart, matrix, roadmap, process or evidence chain in reading order."},
-    "flipbook": {"motion": "high", "use": "Animate a meaningful sequence of states or explain a mechanism. Avoid decorative use."},
-    "horizontal_track": {"motion": "medium", "use": "Present ordered phases or a bounded sequence that benefits from spatial progression."},
-    "sticky_step_change": {"motion": "medium", "use": "Keep a visual context fixed while explanatory steps change."}
+    "none": {
+      "motion": "none",
+      "use": "Default when motion adds no explanatory value."
+    },
+    "fade": {
+      "motion": "low",
+      "use": "Change context without implying direction."
+    },
+    "crossfade": {
+      "motion": "low",
+      "use": "Transition between related images, states or time periods."
+    },
+    "wipe_left": {
+      "motion": "medium",
+      "use": "Reveal a next state or compare layers with a directional reading."
+    },
+    "wipe_right": {
+      "motion": "medium",
+      "use": "Reveal a previous/alternate state or directional comparison."
+    },
+    "wipe_up": {
+      "motion": "medium",
+      "use": "Progress upward through stages, layers or chronology."
+    },
+    "wipe_down": {
+      "motion": "medium",
+      "use": "Reveal a descending sequence or remove a layer."
+    },
+    "parallax": {
+      "motion": "low",
+      "use": "Add depth to contextual photography or chapter transitions."
+    },
+    "fixed_background": {
+      "motion": "low",
+      "use": "Hold context while narrative text progresses."
+    },
+    "zoom_in": {
+      "motion": "medium",
+      "use": "Move from overview to detail; maps, images, diagrams, evidence."
+    },
+    "zoom_out": {
+      "motion": "medium",
+      "use": "Move from detail to system view or conclusion."
+    },
+    "pan": {
+      "motion": "medium",
+      "use": "Travel across a large map, image, timeline or diagram."
+    },
+    "blur_to_focus": {
+      "motion": "low",
+      "use": "Shift attention to a key claim or selected element."
+    },
+    "focus_to_blur": {
+      "motion": "low",
+      "use": "De-emphasise a departing idea."
+    },
+    "grayscale_to_color": {
+      "motion": "low",
+      "use": "Signal activation, selection or before/after state when semantically justified."
+    },
+    "color_to_grayscale": {
+      "motion": "low",
+      "use": "Signal deactivation, loss or backgrounding when semantically justified."
+    },
+    "scale_reveal": {
+      "motion": "medium",
+      "use": "Introduce a quantified result, object or focal visual."
+    },
+    "draw_path": {
+      "motion": "medium",
+      "use": "Show routes, dependencies, sequences, processes or trajectories."
+    },
+    "progressive_build": {
+      "motion": "medium",
+      "use": "Build a chart, matrix, roadmap, process or evidence chain in reading order."
+    },
+    "flipbook": {
+      "motion": "high",
+      "use": "Animate a meaningful sequence of states or explain a mechanism. Avoid decorative use."
+    },
+    "horizontal_track": {
+      "motion": "medium",
+      "use": "Present ordered phases or a bounded sequence that benefits from spatial progression."
+    },
+    "sticky_step_change": {
+      "motion": "medium",
+      "use": "Keep a visual context fixed while explanatory steps change."
+    }
   },
   "primitives": {
     "hero": {
-      "roles": ["opening", "positioning", "chapter_opening"],
-      "supports": ["image", "background_video", "solid_color"],
-      "effects": ["parallax", "fixed_background", "zoom_in", "zoom_out", "fade", "blur_to_focus", "grayscale_to_color"],
-      "rules": ["Use strong source or contextual visual.", "Keep copy short.", "Background video must be muted, looping and have a still fallback."]
+      "roles": [
+        "opening",
+        "positioning",
+        "chapter_opening"
+      ],
+      "supports": [
+        "image",
+        "background_video",
+        "solid_color"
+      ],
+      "effects": [
+        "parallax",
+        "fixed_background",
+        "zoom_in",
+        "zoom_out",
+        "fade",
+        "blur_to_focus",
+        "grayscale_to_color"
+      ],
+      "rules": [
+        "Use strong source or contextual visual.",
+        "Keep copy short.",
+        "Background video must be muted, looping and have a still fallback."
+      ]
     },
     "text_section": {
-      "roles": ["explanation", "context", "method_detail", "evidence_detail"],
-      "supports": ["single_column", "two_column", "inline_media", "quote", "table", "embed"],
-      "effects": ["none", "fade"],
-      "rules": ["Use when reading is more important than motion.", "Do not force every paragraph into an interactive scene."]
+      "roles": [
+        "explanation",
+        "context",
+        "method_detail",
+        "evidence_detail"
+      ],
+      "supports": [
+        "single_column",
+        "two_column",
+        "inline_media",
+        "quote",
+        "table",
+        "embed"
+      ],
+      "effects": [
+        "none",
+        "fade"
+      ],
+      "rules": [
+        "Use when reading is more important than motion.",
+        "Do not force every paragraph into an interactive scene."
+      ]
     },
     "full_screen_statement": {
-      "roles": ["thesis", "turning_point", "conclusion", "chapter_opening"],
-      "supports": ["text", "text_over_media"],
-      "effects": ["fade", "blur_to_focus", "line_by_line_fade", "line_by_line_zoom"],
-      "rules": ["One key idea only.", "Allow visual breathing room before or after high-density scenes."]
+      "roles": [
+        "thesis",
+        "turning_point",
+        "conclusion",
+        "chapter_opening"
+      ],
+      "supports": [
+        "text",
+        "text_over_media"
+      ],
+      "effects": [
+        "fade",
+        "blur_to_focus",
+        "line_by_line_fade",
+        "line_by_line_zoom"
+      ],
+      "rules": [
+        "One key idea only.",
+        "Allow visual breathing room before or after high-density scenes."
+      ]
     },
     "text_over_media": {
-      "roles": ["chapter_opening", "quote", "key_fact", "transition"],
-      "supports": ["image", "background_video", "half_split"],
-      "effects": ["fixed_background", "parallax", "fade", "zoom_in", "zoom_out", "blur_to_focus", "grayscale_to_color"],
-      "rules": ["Use overlay/gradient for legibility.", "Do not place dense body copy over busy media."]
+      "roles": [
+        "chapter_opening",
+        "quote",
+        "key_fact",
+        "transition"
+      ],
+      "supports": [
+        "image",
+        "background_video",
+        "half_split"
+      ],
+      "effects": [
+        "fixed_background",
+        "parallax",
+        "fade",
+        "zoom_in",
+        "zoom_out",
+        "blur_to_focus",
+        "grayscale_to_color"
+      ],
+      "rules": [
+        "Use overlay/gradient for legibility.",
+        "Do not place dense body copy over busy media."
+      ]
     },
     "reveal": {
-      "roles": ["before_after", "layer_comparison", "state_change", "time_change"],
-      "supports": ["image_sequence", "video_sequence", "text_per_frame"],
-      "effects": ["fade", "wipe_left", "wipe_right", "wipe_up", "wipe_down", "none"],
-      "rules": ["Frames must represent comparable states or a meaningful sequence.", "Prefer hard change for frame-by-frame animation and crossfade/wipe for distinct states."]
+      "roles": [
+        "before_after",
+        "layer_comparison",
+        "state_change",
+        "time_change"
+      ],
+      "supports": [
+        "image_sequence",
+        "video_sequence",
+        "text_per_frame"
+      ],
+      "effects": [
+        "fade",
+        "wipe_left",
+        "wipe_right",
+        "wipe_up",
+        "wipe_down",
+        "none"
+      ],
+      "rules": [
+        "Frames must represent comparable states or a meaningful sequence.",
+        "Prefer hard change for frame-by-frame animation and crossfade/wipe for distinct states."
+      ]
     },
     "scrollmation": {
-      "roles": ["step_explanation", "mechanism", "chart_sequence", "map_sequence", "diagram_sequence"],
-      "supports": ["sticky_visual_plus_text", "frame_sequence", "foreground_media"],
-      "effects": ["sticky_step_change", "fade", "flipbook", "progressive_build"],
-      "rules": ["The visual must change because the explanation changes.", "Avoid excessive frame counts without explanatory benefit."]
+      "roles": [
+        "step_explanation",
+        "mechanism",
+        "chart_sequence",
+        "map_sequence",
+        "diagram_sequence"
+      ],
+      "supports": [
+        "sticky_visual_plus_text",
+        "frame_sequence",
+        "foreground_media"
+      ],
+      "effects": [
+        "sticky_step_change",
+        "fade",
+        "flipbook",
+        "progressive_build"
+      ],
+      "rules": [
+        "The visual must change because the explanation changes.",
+        "Avoid excessive frame counts without explanatory benefit."
+      ]
     },
     "background_scrollmation": {
-      "roles": ["immersive_sequence", "place_sequence", "evidence_sequence", "photo_essay"],
-      "supports": ["full_screen_frames", "text_column", "image", "video", "embedded_visual"],
-      "effects": ["fade", "crossfade", "none", "sticky_step_change"],
-      "rules": ["Provide distinct mobile crops or alternates.", "Keep text column position compatible with media focal points."]
+      "roles": [
+        "immersive_sequence",
+        "place_sequence",
+        "evidence_sequence",
+        "photo_essay"
+      ],
+      "supports": [
+        "full_screen_frames",
+        "text_column",
+        "image",
+        "video",
+        "embedded_visual"
+      ],
+      "effects": [
+        "fade",
+        "crossfade",
+        "none",
+        "sticky_step_change"
+      ],
+      "rules": [
+        "Provide distinct mobile crops or alternates.",
+        "Keep text column position compatible with media focal points."
+      ]
     },
     "scrollpoints": {
-      "roles": ["map_exploration", "image_detail", "chart_detail", "timeline_detail", "diagram_inspection"],
-      "supports": ["large_image", "map", "diagram", "chart_image"],
-      "effects": ["zoom_in", "zoom_out", "pan", "marker_highlight"],
-      "rules": ["Use when overview-to-detail context matters.", "Each point needs a semantic reason for movement."]
+      "roles": [
+        "map_exploration",
+        "image_detail",
+        "chart_detail",
+        "timeline_detail",
+        "diagram_inspection"
+      ],
+      "supports": [
+        "large_image",
+        "map",
+        "diagram",
+        "chart_image"
+      ],
+      "effects": [
+        "zoom_in",
+        "zoom_out",
+        "pan",
+        "marker_highlight"
+      ],
+      "rules": [
+        "Use when overview-to-detail context matters.",
+        "Each point needs a semantic reason for movement."
+      ]
     },
     "chart": {
-      "roles": ["quantitative_evidence", "comparison", "trend", "composition", "distribution"],
-      "supports": ["bar", "line", "area", "dot", "pie", "donut", "combo", "custom_svg", "custom_d3"],
-      "effects": ["progressive_build", "fade", "marker_highlight", "sticky_step_change"],
-      "rules": ["Choose chart type from analytical question, not aesthetics.", "Animate annotations or data states only when sequence helps understanding.", "Always expose source and units."]
+      "roles": [
+        "quantitative_evidence",
+        "comparison",
+        "trend",
+        "composition",
+        "distribution"
+      ],
+      "supports": [
+        "bar",
+        "line",
+        "area",
+        "dot",
+        "pie",
+        "donut",
+        "combo",
+        "custom_svg",
+        "custom_d3"
+      ],
+      "effects": [
+        "progressive_build",
+        "fade",
+        "marker_highlight",
+        "sticky_step_change"
+      ],
+      "rules": [
+        "Choose chart type from analytical question, not aesthetics.",
+        "Animate annotations or data states only when sequence helps understanding.",
+        "Always expose source and units."
+      ]
     },
     "big_number": {
-      "roles": ["key_metric", "scale", "single_fact"],
-      "supports": ["number", "unit", "context", "comparison_label"],
-      "effects": ["scale_reveal", "fade", "scroll_highlight"],
-      "rules": ["Only for truly decision-relevant numbers.", "Never manufacture a headline metric by unsafe aggregation."]
+      "roles": [
+        "key_metric",
+        "scale",
+        "single_fact"
+      ],
+      "supports": [
+        "number",
+        "unit",
+        "context",
+        "comparison_label"
+      ],
+      "effects": [
+        "scale_reveal",
+        "fade",
+        "scroll_highlight"
+      ],
+      "rules": [
+        "Only for truly decision-relevant numbers.",
+        "Never manufacture a headline metric by unsafe aggregation."
+      ]
     },
     "timeline": {
-      "roles": ["chronology", "milestones", "history", "future_roadmap"],
-      "supports": ["events", "intervals", "eras", "annotations"],
-      "effects": ["draw_path", "progressive_build", "horizontal_track", "sticky_step_change"],
-      "rules": ["Use temporal order only when time is the real organising dimension."]
+      "roles": [
+        "chronology",
+        "milestones",
+        "history",
+        "future_roadmap"
+      ],
+      "supports": [
+        "events",
+        "intervals",
+        "eras",
+        "annotations"
+      ],
+      "effects": [
+        "draw_path",
+        "progressive_build",
+        "horizontal_track",
+        "sticky_step_change"
+      ],
+      "rules": [
+        "Use temporal order only when time is the real organising dimension."
+      ]
     },
     "gantt": {
-      "roles": ["planning", "delivery_sequence", "workstreams"],
-      "supports": ["tasks", "weeks", "months", "milestones", "dependencies"],
-      "effects": ["progressive_build", "marker_highlight"],
-      "rules": ["Use actual source schedule data.", "Do not infer dates or durations not present in the source."]
+      "roles": [
+        "planning",
+        "delivery_sequence",
+        "workstreams"
+      ],
+      "supports": [
+        "tasks",
+        "weeks",
+        "months",
+        "milestones",
+        "dependencies"
+      ],
+      "effects": [
+        "progressive_build",
+        "marker_highlight"
+      ],
+      "rules": [
+        "Use actual source schedule data.",
+        "Do not infer dates or durations not present in the source."
+      ]
     },
     "matrix": {
-      "roles": ["prioritisation", "portfolio", "segmentation", "tradeoff"],
-      "supports": ["two_axes", "quadrants", "points", "labels"],
-      "effects": ["progressive_build", "zoom_in", "marker_highlight"],
-      "rules": ["Axes and point positions must be sourced or explicitly labelled qualitative transformation."]
+      "roles": [
+        "prioritisation",
+        "portfolio",
+        "segmentation",
+        "tradeoff"
+      ],
+      "supports": [
+        "two_axes",
+        "quadrants",
+        "points",
+        "labels"
+      ],
+      "effects": [
+        "progressive_build",
+        "zoom_in",
+        "marker_highlight"
+      ],
+      "rules": [
+        "Axes and point positions must be sourced or explicitly labelled qualitative transformation."
+      ]
     },
     "comparison": {
-      "roles": ["compare_options", "before_after", "benchmark", "tradeoff"],
-      "supports": ["side_by_side", "stacked", "reveal", "small_multiples"],
-      "effects": ["fade", "wipe_left", "wipe_right", "marker_highlight"],
-      "rules": ["Use common dimensions and consistent scales."]
+      "roles": [
+        "compare_options",
+        "before_after",
+        "benchmark",
+        "tradeoff"
+      ],
+      "supports": [
+        "side_by_side",
+        "stacked",
+        "reveal",
+        "small_multiples"
+      ],
+      "effects": [
+        "fade",
+        "wipe_left",
+        "wipe_right",
+        "marker_highlight"
+      ],
+      "rules": [
+        "Use common dimensions and consistent scales."
+      ]
     },
     "mosaic": {
-      "roles": ["categories", "portfolio", "theme_overview", "visual_index"],
-      "supports": ["image_tiles", "text_tiles", "mixed_tiles"],
-      "effects": ["zoom_in", "blur_to_focus", "grayscale_to_color", "sticky_step_change"],
-      "rules": ["Use for a small bounded set of parallel items.", "Do not hide important hierarchy behind equal-sized tiles if items are not equal."]
+      "roles": [
+        "categories",
+        "portfolio",
+        "theme_overview",
+        "visual_index"
+      ],
+      "supports": [
+        "image_tiles",
+        "text_tiles",
+        "mixed_tiles"
+      ],
+      "effects": [
+        "zoom_in",
+        "blur_to_focus",
+        "grayscale_to_color",
+        "sticky_step_change"
+      ],
+      "rules": [
+        "Use for a small bounded set of parallel items.",
+        "Do not hide important hierarchy behind equal-sized tiles if items are not equal."
+      ]
     },
     "process_flow": {
-      "roles": ["process", "causal_chain", "pipeline", "decision_flow"],
-      "supports": ["nodes", "edges", "stages", "branches"],
-      "effects": ["draw_path", "progressive_build", "marker_highlight"],
-      "rules": ["Arrows must mean something explicit: sequence, dependency or causality."]
+      "roles": [
+        "process",
+        "causal_chain",
+        "pipeline",
+        "decision_flow"
+      ],
+      "supports": [
+        "nodes",
+        "edges",
+        "stages",
+        "branches"
+      ],
+      "effects": [
+        "draw_path",
+        "progressive_build",
+        "marker_highlight"
+      ],
+      "rules": [
+        "Arrows must mean something explicit: sequence, dependency or causality."
+      ]
     },
     "network": {
-      "roles": ["stakeholders", "relationships", "ecosystem", "dependencies"],
-      "supports": ["nodes", "edges", "groups", "central_actor"],
-      "effects": ["progressive_build", "marker_highlight", "zoom_in"],
-      "rules": ["Do not infer relationships absent from the source.", "Use a simpler stakeholder list if relationship evidence is weak."]
+      "roles": [
+        "stakeholders",
+        "relationships",
+        "ecosystem",
+        "dependencies"
+      ],
+      "supports": [
+        "nodes",
+        "edges",
+        "groups",
+        "central_actor"
+      ],
+      "effects": [
+        "progressive_build",
+        "marker_highlight",
+        "zoom_in"
+      ],
+      "rules": [
+        "Do not infer relationships absent from the source.",
+        "Use a simpler stakeholder list if relationship evidence is weak."
+      ]
     },
     "map": {
-      "roles": ["geography", "regional_comparison", "route", "spatial_distribution"],
-      "supports": ["points", "regions", "routes", "choropleth", "labels", "custom_svg", "web_map_embed"],
-      "effects": ["pan", "zoom_in", "zoom_out", "marker_highlight", "draw_path", "sticky_step_change"],
-      "rules": ["Only use geography when spatial location contributes to the argument.", "Do not geocode uncertain entities without marking uncertainty."]
+      "roles": [
+        "geography",
+        "regional_comparison",
+        "route",
+        "spatial_distribution"
+      ],
+      "supports": [
+        "points",
+        "regions",
+        "routes",
+        "choropleth",
+        "labels",
+        "custom_svg",
+        "web_map_embed"
+      ],
+      "effects": [
+        "pan",
+        "zoom_in",
+        "zoom_out",
+        "marker_highlight",
+        "draw_path",
+        "sticky_step_change"
+      ],
+      "rules": [
+        "Only use geography when spatial location contributes to the argument.",
+        "Do not geocode uncertain entities without marking uncertainty."
+      ]
     },
     "gallery": {
-      "roles": ["evidence_gallery", "case_studies", "photo_essay", "examples"],
-      "supports": ["grid", "carousel", "lightbox"],
-      "effects": ["fade", "scale_reveal"],
-      "rules": ["Avoid near-duplicate images.", "Use captions when images carry evidence."]
+      "roles": [
+        "evidence_gallery",
+        "case_studies",
+        "photo_essay",
+        "examples"
+      ],
+      "supports": [
+        "grid",
+        "carousel",
+        "lightbox"
+      ],
+      "effects": [
+        "fade",
+        "scale_reveal"
+      ],
+      "rules": [
+        "Avoid near-duplicate images.",
+        "Use captions when images carry evidence."
+      ]
     },
     "media": {
-      "roles": ["visual_evidence", "pause", "demonstration"],
-      "supports": ["image", "foreground_video", "audio", "rich_embed"],
-      "effects": ["fade", "scale_reveal"],
-      "rules": ["Foreground video may include sound and controls; background video should not be the only carrier of important information."]
+      "roles": [
+        "visual_evidence",
+        "pause",
+        "demonstration"
+      ],
+      "supports": [
+        "image",
+        "foreground_video",
+        "audio",
+        "rich_embed"
+      ],
+      "effects": [
+        "fade",
+        "scale_reveal"
+      ],
+      "rules": [
+        "Foreground video may include sound and controls; background video should not be the only carrier of important information."
+      ]
     },
     "data_table": {
-      "roles": ["lookup", "detail", "appendix", "exact_values"],
-      "supports": ["table", "sortable_table", "download"],
-      "effects": ["none"],
-      "rules": ["Prefer charts for pattern recognition and tables for exact lookup."]
+      "roles": [
+        "lookup",
+        "detail",
+        "appendix",
+        "exact_values"
+      ],
+      "supports": [
+        "table",
+        "sortable_table",
+        "download"
+      ],
+      "effects": [
+        "none"
+      ],
+      "rules": [
+        "Prefer charts for pattern recognition and tables for exact lookup."
+      ]
     },
     "quote": {
-      "roles": ["testimony", "expert_voice", "human_evidence", "emphasis"],
-      "supports": ["text", "portrait", "audio"],
-      "effects": ["fade", "blur_to_focus", "scroll_highlight"],
-      "rules": ["Quotes must be traceable to the exact source wording."]
+      "roles": [
+        "testimony",
+        "expert_voice",
+        "human_evidence",
+        "emphasis"
+      ],
+      "supports": [
+        "text",
+        "portrait",
+        "audio"
+      ],
+      "effects": [
+        "fade",
+        "blur_to_focus",
+        "scroll_highlight"
+      ],
+      "rules": [
+        "Quotes must be traceable to the exact source wording."
+      ]
     },
     "evidence_panel": {
-      "roles": ["methodology", "source_detail", "auditability", "caveat"],
-      "supports": ["source_list", "method_note", "footnotes", "download_link"],
-      "effects": ["none", "fade"],
-      "rules": ["Keep available but visually secondary to the main narrative."]
+      "roles": [
+        "methodology",
+        "source_detail",
+        "auditability",
+        "caveat"
+      ],
+      "supports": [
+        "source_list",
+        "method_note",
+        "footnotes",
+        "download_link"
+      ],
+      "effects": [
+        "none",
+        "fade"
+      ],
+      "rules": [
+        "Keep available but visually secondary to the main narrative."
+      ]
     },
     "conclusion": {
-      "roles": ["synthesis", "recommendation", "next_steps", "call_to_action"],
-      "supports": ["text", "image", "key_points"],
-      "effects": ["fade", "zoom_out", "full_screen_statement"],
-      "rules": ["Do not introduce new unsupported conclusions."]
+      "roles": [
+        "synthesis",
+        "recommendation",
+        "next_steps",
+        "call_to_action"
+      ],
+      "supports": [
+        "text",
+        "image",
+        "key_points"
+      ],
+      "effects": [
+        "fade",
+        "zoom_out",
+        "full_screen_statement"
+      ],
+      "rules": [
+        "Do not introduce new unsupported conclusions."
+      ]
     },
     "custom": {
-      "roles": ["specialised_visualisation"],
-      "supports": ["svg", "canvas", "webgl", "d3", "iframe", "custom_html"],
-      "effects": ["custom"],
-      "rules": ["Use only when standard primitives cannot express the semantic requirement.", "Must be responsive, accessible and tested."]
+      "roles": [
+        "specialised_visualisation"
+      ],
+      "supports": [
+        "svg",
+        "canvas",
+        "webgl",
+        "d3",
+        "iframe",
+        "custom_html"
+      ],
+      "effects": [
+        "custom"
+      ],
+      "rules": [
+        "Use only when standard primitives cannot express the semantic requirement.",
+        "Must be responsive, accessible and tested."
+      ]
     }
   },
   "selection_rules": [
-    {"when": "single decision-critical number", "prefer": ["big_number", "chart"], "avoid": ["data_table"]},
-    {"when": "two or more values whose relationship matters", "prefer": ["chart", "comparison"], "avoid": ["big_number"]},
-    {"when": "change over time", "prefer": ["chart", "timeline"], "avoid": ["mosaic"]},
-    {"when": "project schedule with durations", "prefer": ["gantt"], "avoid": ["timeline"]},
-    {"when": "ordered methodology or mechanism", "prefer": ["scrollmation", "process_flow", "horizontal_track"], "avoid": ["gallery"]},
-    {"when": "geographic difference or route", "prefer": ["map", "scrollpoints"], "avoid": ["decorative_map"]},
-    {"when": "stakeholder relationships are evidenced", "prefer": ["network"], "avoid": ["network_when_only_list_exists"]},
-    {"when": "same scene before and after", "prefer": ["reveal", "comparison"], "avoid": ["two_unrelated_images"]},
-    {"when": "large image contains multiple meaningful areas", "prefer": ["scrollpoints"], "avoid": ["cropped_gallery"]},
-    {"when": "small set of parallel categories", "prefer": ["mosaic", "grid"], "avoid": ["long_text_list"]},
-    {"when": "dense explanatory prose", "prefer": ["text_section"], "avoid": ["forced_animation"]},
-    {"when": "major thesis or narrative turn", "prefer": ["full_screen_statement", "text_over_media"], "avoid": ["dashboard_card"]}
+    {
+      "when": "single decision-critical number",
+      "prefer": [
+        "big_number",
+        "chart"
+      ],
+      "avoid": [
+        "data_table"
+      ]
+    },
+    {
+      "when": "two or more values whose relationship matters",
+      "prefer": [
+        "chart",
+        "comparison"
+      ],
+      "avoid": [
+        "big_number"
+      ]
+    },
+    {
+      "when": "change over time",
+      "prefer": [
+        "chart",
+        "timeline"
+      ],
+      "avoid": [
+        "mosaic"
+      ]
+    },
+    {
+      "when": "project schedule with durations",
+      "prefer": [
+        "gantt"
+      ],
+      "avoid": [
+        "timeline"
+      ]
+    },
+    {
+      "when": "ordered methodology or mechanism",
+      "prefer": [
+        "scrollmation",
+        "process_flow",
+        "horizontal_track"
+      ],
+      "avoid": [
+        "gallery"
+      ]
+    },
+    {
+      "when": "geographic difference or route",
+      "prefer": [
+        "map",
+        "scrollpoints"
+      ],
+      "avoid": [
+        "decorative_map"
+      ]
+    },
+    {
+      "when": "stakeholder relationships are evidenced",
+      "prefer": [
+        "network"
+      ],
+      "avoid": [
+        "network_when_only_list_exists"
+      ]
+    },
+    {
+      "when": "same scene before and after",
+      "prefer": [
+        "reveal",
+        "comparison"
+      ],
+      "avoid": [
+        "two_unrelated_images"
+      ]
+    },
+    {
+      "when": "large image contains multiple meaningful areas",
+      "prefer": [
+        "scrollpoints"
+      ],
+      "avoid": [
+        "cropped_gallery"
+      ]
+    },
+    {
+      "when": "small set of parallel categories",
+      "prefer": [
+        "mosaic",
+        "grid"
+      ],
+      "avoid": [
+        "long_text_list"
+      ]
+    },
+    {
+      "when": "dense explanatory prose",
+      "prefer": [
+        "text_section"
+      ],
+      "avoid": [
+        "forced_animation"
+      ]
+    },
+    {
+      "when": "major thesis or narrative turn",
+      "prefer": [
+        "full_screen_statement",
+        "text_over_media"
+      ],
+      "avoid": [
+        "dashboard_card"
+      ]
+    },
+    {
+      "when": "ordered items should be discovered progressively",
+      "prefer": [
+        "scrollmation",
+        "background_scrollmation",
+        "chart"
+      ],
+      "avoid": [
+        "mosaic_overview_then_repeat"
+      ]
+    },
+    {
+      "when": "source contains a strong chart or diagram",
+      "prefer": [
+        "scrollpoints",
+        "scrollmation",
+        "media"
+      ],
+      "avoid": [
+        "redraw_without_reason"
+      ]
+    },
+    {
+      "when": "source has a coherent visual identity",
+      "prefer": [
+        "source_palette",
+        "source_typography_character",
+        "source_visuals"
+      ],
+      "avoid": [
+        "generic_storyscro_palette"
+      ]
+    }
   ],
   "media_policy": {
     "allow_background_video": true,
-    "background_video": {"muted": true, "loop": true, "fallback_image_required": true, "avoid_adjacent_multiple_videos": true},
+    "background_video": {
+      "muted": true,
+      "loop": true,
+      "fallback_image_required": true,
+      "avoid_adjacent_multiple_videos": true
+    },
     "allow_foreground_video": true,
-    "near_duplicate_detection": {"required": true, "exception": "intentional before/after or layer sequence"},
-    "reuse_same_image": {"default": "forbidden", "exception": "deliberate callback or comparison with explicit semantic purpose"},
+    "near_duplicate_detection": {
+      "required": true,
+      "exception": "intentional before/after or layer sequence"
+    },
+    "reuse_same_image": {
+      "default": "forbidden",
+      "exception": "deliberate callback or comparison with explicit semantic purpose"
+    },
     "source_image_preference": "prefer relevant source visuals before adding stock/contextual imagery",
     "external_image_rule": "external imagery may establish context or mood but must not imply a source fact not present in the document"
   },
@@ -265,5 +925,51 @@
     "medium": "use when movement explains sequence, comparison, hierarchy or navigation",
     "high": "rare; only for mechanisms or frame-by-frame explanations",
     "reduced_motion": "replace transforms and frame animation with static final states or short crossfades"
+  },
+  "source_design_policy": {
+    "default": "preserve",
+    "rules": [
+      "Infer the source document's visual identity before planning the story: dominant palette, accent colours, typography character, logo/brand motifs, chart colours, image style and whitespace density.",
+      "When the source has a coherent brand system, preserve its recognisable visual identity while adapting layout to scrollytelling.",
+      "Do not replace a coherent source palette with StoryScro default colours unless the user explicitly requests rebranding.",
+      "Reuse strong source charts, diagrams and images when they carry evidence; crop or animate them rather than redrawing without need.",
+      "External contextual imagery may add atmosphere or spatial context but must not be presented as source evidence and must not imply a documented event that is not shown in the source.",
+      "If the source is visually weak or inconsistent, keep any meaningful brand cues but allow the renderer to regularise spacing, typography and hierarchy."
+    ]
+  },
+  "scene_lifecycle": {
+    "default": {
+      "intro_hold": 0.16,
+      "step_transition": 0.08,
+      "outro_hold": 0.06,
+      "reveal_mode": "one_at_a_time",
+      "title_behavior": "fade_before_steps",
+      "focus_mode": "active_only"
+    },
+    "phases": [
+      "ARRIVE: establish the scene and let the reader understand the frame before anything changes.",
+      "SETTLE: hold the title/thesis long enough to make the scene legible.",
+      "REVEAL: introduce one meaningful state or item at a time unless overview-first is analytically necessary.",
+      "HOLD: keep each state stable long enough to read; avoid continuous motion for content that needs comprehension.",
+      "EXIT: transition cleanly to the next scene without leaving overlapping copy behind."
+    ],
+    "rules": [
+      "Do not show all future steps and then repeat them one by one unless the overview itself is an explicit analytical message.",
+      "For sequential evidence, start with a neutral or empty frame, then reveal the first item after the intro hold.",
+      "When several items share a frame, non-active items should normally be hidden or visually demoted while the active item is being explained.",
+      "Titles and changing step copy must occupy collision-safe zones; if they cannot coexist, compact or fade the title before step copy appears.",
+      "A scroll event should usually produce one intelligible change, not several simultaneous changes.",
+      "Prefer discrete state changes with short transitions over constant movement when the reader needs to inspect data or text."
+    ]
+  },
+  "interaction_policy": {
+    "hover": [
+      "Use hover to reveal secondary explanation, focus a chart element, expose a tooltip or preview a detail.",
+      "Hover must never be required to understand essential content because touch devices do not have hover."
+    ],
+    "click": [
+      "Use click/tap for optional drill-down, source detail, lightbox expansion or a temporary focus state.",
+      "The reader must be able to return to the narrative without losing scroll position."
+    ]
   }
 }

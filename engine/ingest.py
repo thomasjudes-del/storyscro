@@ -22,7 +22,7 @@ from typing import Any
 import fitz  # PyMuPDF
 from PIL import Image
 
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 
 BULLET_RE = re.compile(r"^\s*(?:[•·▪◦‣⁃*-]|(?:\d{1,2}|[A-Za-z])[.)])\s+")
 NUMBER_RE = re.compile(
@@ -562,6 +562,66 @@ def extract_images(
     return out, min(area_sum, 1.0)
 
 
+def materialize_vector_snapshots(
+    doc: fitz.Document,
+    page_record: dict[str, Any],
+    asset_dir: Path | None,
+    snapshot_cache: dict[str, dict[str, Any]],
+    max_per_page: int = 1,
+) -> None:
+    """Render reusable source snapshots for strong vector charts/diagrams.
+
+    PDFs frequently store charts as vector drawing commands rather than images.
+    A renderer cannot reuse those through image extraction alone, so we preserve a
+    source-grounded raster snapshot with page/bbox provenance. Candidates remain
+    candidates; editorial planning decides whether the visual is actually useful.
+    """
+    if not asset_dir:
+        return
+    candidates = [
+        x for x in page_record.get("derived", [])
+        if x.get("type") == "vector_region_candidate"
+        and x.get("semantic_hint") == "chart_or_diagram_candidate"
+        and (x.get("caption") or float(x.get("area_ratio") or 0) >= .10)
+    ]
+    candidates.sort(key=lambda x: (bool(x.get("caption")), float(x.get("area_ratio") or 0)), reverse=True)
+    page = doc[page_record["number"] - 1]
+    page_rect = page.rect
+    for item in candidates[:max_per_page]:
+        try:
+            x0, y0, x1, y1 = item["bbox"]
+            pad = 16
+            clip = fitz.Rect(max(page_rect.x0, x0-pad), max(page_rect.y0, y0-pad), min(page_rect.x1, x1+pad), min(page_rect.y1, y1+pad))
+            if clip.width < 80 or clip.height < 60:
+                continue
+            pix = page.get_pixmap(matrix=fitz.Matrix(1.5, 1.5), clip=clip, colorspace=fitz.csRGB, alpha=False)
+            data = pix.tobytes("png")
+            digest = hashlib.sha256(data).hexdigest()
+            name = f"visual-{page_record['number']:03d}-{digest[:12]}.png"
+            asset_dir.mkdir(parents=True, exist_ok=True)
+            fp = asset_dir / name
+            if not fp.exists():
+                fp.write_bytes(data)
+            if digest not in snapshot_cache:
+                snapshot_cache[digest] = {
+                    "id": f"asset-visual-{digest[:16]}",
+                    "type": "image",
+                    "origin": "source",
+                    "sha256": digest,
+                    "dhash": image_dhash(data),
+                    "width": pix.width,
+                    "height": pix.height,
+                    "extension": "png",
+                    "file": str(fp.as_posix()),
+                    "source_refs": [{"file_page": page_record["number"], "bbox": bbox_list(clip)}],
+                    "kind": "vector_snapshot_candidate",
+                }
+            item["asset_id"] = snapshot_cache[digest]["id"]
+            item["snapshot_file"] = str(fp.as_posix())
+        except Exception as exc:
+            item["snapshot_error"] = str(exc)
+
+
 def associate_captions(page_record: dict[str, Any]) -> None:
     visuals = [x for x in page_record["derived"] if x["type"] in {"image_placement", "vector_region_candidate", "table"}]
     captions = [b for b in page_record["blocks"] if b.get("semantic_type") == "caption"]
@@ -630,6 +690,7 @@ def ingest(
 ) -> dict[str, Any]:
     doc = fitz.open(pdf_path)
     asset_cache: dict[int, dict[str, Any]] = {}
+    snapshot_cache: dict[str, dict[str, Any]] = {}
     raw_pages = []
     ocr_pages = []
 
@@ -686,6 +747,7 @@ def ingest(
             all_numbers.extend(numbers)
             page_record["derived"].extend(numbers)
         associate_captions(page_record)
+        materialize_vector_snapshots(doc, page_record, assets_dir, snapshot_cache)
         all_elements.extend(page_record["derived"])
 
     full_text = "\n".join(
@@ -722,7 +784,7 @@ def ingest(
         "repeated_margin_elements": list(repeated.values()),
         "title_candidates": infer_title_candidates(raw_pages, body_size),
         "sections": infer_sections(raw_pages),
-        "assets": list(asset_cache.values()),
+        "assets": [*asset_cache.values(), *snapshot_cache.values()],
         "statistics": {
             "text_blocks": sum(len(p["blocks"]) for p in raw_pages),
             "numbers": len(all_numbers),
@@ -732,6 +794,7 @@ def ingest(
             )),
             "image_placements": sum(1 for p in raw_pages for x in p["derived"] if x["type"] == "image_placement"),
             "unique_image_assets": len(asset_cache),
+            "source_visual_snapshots": len(snapshot_cache),
             "vector_regions": sum(1 for p in raw_pages for x in p["derived"] if x["type"] == "vector_region_candidate"),
             "links": sum(1 for p in raw_pages for x in p["derived"] if x["type"] == "link"),
         },

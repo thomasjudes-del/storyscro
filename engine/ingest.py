@@ -158,7 +158,14 @@ def infer_design_profile(doc: fitz.Document, raw_pages: list[dict[str, Any]]) ->
     backgrounds = sorted([c for c in palette if c["role_guess"] == "background"], key=lambda c: c["weight"], reverse=True)
     text_ranked = [{"hex": hx, "character_count": n} for hx, n in text_colors.most_common(12)]
     primary = (darks[0]["hex"] if darks else (accents[0]["hex"] if accents else "#222222"))
-    accent = (accents[0]["hex"] if accents else primary)
+    text_accent_candidates = []
+    for item in text_ranked:
+        hx = item["hex"]
+        rgb = tuple(int(hx[i:i+2], 16) for i in (1, 3, 5))
+        sat, val, lum = color_metrics(rgb)
+        if sat >= .45 and lum >= .12 and hx.lower() != primary.lower():
+            text_accent_candidates.append((item["character_count"] * sat, hx))
+    accent = max(text_accent_candidates, default=(0, accents[0]["hex"] if accents else primary))[1]
     background = (backgrounds[0]["hex"] if backgrounds else "#ffffff")
     text = text_ranked[0]["hex"] if text_ranked else primary
 

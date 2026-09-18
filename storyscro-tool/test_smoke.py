@@ -54,6 +54,21 @@ def run(label,width,height):
         assert stats["overflow"] <= 2, stats
         assert stats["microDots"] == stats["scenes"], stats
         assert stats["sourceButtons"] >= stats["scenes"]-1, stats
+        # Generic editorial quality gates: the StoryScro must not elevate obvious front matter/noise.
+        quality=d.execute_script("""
+          const e=window.__storyscro?.getEvidence?.(), s=window.__storyscro?.getStory?.();
+          const thesis=(s?.chapters?.flatMap(c=>c.scenes||[]).find(x=>x.id==='thesis')?.body||'');
+          const publisher=s?.document?.publisher||'';
+          const chapterTitles=(s?.chapters||[]).map(c=>c.title||'');
+          const sectionTitles=(e?.sections||[]).map(x=>x.title||'');
+          return {thesis,publisher,chapterTitles,sectionTitles,excluded:e?.editorial_excluded_pages||[],toc:e?.toc_pages||[]};
+        """)
+        bad_thesis=("contents" in quality["thesis"].lower() or "list of tables" in quality["thesis"].lower() or
+                    "list of figures" in quality["thesis"].lower() or quality["thesis"].count(".....")>0)
+        assert not bad_thesis, quality
+        pub=quality["publisher"].lower()
+        assert not any(x in pub for x in ["permission","copyright","report to parliament","presented to parliament","may be held responsible"]), quality
+        assert all(len(x) <= 150 for x in quality["chapterTitles"]), quality
         if label == "desktop":
             payload=d.execute_script("""
               const e=window.__storyscro.getEvidence(), s=window.__storyscro.getStory();

@@ -38,7 +38,8 @@ If a relationship needed for a network, causal diagram, map or matrix is not sup
 7. For each scene, identify its semantic role before choosing a primitive.
 8. Choose the simplest primitive that best expresses the relationship.
 9. Add motion only when it improves comprehension, sequencing, comparison, focus or pacing.
-10. Define scene pacing (`pacing`) for scroll-driven scenes: intro hold, reveal mode, title behaviour and focus mode.\n11. Review the whole story for rhythm, repetition, density, source visual identity and factual traceability.
+10. Define scene pacing (`pacing`) for scroll-driven scenes: intro hold, reveal mode, title behaviour and focus mode.
+11. Review the whole story for rhythm, repetition, density, source visual identity and factual traceability.
 
 ## Primitive selection
 
@@ -93,6 +94,16 @@ Use this mental model:
 Default to progressive discovery. Do not show all future items and then repeat them one by one unless the overview itself is analytically necessary. For a four-step sequence, a good default is: title -> item 1 -> item 2 -> item 3 -> item 4, with inactive items hidden or strongly demoted.
 
 Prevent collisions by design. If a scene title and active step copy cannot coexist in clearly separate zones, set the title to compact or fade before the steps start. Text-on-text overlap is a rendering failure, not an acceptable effect.
+
+## Presentation profile
+
+Choose or honour a `presentation_profile` when one is supplied. Treat it as a compact set of rendering/editorial parameters, not as a different factual story.
+
+The main dimensions are density, motion, image weight, type scale, compression, contrast and source-identity strength. Presets such as consulting, executive, dynamic, cinematic, data-heavy and minimal are starting points only.
+
+A more cinematic treatment may enlarge a key number, invert the visual field, use stronger image transitions or longer held scenes, but it must not alter claims or invent drama unsupported by the source. A consulting treatment should normally favour denser evidence, cleaner hierarchy and lower motion. An executive treatment should compress aggressively while retaining the evidence chain.
+
+Later editor/mix-and-match workflows may select a different variant for one scene without changing its message or provenance. Plan scenes so this remains possible.
 
 ## Effects and pacing
 
@@ -159,7 +170,10 @@ Reject and fix the plan if any of the following is true:
 - the story is dominated by decorative cards;
 - effects are used without explanatory value;
 - every section uses the same layout;
-- the same image is reused without explicit purpose;\n- the output ignores a coherent source visual identity without a stated reason;\n- a sequential scene reveals all future steps before the reader reaches them;\n- title and active content are likely to collide or overlap;
+- the same image is reused without explicit purpose;
+- the output ignores a coherent source visual identity without a stated reason;
+- a sequential scene reveals all future steps before the reader reaches them;
+- title and active content are likely to collide or overlap;
 - data visualisation implies unsupported precision;
 - a network invents relationships;
 - a map is decorative rather than geographic evidence;

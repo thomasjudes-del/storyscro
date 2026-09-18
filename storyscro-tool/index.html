@@ -706,7 +706,32 @@ function sectionTables(evidence,section){
   if(inRange.length===1)return inRange;
   return inRange.filter(t=>{const tt=cleanHeadingTitle(t.title).toLowerCase();return [...titles].some(st=>st&&tt&&(st.includes(tt)||tt.includes(st)))});
 }
-function pickParagraphs(ps,count=3){return ps.filter(p=>p.text.length>55&&usefulText(p.text)).slice(0,count)}
+function likelyFrench(evidence){
+  const sample=normalize([evidence.document?.title||'',...(evidence.paragraphs||[]).slice(0,8).map(p=>p.text)].join(' ')).toLowerCase();
+  const hits=(sample.match(/\b(?:le|la|les|des|une|un|dans|avec|sur|pour|entre|étude|impact|emploi|chiffre|port)\b/g)||[]).length;
+  return hits>=6;
+}
+function paragraphSourceHeading(evidence,p){
+  const sec=(evidence.sections||[]).find(s=>(s.paragraph_ids||[]).includes(p.id));
+  return cleanHeadingTitle(sec?.title||'');
+}
+function editorialParagraphScore(evidence,group,p){
+  const t=normalize(p.text),h=paragraphSourceHeading(evidence,p);let score=0;
+  if(/points? clés?|key points?|findings?|résultats?|results?|conclusion|recommend|recommand|implications?|outlook|perspectives?/i.test(h))score+=10;
+  if(/principes? méthodologiques?|method(?:s|ology)?|indicateurs?/i.test(h)&&/method|méthod/i.test(group.title||''))score+=5;
+  if(/\b(?:augmentation|hausse|baisse|diminution|croissance|stable|stabilité|impact|projection|prévision|reprise|résilien|progress|increase|decrease|growth|stable|stability|decline|recovery|project|forecast|resilien|finding|result|recommend)\w*/i.test(t))score+=4;
+  if(/\b(?:direct|indirect|induit|indicator|indicateur|emploi|employment|chiffre d'affaires|revenue|value added|valeur ajoutée)\b/i.test(t))score+=2;
+  if(t.length>=80&&t.length<=520)score+=2;
+  if(t.length<55)score-=4;if(t.length>760)score-=2;
+  if((t.match(/\d/g)||[]).length>28)score-=4;
+  if(NOISE_RX.test(t)||isCitationLike(t))score-=20;
+  return score;
+}
+function pickEditorialParagraphs(evidence,group,ps,count=3){
+  const ranked=ps.filter(p=>p.text.length>50&&usefulText(p.text)).map(p=>({p,score:editorialParagraphScore(evidence,group,p)})).sort((a,b)=>b.score-a.score||a.p.page-b.p.page);
+  const out=[];for(const x of ranked){if(out.some(y=>normalize(y.text).slice(0,80)===normalize(x.p.text).slice(0,80)))continue;out.push({...x.p,_editorialScore:x.score});if(out.length>=count)break}
+  return out;
+}
 function topNumbers(ns,count=4){const seen=new Set();return [...ns].sort((a,b)=>b.score-a.score).filter(n=>!seen.has(n.raw)&&seen.add(n.raw)).slice(0,count)}
 function safeNav(s){const t=cleanHeadingTitle(s).replace(/\s*[.:;]\s*$/,'');return t.slice(0,38)||'Section'}
 function bestSnapshot(evidence,page){return evidence.snapshots[page]||evidence.snapshots[1]||null}
@@ -788,30 +813,43 @@ function run(evidence,onProgress=()=>{}){
   const evidenceMap=[];const evIds=new Set();
   const addEv=ev=>{if(!evIds.has(ev.id)){evIds.add(ev.id);evidenceMap.push(ev)}return ev.id};
   const chapters=[];const sourceSections=consolidateSections(evidence,6);
-  const statement=chooseStatement(evidence);
+  const statement=chooseStatement(evidence);const fr=likelyFrench(evidence);
 
   const hero={
-    id:'hero',nav_label:'Opening',primitive:'hero',semantic_role:'opening',
+    id:'hero',nav_label:fr?'Ouverture':'Opening',primitive:'hero',semantic_role:'opening',
     message:evidence.document.title,title:evidence.document.title,body:evidence.document.subtitle||'',
     source_evidence_ids:[],source_refs:[pageRef(file,1)],transformations:[{type:'none',description:'Document title retained from the source.'}],
     media:[]
   };
-  chapters.push({id:'opening',title:evidence.document.title,nav_label:'Opening',purpose:'positioning',scenes:[hero]});
+  chapters.push({id:'opening',title:evidence.document.title,nav_label:fr?'Ouverture':'Opening',purpose:'positioning',scenes:[hero]});
   if(statement){
     const id=addEv(evidenceForParagraph(statement,file));
-    chapters[0].scenes.push({id:'thesis',nav_label:'Thesis',primitive:'full_screen_statement',semantic_role:'thesis',message:statement.text,body:trimAtSentence(statement.text,440),emphasis:[{text:trimAtSentence(statement.text,440).split(' ').slice(0,Math.min(7,trimAtSentence(statement.text,440).split(' ').length)).join(' '),style:'scroll_highlight'}],source_evidence_ids:[id],source_refs:[pageRef(file,statement.page)],transformations:[{type:statement.text===trimAtSentence(statement.text,440)?'none':'shorten',description:'Source paragraph isolated as the opening thesis.'}],pacing:{intro_hold:.2,outro_hold:.08,reveal_mode:'build',title_behavior:'persistent',focus_mode:'active_only'}});
+    chapters[0].scenes.push({id:'thesis',nav_label:fr?'Thèse':'Thesis',primitive:'full_screen_statement',semantic_role:'thesis',message:statement.text,body:trimAtSentence(statement.text,360),emphasis:[{text:trimAtSentence(statement.text,360).split(' ').slice(0,Math.min(7,trimAtSentence(statement.text,360).split(' ').length)).join(' '),style:'scroll_highlight'}],source_evidence_ids:[id],source_refs:[pageRef(file,statement.page)],transformations:[{type:statement.text===trimAtSentence(statement.text,360)?'none':'shorten',description:'Source paragraph isolated as the opening thesis.'}],pacing:{intro_hold:.16,outro_hold:.06,reveal_mode:'build',title_behavior:'persistent',focus_mode:'active_only'}});
+  }else if(evidence.document.page_count<=12){
+    const thematic=sourceSections.filter(sec=>!/method|méthod|introduction|overview|contexte|context|consolid|consolidé|summary|synthèse/i.test(cleanHeadingTitle(sec.title||'')));
+    const items=[];
+    for(const sec of thematic){
+      const ps=sectionParagraphs(evidence,sec);const pick=pickEditorialParagraphs(evidence,sec,ps,1)[0];
+      if(!pick||pick._editorialScore<3)continue;
+      const ev=addEv(evidenceForParagraph(pick,file));
+      items.push({title:cleanHeadingTitle(sec.title)||sec.title,text:trimAtSentence(pick.text,190),page:pick.page,evidence_id:ev});
+      if(items.length>=3)break;
+    }
+    if(items.length>=3){
+      chapters[0].scenes.push({id:'synthesis',nav_label:fr?'Synthèse':'Synthesis',primitive:'synthesis_grid',semantic_role:'executive_synthesis',message:fr?'Trois messages à retenir':'Three messages to retain',title:fr?'À retenir':'Key messages',data:{items},source_evidence_ids:items.map(x=>x.evidence_id),source_refs:[...new Set(items.map(x=>x.page))].map(p=>pageRef(file,p)),transformations:[{type:'select',description:'Three source-grounded messages selected from the document’s main thematic sections; no new factual claim added.'}]});
+    }
   }
 
   let sceneCounter=0;
   for(const sec of sourceSections){
-    const ps=sectionParagraphs(evidence,sec);const ns=sectionNumbers(evidence,sec);const bs=sectionBullets(evidence,sec);const years=sectionYears(evidence,sec);const tables=sectionTables(evidence,sec);const chosen=pickParagraphs(ps,3);
+    const ps=sectionParagraphs(evidence,sec);const ns=sectionNumbers(evidence,sec);const bs=sectionBullets(evidence,sec);const years=sectionYears(evidence,sec);const tables=sectionTables(evidence,sec);const chosen=pickEditorialParagraphs(evidence,sec,ps,3);
     const chapterTitle=cleanHeadingTitle(sec.title)||sec.title;
     const chapter={id:`chapter-${chapters.length}`,title:chapterTitle,nav_label:safeNav(chapterTitle),purpose:'source-section',source_evidence_ids:[],scenes:[]};
     const page=sec.page_start;const strongNums=topNumbers(ns.filter(n=>n.strong),4);const table=tables[0];
 
     if(table&&table.rows?.length>=2&&table.years?.length>=3){
       const tableEv=addEv(evidenceForTable(table,file));const rows=chartRows(table,3);
-      chapter.scenes.push({id:`scene-${++sceneCounter}`,nav_label:'Trends',primitive:'trend_grid',semantic_role:'quantitative_comparison',message:`Trends from ${chapterTitle}`,title:chapterTitle,body:'Source values compared across the periods reported in the document.',data:{years:table.years,series:rows.map(r=>({label:r.label,unit:r.unit,values:r.values}))},source_evidence_ids:[tableEv],source_refs:[pageRef(file,table.page)],transformations:[{type:'visualize',description:'Structured source table converted into small-multiple trend charts; values unchanged.'}]});
+      chapter.scenes.push({id:`scene-${++sceneCounter}`,nav_label:fr?'Évolution':'Trends',primitive:'trend_grid',semantic_role:'quantitative_comparison',message:`Trends from ${chapterTitle}`,title:chapterTitle,body:fr?'Valeurs sources comparées sur les périodes présentées dans le document.':'Source values compared across the periods reported in the document.',data:{years:table.years,series:rows.map(r=>({label:r.label,unit:r.unit,values:r.values}))},source_evidence_ids:[tableEv],source_refs:[pageRef(file,table.page)],transformations:[{type:'visualize',description:'Structured source table converted into small-multiple trend charts; values unchanged.'}]});
     }
 
     if(!table&&strongNums.length>=2){
@@ -826,9 +864,9 @@ function run(evidence,onProgress=()=>{}){
       const bulletParas=bs.slice(0,6).map((b,i)=>({id:`bullet-as-para-${sceneCounter}-${i}`,text:b.text,page:b.page}));
       const evs=bulletParas.map(p=>addEv(evidenceForParagraph(p,file)));
       chapter.scenes.push({id:`scene-${++sceneCounter}`,nav_label:'Sequence',primitive:'sticky_narrative',semantic_role:'ordered_list',message:chapterTitle,title:chapterTitle,data:{steps:bulletParas.map((p,i)=>({n:String(i+1).padStart(2,'0'),title:trimAtSentence(p.text,82),text:trimAtSentence(p.text,260),page:p.page,asset_id:null}))},source_evidence_ids:evs,source_refs:[...new Set(bulletParas.map(p=>p.page))].map(p=>pageRef(file,p)),transformations:[{type:'visualize',description:'Source list rendered as a progressive sequence.'}],pacing:{intro_hold:.15,outro_hold:.05,reveal_mode:'one_at_a_time',title_behavior:'fade_before_steps',focus_mode:'active_only'}});
-    }else if(chosen.length){
+    }else if(chosen.length&&(!table||chosen[0]._editorialScore>=3)){
       const evs=chosen.map(p=>addEv(evidenceForParagraph(p,file)));
-      chapter.scenes.push({id:`scene-${++sceneCounter}`,nav_label:'Read',primitive:'sticky_narrative',semantic_role:'evidence_sequence',message:chapterTitle,title:chapterTitle,data:{steps:chosen.map((p,i)=>({n:String(i+1).padStart(2,'0'),title:i===0?chapterTitle:`Evidence ${i+1}`,text:trimAtSentence(p.text,260),page:p.page,asset_id:null}))},source_evidence_ids:evs,source_refs:[...new Set(chosen.map(p=>p.page))].map(p=>pageRef(file,p)),transformations:[{type:'shorten',description:'Source paragraphs shortened only when needed for scrollytelling readability.'}],pacing:{intro_hold:.15,outro_hold:.05,reveal_mode:'one_at_a_time',title_behavior:'fade_before_steps',focus_mode:'active_only'}});
+      chapter.scenes.push({id:`scene-${++sceneCounter}`,nav_label:fr?'À lire':'Read',primitive:'sticky_narrative',semantic_role:'evidence_sequence',message:chapterTitle,title:chapterTitle,data:{steps:chosen.map((p,i)=>({n:String(i+1).padStart(2,'0'),title:i===0?chapterTitle:(fr?`Message ${i+1}`:`Evidence ${i+1}`),text:trimAtSentence(p.text,240),page:p.page,asset_id:null}))},source_evidence_ids:evs,source_refs:[...new Set(chosen.map(p=>p.page))].map(p=>pageRef(file,p)),transformations:[{type:'shorten',description:'Source paragraphs shortened only when needed for scrollytelling readability.'}],pacing:{intro_hold:.15,outro_hold:.05,reveal_mode:'one_at_a_time',title_behavior:'fade_before_steps',focus_mode:'active_only'}});
     }
 
     if(!chapter.scenes.length&&ps[0]){

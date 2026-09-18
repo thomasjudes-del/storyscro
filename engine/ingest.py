@@ -576,7 +576,7 @@ def materialize_vector_snapshots(
     source-grounded raster snapshot with page/bbox provenance. Candidates remain
     candidates; editorial planning decides whether the visual is actually useful.
     """
-    if not asset_dir:
+    if not asset_dir or len(snapshot_cache) >= 40:
         return
     candidates = [
         x for x in page_record.get("derived", [])

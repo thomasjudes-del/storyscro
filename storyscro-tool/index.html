@@ -107,7 +107,7 @@ mark{font:inherit;color:inherit}.scroll-highlight{background:linear-gradient(tra
 
 .title-fit.long{font-size:clamp(30px,3.7vw,54px)!important;line-height:.99!important}.title-fit.xlong{font-size:clamp(22px,2.55vw,36px)!important;line-height:1.04!important;letter-spacing:-.025em!important}
 .synthesis-scene{min-height:100svh;padding:calc(var(--header-h) + 7vh) 7vw 7vh;background:var(--brand-primary);color:#fff;display:flex;align-items:center}
-.synthesis-inner{width:min(1240px,88vw);margin:auto}.synthesis-head{display:flex;justify-content:space-between;align-items:end;gap:3vw;margin-bottom:7vh}.synthesis-head h2{font-size:clamp(40px,5vw,70px);line-height:.96;letter-spacing:-.05em;margin:0}.synthesis-head .source-chip{flex:0 0 auto}
+.synthesis-inner{width:min(1240px,88vw);margin:auto}.synthesis-head{display:flex;justify-content:space-between;align-items:end;gap:3vw;margin-bottom:7vh}.synthesis-head h2{font-size:clamp(40px,5vw,70px);line-height:.96;letter-spacing:-.05em;margin:0}.synthesis-source{margin-top:18px}.synthesis-head .source-chip{flex:0 0 auto}
 .synthesis-items{display:grid;grid-template-columns:repeat(3,1fr);gap:0}.synthesis-item{padding:24px 28px 8px 0;border-top:1px solid rgba(255,255,255,.24);min-width:0}.synthesis-item+.synthesis-item{padding-left:28px;border-left:1px solid rgba(255,255,255,.14)}
 .synthesis-index{display:block;font-size:11px;letter-spacing:.14em;color:color-mix(in srgb,var(--brand-accent) 75%,#fff);font-weight:850;margin-bottom:16px}.synthesis-item h3{font-size:clamp(24px,2.2vw,34px);line-height:1.02;letter-spacing:-.035em;margin:0 0 15px}.synthesis-item p{font-size:16px;line-height:1.5;color:rgba(255,255,255,.72);margin:0}
 .trend-scene{min-height:100svh;padding:calc(var(--header-h) + 7vh) 7vw 7vh;background:var(--story-paper);display:flex;align-items:center}
@@ -372,6 +372,7 @@ function detectTables(allLines,headings=[]){
   const out=[];const byPage=new Map();
   for(const l of allLines){if(l.isRepeated||l.rotated)continue;if(!byPage.has(l.page))byPage.set(l.page,[]);byPage.get(l.page).push(l)}
   const numRx=/[-+]?\d+(?:[ \u00a0.]\d{3})*(?:[.,]\d+)?/g;
+  const cellNumRx=/[-+]?\d+(?:[ \u00a0.]\d{3})*(?:[.,]\d+)?/;
   const parseValue=raw=>{let t=String(raw||'').replace(/[ \u00a0]/g,'').replace(',','.');if(/^[-+]?\d{1,3}(?:\.\d{3})+$/.test(t))t=t.replace(/\./g,'');const n=Number(t);return Number.isFinite(n)?n:null};
   for(const [page,lines] of byPage){
     const sorted=[...lines].sort((a,b)=>b.y-a.y||a.x-b.x);const groups=[];
@@ -405,10 +406,9 @@ function detectTables(allLines,headings=[]){
         if(label.length<2||label.split(/\s+/).length>14||/^https?:\/\//i.test(label))continue;
         const values=[];let aligned=true;
         for(const col of cols){
-          const candidates=parts.filter(p=>Math.abs(p.x-col.x)<=tol&&numRx.test(String(p.text||''))).sort((a,b)=>Math.abs(a.x-col.x)-Math.abs(b.x-col.x));
-          numRx.lastIndex=0;
+          const candidates=parts.filter(p=>Math.abs(p.x-col.x)<=tol&&cellNumRx.test(String(p.text||''))).sort((a,b)=>Math.abs(a.x-col.x)-Math.abs(b.x-col.x));
           const cell=candidates[0];if(!cell){aligned=false;break}
-          const m=String(cell.text||'').match(numRx);if(!m?.length){aligned=false;break}
+          const m=String(cell.text||'').match(cellNumRx);if(!m?.length){aligned=false;break}
           const raw=m[0],value=parseValue(raw);if(value===null){aligned=false;break}
           values.push({year:col.year,raw,value});
         }
@@ -772,16 +772,55 @@ function chartRows(table,max=3){
   rows.forEach(add);return out.slice(0,max);
 }
 
+function sectionAnchorScore(evidence,s){
+  const t=cleanHeadingTitle(s.title||''),lower=t.toLowerCase(),words=t.split(/\s+/).filter(Boolean).length;
+  const body=evidence.design_profile?.body_font_size||10,size=(s.heading_size||body)/Math.max(1,body),x=s.heading_x;
+  const pageCount=Math.max(1,evidence.document?.page_count||1),paraCount=(s.paragraph_ids||[]).length;
+  const docTitle=normalize(evidence.document?.title||'').toLowerCase();let score=0;
+  if(!t||words<1)return -99;
+  if(/(?:\bde|\bdu|\bdes|\bà|\bau|\bpour|\bavec|\bsur|\ben|\bof|\band|\bto|\bfor)$/i.test(t))score-=14;
+  if(/^(?:january|february|march|april|may|june|july|august|september|october|november|december|janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre|world|economic|outlook|update|contents|sommaire|overview|data table|input-input layer)$/i.test(t))score-=16;
+  if(/\bbox\s*\d+\b|^(?:figure|table|annex|appendix|references?|bibliography)\b/i.test(t))score-=18;
+  if(s.page_start<=2&&t.length>=10&&docTitle&&(docTitle.includes(lower)||lower.includes(docTitle.slice(0,Math.min(docTitle.length,45)))))score-=9;
+  if(isGenericLeafTitle(t))score-=4;
+  if(/^(?:abstract|executive summary|résumé exécutif|introduction|méthodologie|methodology|methods?|background|context|contexte)$/i.test(t))score+=5;
+  if(/\b(?:crosscurrents?|risks?|policies?|policy|findings?|results?|résultats?|points? clés?|key points?|recommendations?|recommandations?|conclusion|outlook|perspectives?|impact|market|marché|ecosystem|écosystème|climate|adaptation|commerce|pêche|plaisance|health|santé|r&d)\b/i.test(t))score+=7;
+  if((s.level||9)===1)score+=5;else if((s.level||9)===2)score+=3;
+  if(size>=1.5)score+=8;else if(size>=1.25)score+=5;else if(size>=1.1)score+=2;
+  if(Number.isFinite(x)&&x<190)score+=3;
+  if(words>=3&&words<=16)score+=2;
+  if(words>=6&&words<=26&&size>=1.45)score+=3;
+  if(paraCount>=1)score+=2;if(paraCount>=3)score+=1;
+  const pageFrac=(s.page_start||1)/pageCount;if(pageFrac>.12&&pageFrac<.94)score+=1;
+  return score;
+}
+function spreadAnchors(evidence,candidates,max){
+  const scored=candidates.map(s=>({s,score:sectionAnchorScore(evidence,s)})).filter(x=>x.score>-7);
+  if(scored.length<=max)return scored.sort((a,b)=>a.s.page_start-b.s.page_start).map(x=>x.s);
+  const minPage=Math.min(...scored.map(x=>x.s.page_start)),maxPage=Math.max(...scored.map(x=>x.s.page_start));
+  const selected=[],used=new Set();
+  for(let i=0;i<max;i++){
+    const lo=minPage+(maxPage-minPage+1)*i/max,hi=minPage+(maxPage-minPage+1)*(i+1)/max;
+    let pool=scored.filter(x=>!used.has(x.s.id)&&x.s.page_start>=lo&&x.s.page_start<hi);
+    if(!pool.length)pool=scored.filter(x=>!used.has(x.s.id));
+    if(!pool.length)break;
+    pool.sort((a,b)=>b.score-a.score||Math.abs(a.s.page_start-(lo+hi)/2)-Math.abs(b.s.page_start-(lo+hi)/2));
+    selected.push(pool[0].s);used.add(pool[0].s.id);
+  }
+  return selected.sort((a,b)=>a.page_start-b.page_start);
+}
 function consolidateSections(evidence,max=7){
   const docTitle=normalize(evidence.document.title).toLowerCase();
-  let raw=evidence.sections.filter(s=>s.title&&!/^page \d+$/i.test(s.title)&&!NOISE_RX.test(s.title)&&s.kind!=='references'&&s.kind!=='annex'&&s.title.split(/\s+/).length<=18&&!/^(?:figure|table|input-input layer)/i.test(s.title));
+  let raw=evidence.sections.filter(s=>s.title&&!/^page \d+$/i.test(s.title)&&!NOISE_RX.test(s.title)&&s.kind!=='references'&&s.kind!=='annex'&&s.title.split(/\s+/).length<=26&&!/^(?:figure|table|input-input layer)/i.test(s.title));
   raw=raw.filter(s=>!(s.page_start===1&&s.title.length>=14&&docTitle.includes(normalize(s.title).toLowerCase())));
-  const level1=raw.filter(s=>(s.level||9)===1&&!isGenericLeafTitle(s.title));
-  const level2=raw.filter(s=>(s.level||9)===2&&!isGenericLeafTitle(s.title));
-  let anchors=level1.length>=3?level1:(level2.length>=3?level2:raw.filter(s=>!isGenericLeafTitle(s.title)).slice(0,max));
-  if(!anchors.length)anchors=raw.slice(0,max);
+  const meaningful=raw.filter(s=>sectionAnchorScore(evidence,s)>-7);
+  const level1=meaningful.filter(s=>(s.level||9)===1&&!isGenericLeafTitle(s.title));
+  const level2=meaningful.filter(s=>(s.level||9)===2&&!isGenericLeafTitle(s.title));
+  let candidatePool=level1.length>=3?level1:(level2.length>=3?level2:meaningful.filter(s=>!isGenericLeafTitle(s.title)));
+  if(!candidatePool.length)candidatePool=meaningful.length?meaningful:raw;
+  let anchors=spreadAnchors(evidence,candidatePool,max);
   anchors=anchors.filter((a,i)=>i===0||cleanHeadingTitle(a.title).toLowerCase()!==cleanHeadingTitle(anchors[i-1].title).toLowerCase());
-  const positions=anchors.map(a=>raw.findIndex(x=>x.id===a.id)).filter(i=>i>=0);
+  const positions=anchors.map(a=>raw.findIndex(x=>x.id===a.id)).filter(i=>i>=0).sort((a,b)=>a-b);
   const groups=[];
   for(let i=0;i<positions.length;i++){
     const start=positions[i],end=i+1<positions.length?positions[i+1]:raw.length;const part=raw.slice(start,end);if(!part.length)continue;
@@ -792,7 +831,7 @@ function consolidateSections(evidence,max=7){
       if(parent&&/(?:method|méthod|approach|démarche)/i.test(cleanHeadingTitle(parent.title)))title=cleanHeadingTitle(parent.title);
     }
     const pageEnd=Math.max(...part.map(x=>x.page_end||x.page_start));
-    groups.push({id:`group-${groups.length+1}`,title,page_start:anchor.page_start,page_end:pageEnd,kind:'core',level:anchor.level||null,paragraph_ids:[...new Set(part.flatMap(x=>x.paragraph_ids||[]))],grouped_titles:part.map(x=>x.title)});
+    groups.push({id:`group-${groups.length+1}`,title,page_start:anchor.page_start,page_end:pageEnd,kind:'core',level:anchor.level||null,heading_size:anchor.heading_size||null,heading_x:anchor.heading_x||null,paragraph_ids:[...new Set(part.flatMap(x=>x.paragraph_ids||[]))],grouped_titles:part.map(x=>x.title)});
   }
   const merged=[];
   for(const g of groups){
@@ -946,10 +985,12 @@ async function commonsImage(query,signal){
     for(const x of candidates){
       const name=String(x.p.title||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
       const ratio=(x.ii.width||1)/Math.max(1,x.ii.height||1);
-      x.score=tokens.reduce((n,t)=>n+(name.includes(t)?4:0),0)+(ratio>=1.25&&ratio<=2.4?3:0)+Math.min(3,((x.ii.width||0)*(x.ii.height||0))/4000000);
-      if(/wreck|barge|epave|ruin|logo|icon|diagram|schema|map|carte|coat.of.arms/i.test(name))x.score-=7;
+      x.matchCount=tokens.filter(t=>name.includes(t)).length;
+      x.score=x.matchCount*5+(ratio>=1.25&&ratio<=2.4?3:0)+Math.min(3,((x.ii.width||0)*(x.ii.height||0))/4000000);
+      if(/wreck|barge|epave|ruin|logo|icon|diagram|schema|map|carte|coat.of.arms/i.test(name))x.score-=9;
     }
-    const picked=candidates.sort((a,b)=>b.score-a.score)[0];if(!picked)return null;
+    const needed=tokens.length>=4?2:1;
+    const picked=candidates.filter(x=>x.matchCount>=needed).sort((a,b)=>b.score-a.score)[0];if(!picked)return null;
     const ii=picked.ii,m=ii.extmetadata||{};
     return{uri:ii.thumburl||ii.url,original_url:ii.url,description_url:ii.descriptionurl||'',width:ii.thumbwidth||ii.width,height:ii.thumbheight||ii.height,license:m.LicenseShortName?.value||m.License?.value||'',attribution:m.Artist?.value?.replace(/<[^>]*>/g,'')||'',credit:m.Credit?.value?.replace(/<[^>]*>/g,'')||'',search_query:query,file_title:picked.p.title||''};
   }catch(err){if(err?.name==='AbortError')throw err;return null}
@@ -1040,7 +1081,7 @@ function run(story,{mount,sourceUrl}){
     metric_sequence(scene){const items=scene.data?.items||[];const el=document.createElement('section');el.className='story-scene scrolly';el.innerHTML=`<div class="sticky-stage metric-stage"><div class="metric-backdrop"></div><div class="metric-inner"><p class="scene-kicker metric-label">${esc(scene.title||'Key figures')}</p><div class="metric-number"></div><h2 class="metric-title title-fit"></h2><p class="metric-body"></p><div class="metric-source">${sourceChip(scene)}</div></div></div><div class="scroll-space ${items.length>3?'long':'medium'}"></div>`;let prev=-1;el._update=x=>{const intro=.14,q=clamp((x-intro)/(1-intro-.06)),idx=Math.min(items.length-1,Math.floor(q*items.length*.999));const local=(q*items.length)-Math.floor(q*items.length);const item=items[Math.max(0,idx)]||{};if(idx!==prev){prev=idx;qs('.metric-number',el).textContent=item.value||'';const mt=item.text?.split(/[.!?]/)[0]||scene.title||'';qs('.metric-title',el).textContent=mt;qs('.metric-title',el).className='metric-title '+titleFit(mt);qs('.metric-body',el).textContent=item.text||'';const a=bg(item.asset_id);qs('.metric-stage',el).style.backgroundImage=a?`linear-gradient(rgba(255,255,255,.9),rgba(255,255,255,.9)),url('${a}')`:'';qs('.metric-stage',el).style.backgroundSize='cover';qs('.metric-stage',el).style.backgroundPosition='center'}const field=clamp((local-.42)/.34)*.92;el.style.setProperty('--metric-progress',clamp(.28+local*.72));el.style.setProperty('--metric-field',field);qs('.metric-stage',el).classList.toggle('inverted',field>.52);};return el},
     sticky_narrative(scene){const steps=scene.data?.steps||[];const el=document.createElement('section');el.className='story-scene scrolly';el.innerHTML=`<div class="sticky-stage narrative-stage"><div class="narrative-bg"></div><div class="narrative-intro"><p class="scene-kicker">${esc(scene.nav_label||'Section')}</p><h2 class="${titleFit(scene.title||scene.message)}">${esc(scene.title||scene.message)}</h2></div><div class="narrative-copy hidden"><span class="step-index"></span><h3></h3><p></p>${sourceChip(scene)}</div></div><div class="scroll-space ${steps.length>=5?'long':'medium'}"></div>`;let prev=-1;el._update=x=>{const intro=.17;if(x<intro){qs('.narrative-intro',el).classList.remove('hidden');qs('.narrative-copy',el).classList.add('hidden');const a=bg(steps[0]?.asset_id||scene.media?.[0]?.asset_id);if(a)qs('.narrative-bg',el).style.backgroundImage=`url('${a}')`;return}const q=clamp((x-intro)/(1-intro-.06)),idx=Math.min(steps.length-1,Math.floor(q*steps.length*.999));const s=steps[Math.max(0,idx)]||{};qs('.narrative-intro',el).classList.add('hidden');qs('.narrative-copy',el).classList.remove('hidden');if(idx!==prev){prev=idx;qs('.step-index',el).textContent=s.n||String(idx+1).padStart(2,'0');qs('.narrative-copy h3',el).textContent=s.title||'';qs('.narrative-copy p',el).textContent=s.text||'';const a=bg(s.asset_id||scene.media?.[0]?.asset_id);if(a)qs('.narrative-bg',el).style.backgroundImage=`url('${a}')`}};return el},
     timeline(scene){const evs=scene.data?.events||[];const el=document.createElement('section');el.className='story-scene scrolly';const positions=evs.map((_,i)=>evs.length===1?50:8+i*(84/(evs.length-1)));el.innerHTML=`<div class="sticky-stage timeline-stage"><div class="timeline-head"><p class="scene-kicker">Timeline</p><h2 class="${titleFit(scene.title||scene.message)}">${esc(scene.title||scene.message)}</h2>${sourceChip(scene)}</div><div class="timeline-rail"><div class="timeline-fill"></div></div>${evs.map((e,i)=>`<div class="timeline-event" style="left:${positions[i]}%"><i></i><div><b>${esc(e.year)}</b><span>${esc(e.text)}</span></div></div>`).join('')}</div><div class="scroll-space medium"></div>`;el._update=x=>{const q=clamp((x-.15)/.72);el.style.setProperty('--timeline-progress',q);qsa('.timeline-event',el).forEach((e,i)=>e.classList.toggle('active',q>=(i+1)/(evs.length+1)))};return el},
-    synthesis_grid(scene){const items=scene.data?.items||[];const el=document.createElement('section');el.className='story-scene synthesis-scene';el.innerHTML=`<div class="synthesis-inner"><div class="synthesis-head"><div><p class="scene-kicker">${esc(scene.nav_label||'Synthesis')}</p><h2 class="${titleFit(scene.title||scene.message)}">${esc(scene.title||scene.message)}</h2></div>${sourceChip(scene)}</div><div class="synthesis-items">${items.map((it,i)=>`<article class="synthesis-item"><span class="synthesis-index">${String(i+1).padStart(2,'0')}</span><h3>${esc(it.title||'')}</h3><p>${esc(it.text||'')}</p></article>`).join('')}</div></div>`;return el},
+    synthesis_grid(scene){const items=scene.data?.items||[];const el=document.createElement('section');el.className='story-scene synthesis-scene';el.innerHTML=`<div class="synthesis-inner"><div class="synthesis-head"><div><p class="scene-kicker">${esc(scene.nav_label||'Synthesis')}</p><h2 class="${titleFit(scene.title||scene.message)}">${esc(scene.title||scene.message)}</h2><div class="synthesis-source">${sourceChip(scene)}</div></div></div><div class="synthesis-items">${items.map((it,i)=>`<article class="synthesis-item"><span class="synthesis-index">${String(i+1).padStart(2,'0')}</span><h3>${esc(it.title||'')}</h3><p>${esc(it.text||'')}</p></article>`).join('')}</div></div>`;return el},
     trend_grid(scene){const years=scene.data?.years||[];const series=scene.data?.series||[];const el=document.createElement('section');el.className='story-scene trend-scene';el.innerHTML=`<div class="trend-inner"><div class="trend-head"><div><p class="scene-kicker">${esc(scene.nav_label||'Trends')}</p><h2 class="${titleFit(scene.title||scene.message)}">${esc(scene.title||scene.message)}</h2></div><div><p>${esc(scene.body||'')}</p>${sourceChip(scene)}</div></div><div class="trend-grid">${series.map(sr=>`<article class="trend-card"><h3>${esc(sr.label)}</h3><span class="trend-unit">${esc(sr.unit||'')}</span>${trendSvg(sr,years)}</article>`).join('')}</div></div>`;return el},
     text_section(scene){const el=document.createElement('section');el.className='story-scene simple-scene text-scene';el.innerHTML=`<div class="text-inner"><p class="scene-kicker">${esc(scene.nav_label||'Section')}</p><h2 class="${titleFit(scene.title||scene.message)}">${esc(scene.title||scene.message)}</h2><p>${esc(scene.body||scene.message)}</p>${sourceChip(scene)}</div>`;return el},
     conclusion(scene){const el=document.createElement('section');el.className='story-scene story-conclusion';el.innerHTML=`<div class="conclusion-inner"><p class="scene-kicker">Closing</p><h2 class="${titleFit(scene.title||scene.message)}">${esc(scene.title||scene.message)}</h2>${scene.body?`<p>${esc(scene.body)}</p>`:''}${sourceChip(scene)}</div>`;return el}

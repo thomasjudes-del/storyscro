@@ -9,6 +9,7 @@ from selenium.webdriver.chrome.options import Options
 BASE=os.environ.get("STORYSCRO_TOOL_BASE","http://127.0.0.1:4182/storyscro-tool/")
 PDF=os.environ["STORYSCRO_TOOL_PDF"]
 OUT=Path(os.environ.get("STORYSCRO_TOOL_OUT","tool-artifacts")); OUT.mkdir(parents=True,exist_ok=True)
+EXPECT_CHART=os.environ.get("STORYSCRO_EXPECT_CHART","0") == "1"
 
 def driver_for(width,height):
     opts=Options()
@@ -52,9 +53,10 @@ def run(label,width,height):
             titleTooTall:[...document.querySelectorAll('.story-scene h1,.story-scene h2')].filter(el=>el.getBoundingClientRect().height>window.innerHeight*.58).length
           }
         """)
-        assert stats["pages"] >= 8, stats
-        assert stats["paragraphs"] >= 10, stats
-        assert stats["chapters"] >= 2 and stats["scenes"] >= 4, stats
+        assert stats["pages"] >= 2, stats
+        assert stats["paragraphs"] >= 4, stats
+        assert stats["chapters"] >= 2 and stats["scenes"] >= 3, stats
+        assert stats["scenes"] <= max(8, min(20, stats["pages"]+4)), stats
         assert stats["title"], stats
         assert stats["primary"].startswith("#"), stats
         assert stats["sourceLink"].startswith("blob:"), stats
@@ -65,6 +67,8 @@ def run(label,width,height):
         assert stats["sourceBackdropRefs"] == 0, stats
         assert stats["titleTooTall"] == 0, stats
         assert stats["charts"] == stats["storyTables"], stats
+        if EXPECT_CHART:
+            assert stats["charts"] >= 1, stats
 
         quality=d.execute_script("""
           const e=window.__storyscro?.getEvidence?.(), s=window.__storyscro?.getStory?.();

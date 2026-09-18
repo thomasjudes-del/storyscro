@@ -204,7 +204,7 @@ const isBold=name=>/bold|black|heavy|semibold|demi/i.test(name||'');
 
 function itemFontSize(item){
   const t=item.transform||[];
-  return Math.abs(t[3]||t[0]||item.height||0) || 10;
+  return Math.hypot(t[0]||0,t[1]||0) || Math.hypot(t[2]||0,t[3]||0) || Math.abs(item.height||0) || 10;
 }
 
 function joinLineItems(items){
@@ -223,7 +223,8 @@ function joinLineItems(items){
 }
 
 function groupLines(rawItems,pageWidth,pageHeight){
-  const sorted=[...rawItems].sort((a,b)=>b.y-a.y || a.x-b.x);
+  const horizontal=rawItems.filter(it=>!it.rotated);
+  const sorted=[...horizontal].sort((a,b)=>b.y-a.y || a.x-b.x);
   const rows=[];
   for(const it of sorted){
     const tol=Math.max(2.4,it.size*.32);
@@ -231,19 +232,30 @@ function groupLines(rawItems,pageWidth,pageHeight){
     if(!row){row={y:it.y,tol,items:[]};rows.push(row)}
     row.items.push(it); row.tol=Math.max(row.tol,tol);
   }
-  return rows.sort((a,b)=>b.y-a.y).map((row,index)=>{
+  const lines=[];
+  for(const row of rows.sort((a,b)=>b.y-a.y)){
     const items=[...row.items].sort((a,b)=>a.x-b.x);
-    const text=joinLineItems(items);
-    const chars=items.reduce((n,x)=>n+x.text.length,0)||1;
-    const weighted=items.reduce((n,x)=>n+x.size*Math.max(1,x.text.length),0)/chars;
-    const maxSize=Math.max(...items.map(x=>x.size));
-    const x=Math.min(...items.map(x=>x.x));
-    const right=Math.max(...items.map(x=>x.x+x.width));
-    const fontCounts={};
-    for(const it of items)fontCounts[it.font]=(fontCounts[it.font]||0)+Math.max(1,it.text.length);
-    const font=Object.entries(fontCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||'';
-    return {id:`line-${index+1}`,text,x,y:row.y,width:right-x,size:weighted,maxSize,font,bold:isBold(font),pageWidth,pageHeight,topRatio:1-row.y/pageHeight,bottomRatio:row.y/pageHeight};
-  }).filter(x=>x.text);
+    const segments=[];let seg=[];let last=null;
+    for(const it of items){
+      const gap=last?it.x-(last.x+last.width):0;
+      const split=last && gap>Math.max(34,pageWidth*.055,Math.min(last.size,it.size)*4.2);
+      if(split&&seg.length){segments.push(seg);seg=[]}
+      seg.push(it);last=it;
+    }
+    if(seg.length)segments.push(seg);
+    for(const part of segments){
+      const text=joinLineItems(part);if(!text)continue;
+      const chars=part.reduce((n,x)=>n+x.text.length,0)||1;
+      const weighted=part.reduce((n,x)=>n+x.size*Math.max(1,x.text.length),0)/chars;
+      const maxSize=Math.max(...part.map(x=>x.size));
+      const x=Math.min(...part.map(x=>x.x));
+      const right=Math.max(...part.map(x=>x.x+x.width));
+      const fontCounts={};for(const it of part)fontCounts[it.font]=(fontCounts[it.font]||0)+Math.max(1,it.text.length);
+      const font=Object.entries(fontCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||'';
+      lines.push({text,x,y:row.y,width:right-x,size:weighted,maxSize,font,bold:isBold(font),pageWidth,pageHeight,topRatio:1-row.y/pageHeight,bottomRatio:row.y/pageHeight});
+    }
+  }
+  return lines.sort((a,b)=>b.y-a.y||a.x-b.x).map((x,index)=>({id:`line-${index+1}`,...x}));
 }
 
 function mergeParagraphs(lines,bodySize){
@@ -265,6 +277,22 @@ function mergeParagraphs(lines,bodySize){
   }
   if(cur)out.push(cur);
   return out.filter(x=>x.text.length>=24);
+}
+
+function isBoilerplateText(text){
+  return /provided proper attribution|grants permission|permission to reproduce|copyright|all rights reserved|creative commons|equal contribution|listing order is random|work performed while|conference on|proceedings of|arxiv:|doi:|https?:\/\/|\bwww\.|\S+@\S+/i.test(text||'');
+}
+
+function isHeadingLike(line,bodySize){
+  const text=normalize(line.text); if(!text||line.isRepeated||line.rotated)return false;
+  if(isBoilerplateText(text)||/^(?:figure|fig\.?|table|algorithm)\s*\d+/i.test(text))return false;
+  const words=text.split(/\s+/).length;
+  if(words>16&&line.page!==1)return false;
+  if(line.x>line.pageWidth*.82)return false;
+  const numbered=/^\d+(?:\.\d+)*\.?\s+[A-Za-zÀ-ÿ]/.test(text);
+  const canonical=/^(?:abstract|introduction|background|related work|method(?:s|ology)?|approach|model(?: architecture)?|experiments?|results?|discussion|limitations?|recommendations?|conclusions?|summary|outlook|references|appendix|annex|overview|executive summary|context|méthode|résultats?|discussion|conclusion|recommandations?|synthèse|introduction|contexte)\b/i.test(text);
+  const sizeSignal=line.maxSize>=bodySize*1.28 || (line.bold&&line.maxSize>=bodySize*1.05&&words<=12);
+  return numbered||canonical||sizeSignal;
 }
 
 function detectNumbers(paragraphs){
@@ -352,10 +380,18 @@ function inferDocumentTitle(lines,metadata){
   const biggest=candidates[0].maxSize;return normalize(candidates.filter(x=>x.maxSize>=biggest*.78).sort((a,b)=>b.y-a.y).map(x=>x.text).join(' ')).slice(0,180);
 }
 
-function inferSubtitle(lines,title){
-  const first=lines.filter(x=>x.page===1&&!x.isRepeated&&x.text!==title).sort((a,b)=>b.y-a.y);
-  const cand=first.find(x=>x.text.length>8&&x.text.length<180&&x.topRatio<.72&&x.size>8);
-  return cand?.text||'';
+function inferSubtitle(lines,title,bodySize){
+  const titleLines=lines.filter(x=>x.page===1&&!x.isRepeated&&title.includes(x.text));
+  const lowestTitleY=Math.min(...titleLines.map(x=>x.y),Infinity);
+  const candidates=lines.filter(x=>x.page===1&&!x.isRepeated&&x.y<lowestTitleY&&x.text.length>=8&&x.text.length<=150&&x.maxSize>=bodySize*1.12&&!isBoilerplateText(x.text)&&!/@/.test(x.text)&&!/^(?:abstract|authors?)$/i.test(x.text)).sort((a,b)=>b.y-a.y);
+  return candidates[0]?.text||'';
+}
+
+function safePublisher(info){
+  const author=normalize(info?.Author||''); if(author&&author.length<120&&!isBoilerplateText(author))return author;
+  const creator=normalize(info?.Creator||'');
+  if(creator&&!/latex|pdftex|word|microsoft|adobe|acrobat|indesign|quark|libreoffice|ghostscript|wkhtml|prince|pandoc|hyperref/i.test(creator)&&creator.length<100)return creator;
+  return null;
 }
 
 async function run(file,onProgress=()=>{},signal){
@@ -369,12 +405,12 @@ async function run(file,onProgress=()=>{},signal){
   for(let p=1;p<=pdf.numPages;p++){
     if(signal?.aborted)throw new DOMException('Cancelled','AbortError');
     const page=await pdf.getPage(p);const viewport=page.getViewport({scale:1});const tc=await page.getTextContent({includeMarkedContent:false,disableNormalization:false});
-    const rawItems=tc.items.filter(it=>it.str&&normalize(it.str)).map((it,i)=>({id:`p${p}-i${i}`,text:it.str,x:it.transform[4],y:it.transform[5],width:it.width||0,height:it.height||0,size:itemFontSize(it),font:it.fontName||'',page:p,pageWidth:viewport.width,pageHeight:viewport.height}));
+    const rawItems=tc.items.filter(it=>it.str&&normalize(it.str)).map((it,i)=>{const t=it.transform||[];const angle=Math.atan2(t[1]||0,t[0]||1);return{id:`p${p}-i${i}`,text:it.str,x:t[4],y:t[5],width:it.width||0,height:it.height||0,size:itemFontSize(it),font:it.fontName||'',page:p,pageWidth:viewport.width,pageHeight:viewport.height,rotated:Math.abs(angle)>.14};});
     rawItemsAll.push(...rawItems);pages.push({number:p,width:viewport.width,height:viewport.height,lines:groupLines(rawItems,viewport.width,viewport.height)});
     if(p%3===0||p===pdf.numPages)onProgress({stage:'ingest',progress:.04+.35*(p/pdf.numPages),title:'Reading the document',detail:`Page ${p} of ${pdf.numPages}`});
     if(p%8===0)await new Promise(r=>setTimeout(r,0));
   }
-  const bodySize=median(rawItemsAll.filter(x=>x.text.length>1).map(x=>x.size).filter(x=>x>4&&x<50))||10;
+  const bodySize=median(rawItemsAll.filter(x=>!x.rotated&&x.text.length>1).map(x=>x.size).filter(x=>x>4&&x<50))||10;
   const allLines=pages.flatMap(p=>p.lines.map(l=>({...l,page:p.number})));
   const repeated=new Map();
   for(const line of allLines.filter(x=>x.topRatio<.13||x.bottomRatio<.12)){
@@ -382,10 +418,16 @@ async function run(file,onProgress=()=>{},signal){
   }
   const repeatedKeys=new Set([...repeated.entries()].filter(([,set])=>set.size>=Math.max(2,Math.ceil(pdf.numPages*.28))).map(([k])=>k));
   for(const l of allLines)l.isRepeated=repeatedKeys.has(normalizeKey(l.text));
-  const headingCandidates=allLines.filter(l=>!l.isRepeated&&l.text.length>=3&&l.text.length<=170&&(l.maxSize>=bodySize*1.22||l.bold&&l.maxSize>=bodySize*1.05));
+  const headingCandidates=allLines.filter(l=>l.text.length>=3&&l.text.length<=170&&isHeadingLike(l,bodySize));
   const sizes=[...new Set(headingCandidates.map(h=>Math.round(h.maxSize*10)/10))].sort((a,b)=>b-a);
   const thresholds=sizes.slice(0,5);
-  const headings=headingCandidates.map((h,i)=>{let level=thresholds.findIndex(s=>h.maxSize>=s-.25)+1;if(level<1)level=3;return{...h,id:`heading-${i+1}`,level:Math.min(3,level),score:h.maxSize/bodySize+(h.bold?.25:0)}}).filter(h=>h.score>=1.17);
+  const headings=headingCandidates.map((h,i)=>{
+    const text=normalize(h.text);const m=text.match(/^(\d+(?:\.\d+)*)\.?\s+/);let level;
+    if(m)level=Math.min(3,m[1].split('.').length);
+    else if(/^(?:abstract|introduction|background|related work|method(?:s|ology)?|approach|model(?: architecture)?|experiments?|results?|discussion|limitations?|recommendations?|conclusions?|summary|outlook|references|appendix|annex|executive summary|méthode|résultats?|conclusion|recommandations?|synthèse|contexte)\b/i.test(text)) level=1;
+    else {level=thresholds.findIndex(sz=>h.maxSize>=sz-.25)+1;if(level<1)level=3;level=Math.min(3,level)}
+    return{...h,id:`heading-${i+1}`,level,score:h.maxSize/bodySize+(h.bold?.25:0)+(m?.2:0)};
+  }).filter(h=>h.score>=1.05);
   const headingIds=new Set(headings.map(h=>`${h.page}|${h.text}|${h.y}`));
   for(const l of allLines)l.isHeading=headingIds.has(`${l.page}|${l.text}|${l.y}`);
   const paragraphs=mergeParagraphs(allLines,bodySize).map((p,i)=>({...p,id:`para-${i+1}`}));
@@ -396,8 +438,8 @@ async function run(file,onProgress=()=>{},signal){
   const palette=await samplePalette(pdf,samplePages);
   const charByFont={};for(const x of rawItemsAll)charByFont[x.font]=(charByFont[x.font]||0)+x.text.length;
   const fonts=Object.entries(charByFont).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([name,chars])=>({name,chars}));
-  const title=inferDocumentTitle(allLines,metadata);const subtitle=inferSubtitle(allLines,title);
-  const publisher=normalize(metadata?.info?.Author||metadata?.info?.Creator||'')||null;
+  const title=inferDocumentTitle(allLines,metadata);const subtitle=inferSubtitle(allLines,title,bodySize);
+  const publisher=safePublisher(metadata?.info||{});
   onProgress({stage:'understand',progress:.64,title:'Understanding the document',detail:`Mapping ${sections.length} sections and its visual identity`});
 
   const snapshotPages=new Set([1]);
@@ -433,6 +475,8 @@ return run;
 const planStory = (()=>{
 const normalize=s=>String(s||'').replace(/\s+/g,' ').trim();
 const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n));
+const NOISE_RX=/provided proper attribution|grants permission|permission to reproduce|copyright|all rights reserved|creative commons|equal contribution|listing order is random|work performed while|conference on|proceedings of|arxiv:|doi:|https?:\/\/|\bwww\.|\S+@\S+|^figure\s*\d+|^table\s*\d+/i;
+const usefulText=t=>t&&!NOISE_RX.test(t)&&String(t).replace(/[^A-Za-zÀ-ÿ]/g,'').length>20;
 
 function trimAtSentence(text,max=360){
   const t=normalize(text);if(t.length<=max)return t;
@@ -442,17 +486,17 @@ function trimAtSentence(text,max=360){
 function pageRef(file,page){return{file,page}}
 function evidenceForParagraph(p,file){return{id:`ev-${p.id}`,type:'claim',status:'VERIFIED',text:p.text,source_refs:[pageRef(file,p.page)]}}
 function evidenceForNumber(n,file){return{id:`ev-${n.id}`,type:'number',status:'VERIFIED',text:n.context,value:n.raw,source_refs:[pageRef(file,n.page)]}}
-function sectionParagraphs(evidence,section){const ids=new Set(section.paragraph_ids);return evidence.paragraphs.filter(p=>ids.has(p.id))}
+function sectionParagraphs(evidence,section){const ids=new Set(section.paragraph_ids);return evidence.paragraphs.filter(p=>ids.has(p.id)&&usefulText(p.text))}
 function sectionNumbers(evidence,section){return evidence.numbers.filter(n=>n.page>=section.page_start&&n.page<=section.page_end)}
 function sectionBullets(evidence,section){return evidence.bullets.filter(n=>n.page>=section.page_start&&n.page<=section.page_end)}
 function sectionYears(evidence,section){const arr=sectionNumbers(evidence,section).filter(n=>n.year);const seen=new Set();return arr.filter(n=>!seen.has(n.raw)&&seen.add(n.raw)).slice(0,7)}
-function pickParagraphs(ps,count=4){return ps.filter(p=>p.text.length>55).slice(0,count)}
+function pickParagraphs(ps,count=4){return ps.filter(p=>p.text.length>55&&usefulText(p.text)).slice(0,count)}
 function topNumbers(ns,count=4){const seen=new Set();return [...ns].sort((a,b)=>b.score-a.score).filter(n=>!seen.has(n.raw)&&seen.add(n.raw)).slice(0,count)}
 function safeNav(s){return normalize(s).replace(/[.:;].*$/,'').slice(0,26)||'Section'}
 function bestSnapshot(evidence,page){return evidence.snapshots[page]||evidence.snapshots[1]||null}
 
 function consolidateSections(evidence,max=6){
-  const raw=evidence.sections.filter(s=>s.title&&!/^page \d+$/i.test(s.title));
+  const raw=evidence.sections.filter(s=>s.title&&!/^page \d+$/i.test(s.title)&&!NOISE_RX.test(s.title)&&s.title.split(/\s+/).length<=16&&!/^(?:figure|table|input-input layer)/i.test(s.title));
   if(raw.length<=max)return raw;
   const chunk=Math.ceil(raw.length/max);const out=[];
   for(let i=0;i<raw.length;i+=chunk){
@@ -462,9 +506,24 @@ function consolidateSections(evidence,max=6){
 }
 
 function chooseStatement(evidence){
-  const starters=evidence.paragraphs.filter(p=>p.page<=Math.min(4,evidence.document.page_count)&&p.text.length>70&&p.text.length<520);
-  const strong=starters.find(p=>/conclu|find|demonstrat|show|aim|purpose|objective|challenge|must|need|recommend|result|mission|enjeu|objectif|conclusion|montre|démontre|doit|nécessaire/i.test(p.text));
-  return strong||starters[0]||evidence.paragraphs[0]||null;
+  const candidates=evidence.paragraphs.filter(p=>p.page<=Math.min(5,evidence.document.page_count)&&p.text.length>70&&p.text.length<900&&usefulText(p.text));
+  const scored=candidates.map(p=>{
+    const t=p.text;let score=0;
+    if(/\b(?:we propose|we present|we show|we find|we demonstrate|our results|this report (?:finds|concludes|shows)|this study (?:finds|shows)|the purpose|the objective|our aim)\b/i.test(t))score+=8;
+    if(/\b(?:transformer|result|finding|conclusion|recommend|objective|purpose|challenge|significant|improv|outperform|state of the art)\b/i.test(t))score+=2;
+    if(p.page<=2)score+=3; else if(p.page<=4)score+=1;
+    if(/^abstract\b/i.test(t))score+=2;
+    if(/\b(?:author|affiliation|university|google brain|conference|permission|reproduce)\b/i.test(t))score-=6;
+    return{p,score};
+  }).sort((a,b)=>b.score-a.score||a.p.page-b.p.page);
+  return scored[0]?.p||candidates[0]||null;
+}
+
+function chooseConclusion(evidence,sections){
+  const explicit=[...sections].reverse().find(s=>/conclusion|summary|outlook|recommend|discussion|synthèse|conclusion|recommandation/i.test(s.title||''));
+  if(explicit){const ps=sectionParagraphs(evidence,explicit).filter(p=>usefulText(p.text));if(ps.length)return ps[Math.max(0,ps.length-1)]}
+  const floor=Math.max(1,Math.floor(evidence.document.page_count*.7));
+  return [...evidence.paragraphs].reverse().find(p=>p.page>=floor&&p.text.length>70&&usefulText(p.text)&&!/^figure\s*\d+/i.test(p.text))||null;
 }
 
 function makeSceneEvidence(items,file){return items.map(x=>x.raw!==undefined?evidenceForNumber(x,file):evidenceForParagraph(x,file))}
@@ -519,7 +578,7 @@ function run(evidence,onProgress=()=>{}){
     chapter.source_evidence_ids=[...new Set(chapter.scenes.flatMap(s=>s.source_evidence_ids||[]))];if(chapter.scenes.length)chapters.push(chapter);
   }
 
-  const lastPara=[...evidence.paragraphs].reverse().find(p=>p.text.length>70);
+  const lastPara=chooseConclusion(evidence,evidence.sections);
   if(lastPara){const id=addEv(evidenceForParagraph(lastPara,file));chapters.push({id:'conclusion',title:'Closing',nav_label:'Closing',purpose:'conclusion',source_evidence_ids:[id],scenes:[{id:'conclusion-scene',nav_label:'Closing',primitive:'conclusion',semantic_role:'synthesis',message:trimAtSentence(lastPara.text,400),title:trimAtSentence(lastPara.text,260),body:'',source_evidence_ids:[id],source_refs:[pageRef(file,lastPara.page)],transformations:[{type:lastPara.text===trimAtSentence(lastPara.text,400)?'none':'shorten',description:'Late source statement retained as the closing scene.'}],emphasis:[]} ]});}
 
   const assets=Object.entries(evidence.snapshots).map(([page,uri])=>({id:`page-${page}`,type:'image',uri,origin:'source',source_page:Number(page),caption:`Source page ${page} rendered from ${file}.`,source_refs:[pageRef(file,Number(page))]}));

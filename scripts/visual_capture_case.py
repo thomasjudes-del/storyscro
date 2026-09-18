@@ -82,7 +82,7 @@ def inspect_layout(driver, scene_id):
         originalPdfVisible:!!document.querySelector('#sourcePdfLink:not([hidden])'),
         originalPdfHref:document.querySelector('#sourcePdfLink')?.href||'',
         arrowControls:document.querySelectorAll('.micro-controls button').length,
-        heroCopyTop:document.querySelector('.hero-copy')?.getBoundingClientRect().top??null,
+        heroTextTop:document.querySelector('.hero-copy h1')?.getBoundingClientRect().top??null,
         headerBottom:document.querySelector('.story-header')?.getBoundingClientRect().bottom??null,
         offenders:offenders.slice(0,30)
       };
@@ -105,8 +105,8 @@ def inspect_layout(driver, scene_id):
         raise RuntimeError(f'Progressive scene visually overlaps states at {scene_id}: {dims["progressiveVisibleTiles"]} visible tiles')
     if dims.get('arrowControls'):
         raise RuntimeError('Redundant up/down arrow controls should not be rendered')
-    if scene_id == 'ccc-hero' and dims.get('heroCopyTop') is not None and dims.get('headerBottom') is not None and dims['heroCopyTop'] < dims['headerBottom'] + 10:
-        raise RuntimeError(f'Hero copy collides with fixed header: top={dims["heroCopyTop"]}, headerBottom={dims["headerBottom"]}')
+    if scene_id == 'ccc-hero' and dims.get('heroTextTop') is not None and dims.get('headerBottom') is not None and dims['heroTextTop'] < dims['headerBottom'] + 10:
+        raise RuntimeError(f'Hero title collides with fixed header: top={dims["heroTextTop"]}, headerBottom={dims["headerBottom"]}')
     if not dims['scrubber']:
         raise RuntimeError('Generic draggable scrubber is missing')
     return dims

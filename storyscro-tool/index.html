@@ -809,7 +809,7 @@ function sectionAnchorScore(evidence,s){
   if(s.page_start<=2&&t.length>=10&&docTitle&&(docTitle.includes(lower)||lower.includes(docTitle.slice(0,Math.min(docTitle.length,45)))))score-=9;
   if(isGenericLeafTitle(t))score-=4;
   if(/^(?:abstract|executive summary|résumé exécutif|introduction|méthodologie|methodology|methods?|background|context|contexte)$/i.test(t))score+=5;
-  if(/\b(?:crosscurrents?|risks?|policies?|policy|findings?|results?|résultats?|points? clés?|key points?|recommendations?|recommandations?|conclusion|outlook|perspectives?|impact|market|marché|ecosystem|écosystème|climate|adaptation|commerce|pêche|plaisance|health|santé|r&d)\b/i.test(t))score+=7;
+  if(/\b(?:findings?|results?|résultats?|points? clés?|key points?|recommendations?|recommandations?|conclusion|outlook|perspectives?|implications?|discussion|summary|synthèse|assessment|évaluation|analysis|analyse|strategy|stratégie|objectives?|objectifs?|challenges?|enjeux|priorities|priorités|impact)\b/i.test(t))score+=7;
   if((s.level||9)===1)score+=5;else if((s.level||9)===2)score+=3;
   if(size>=1.5)score+=8;else if(size>=1.25)score+=5;else if(size>=1.1)score+=2;
   if(Number.isFinite(x)&&x<190)score+=3;
@@ -855,33 +855,30 @@ function consolidateSections(evidence,max=7){
     return groups;
   };
 
-  const pageCount=Math.max(1,evidence.document?.page_count||1);
-  if(pageCount<=12){
-    const level1Idx=raw.map((s,i)=>(s.level||9)===1?i:-1).filter(i=>i>=0);
-    if(level1Idx.length){
-      const selected=[];
-      for(let k=0;k<level1Idx.length;k++){
-        const i=level1Idx[k],j=k+1<level1Idx.length?level1Idx[k+1]:raw.length;
-        const parent=raw[i],parentTitle=cleanHeadingTitle(parent.title),parentRoot=headingRootNumber(parent.title);
-        const block=raw.slice(i+1,j);
-        const children=block.filter(s=>(s.level||9)===2&&!isGenericLeafTitle(s.title)&&sectionAnchorScore(evidence,s)>=1);
-        const sameRoot=children.filter(c=>!parentRoot||headingRootNumber(c.title)===parentRoot);
-        const foreignRoot=children.filter(c=>parentRoot&&headingRootNumber(c.title)&&headingRootNumber(c.title)!==parentRoot);
-        const splitSame=sameRoot.length>=2&&!/^(?:method|methods|methodology|méthode|méthodologie|introduction|context|contexte|overview)$/i.test(parentTitle);
-        if(splitSame)selected.push(...sameRoot); else selected.push(parent);
-        selected.push(...foreignRoot);
-      }
-      let anchors=[];const seen=new Set();
-      for(const a of selected){
-        const key=cleanHeadingTitle(a.title).toLowerCase();
-        if(!key||seen.has(key)||sectionAnchorScore(evidence,a)<=-5)continue;
-        seen.add(key);anchors.push(a);
-      }
-      anchors.sort((a,b)=>raw.indexOf(a)-raw.indexOf(b));
-      if(anchors.length>max)anchors=spreadAnchors(evidence,anchors,max);
-      const groups=buildGroups(anchors);
-      if(groups.length>=2)return groups.slice(0,max);
+  const level1Idx=raw.map((s,i)=>(s.level||9)===1?i:-1).filter(i=>i>=0);
+  if(level1Idx.length>=2){
+    const selected=[];
+    for(let k=0;k<level1Idx.length;k++){
+      const i=level1Idx[k],j=k+1<level1Idx.length?level1Idx[k+1]:raw.length;
+      const parent=raw[i],parentTitle=cleanHeadingTitle(parent.title),parentRoot=headingRootNumber(parent.title);
+      const block=raw.slice(i+1,j);
+      const children=block.filter(s=>(s.level||9)===2&&!isGenericLeafTitle(s.title)&&sectionAnchorScore(evidence,s)>=1);
+      const sameRoot=children.filter(c=>!parentRoot||headingRootNumber(c.title)===parentRoot);
+      const foreignRoot=children.filter(c=>parentRoot&&headingRootNumber(c.title)&&headingRootNumber(c.title)!==parentRoot);
+      const isContainer=/^(?:results?|résultats?|findings?|analysis|analyse|discussion|implications?|recommendations?|recommandations?|themes?|thèmes?|sectors?|secteurs?|cases?|cas|workstreams?|axes?)\b/i.test(parentTitle);
+      if(sameRoot.length>=2&&isContainer)selected.push(...sameRoot);else selected.push(parent);
+      selected.push(...foreignRoot);
     }
+    let anchors=[];const seen=new Set();
+    for(const a of selected){
+      const key=cleanHeadingTitle(a.title).toLowerCase();
+      if(!key||seen.has(key)||sectionAnchorScore(evidence,a)<=-5)continue;
+      seen.add(key);anchors.push(a);
+    }
+    anchors.sort((a,b)=>raw.indexOf(a)-raw.indexOf(b));
+    if(anchors.length>max)anchors=spreadAnchors(evidence,anchors,max);
+    const groups=buildGroups(anchors);
+    if(groups.length>=2)return groups.slice(0,max);
   }
 
   const meaningful=raw.filter(s=>sectionAnchorScore(evidence,s)>-7);
@@ -934,7 +931,8 @@ function run(evidence,onProgress=()=>{}){
   const evidenceMap=[];const evIds=new Set();
   const addEv=ev=>{if(!evIds.has(ev.id)){evIds.add(ev.id);evidenceMap.push(ev)}return ev.id};
   const chapters=[];const sourceSections=consolidateSections(evidence,6);
-  const statement=evidence.document.page_count<=12?null:chooseStatement(evidence);const fr=likelyFrench(evidence);
+  const hasExplicitSummary=(evidence.sections||[]).some(sec=>sec.kind==='summary'||/abstract|executive summary|résumé exécutif|summary|synthèse/i.test(cleanHeadingTitle(sec.title||'')));
+  const statement=hasExplicitSummary?chooseStatement(evidence):null;const fr=likelyFrench(evidence);
 
   const hero={
     id:'hero',nav_label:fr?'Ouverture':'Opening',primitive:'hero',semantic_role:'opening',
@@ -946,7 +944,7 @@ function run(evidence,onProgress=()=>{}){
   if(statement){
     const id=addEv(evidenceForParagraph(statement,file));
     chapters[0].scenes.push({id:'thesis',nav_label:fr?'Thèse':'Thesis',primitive:'full_screen_statement',semantic_role:'thesis',message:statement.text,body:trimAtSentence(statement.text,360),emphasis:[{text:trimAtSentence(statement.text,360).split(' ').slice(0,Math.min(7,trimAtSentence(statement.text,360).split(' ').length)).join(' '),style:'scroll_highlight'}],source_evidence_ids:[id],source_refs:[pageRef(file,statement.page)],transformations:[{type:statement.text===trimAtSentence(statement.text,360)?'none':'shorten',description:'Source paragraph isolated as the opening thesis.'}],pacing:{intro_hold:.16,outro_hold:.06,reveal_mode:'build',title_behavior:'persistent',focus_mode:'active_only'}});
-  }else if(evidence.document.page_count<=12){
+  }else{
     const thematic=sourceSections.filter(sec=>!/method|méthod|introduction|overview|contexte|context|consolid|consolidé|summary|synthèse/i.test(cleanHeadingTitle(sec.title||''))&&/[A-Za-zÀ-ÿ]/.test(cleanHeadingTitle(sec.title||'')));
     const items=[];
     for(const sec of thematic){
@@ -1001,7 +999,7 @@ function run(evidence,onProgress=()=>{}){
 
   const assets=Object.entries(evidence.snapshots).map(([page,uri])=>({id:`page-${page}`,type:'image',uri,origin:'source',source_page:Number(page),caption:`Source page ${page} rendered from ${file}.`,source_refs:[pageRef(file,Number(page))]}));
   const story={
-    version:'0.2.1-browser',engine:{planner:'deterministic_source_grounded',notes:'Source-grounded editorial compiler with short-report hierarchy consolidation, table-to-chart planning and bounded scene composition. No facts are invented.'},
+    version:'0.2.1-browser',engine:{planner:'deterministic_source_grounded',notes:'Source-grounded editorial compiler using document hierarchy, evidence roles, table-to-chart planning and bounded scene composition. No document-specific templates or facts are invented.'},
     document:{id:'uploaded-pdf',title:evidence.document.title,subtitle:evidence.document.subtitle,source_file:file,page_count:evidence.document.page_count,publisher:evidence.document.publisher,language:evidence.document.language},
     editorial_policy:{fidelity:'adaptive',compression:'balanced',notes:'Structure may be consolidated, but scene copy is source-derived.'},
     design_system:{source_strategy:'preserve',palette,typography:{source_fonts:evidence.design_profile.fonts.map(x=>x.name),character:'source-derived'},branding:{publisher:evidence.document.publisher||''}},
@@ -1061,14 +1059,14 @@ async function run(story,evidence,onProgress=()=>{},signal){
   const title=story.document?.title||'';const place=placeHint(title);const targets=[];
   const hero=story.chapters?.[0]?.scenes?.find(s=>s.primitive==='hero');
   if(hero){
-    const heroQuery=place&&/\bport\b|harbou?r|marina/i.test(title)?`Port de ${place}`:cleanQuery(title,12);
-    targets.push({scene:hero,query:heroQuery,fallback:place?normalize(`Port ${place}`):cleanQuery(title,8)});
+    const heroQuery=normalize([cleanQuery(title,10),place].filter(Boolean).join(' '));
+    targets.push({scene:hero,query:heroQuery,fallback:cleanQuery(title,7)});
   }
   for(const chapter of (story.chapters||[]).slice(1)){
     if(/method|méthod|introduction|summary|synthèse|conclusion|overview|background|references?/i.test(chapter.title||''))continue;
     const scene=(chapter.scenes||[]).find(s=>s.primitive==='sticky_narrative');
     if(!scene)continue;
-    const q=normalize([cleanQuery(chapter.title,7),place].filter(Boolean).join(' '));targets.push({scene,query:q,fallback:place?normalize(`${place} port`):cleanQuery(chapter.title,7)});
+    const q=normalize([cleanQuery(chapter.title,7),place].filter(Boolean).join(' '));targets.push({scene,query:q,fallback:cleanQuery(chapter.title,7)});
     if(targets.length>=4)break;
   }
   let done=0;

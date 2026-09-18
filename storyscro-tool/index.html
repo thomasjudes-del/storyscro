@@ -570,7 +570,7 @@ async function ingestPdf(file,onProgress=()=>{},signal){
 }
 
 
-return run;
+return ingestPdf;
 })();
 const planStory = (()=>{
 const normalize=s=>String(s||'').replace(/\s+/g,' ').trim();

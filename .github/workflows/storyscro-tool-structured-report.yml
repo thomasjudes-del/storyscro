@@ -1,0 +1,163 @@
+name: StoryScro Tool - Structured report QA
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'storyscro-tool/**'
+      - '.github/workflows/storyscro-tool-structured-report.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: storyscro-tool-structured-report-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  structured-six-page-report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install QA dependencies
+        run: python -m pip install --disable-pip-version-check selenium==4.35.0 reportlab==4.4.3
+
+      - name: Generate synthetic six-page French port report
+        run: |
+          cat > /tmp/make_report.py <<'PY'
+          from reportlab.lib.pagesizes import A4
+          from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
+          from reportlab.lib import colors
+          from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+          from reportlab.lib.enums import TA_CENTER
+
+          out='/tmp/structured-port-report.pdf'
+          doc=SimpleDocTemplate(out,pagesize=A4,rightMargin=52,leftMargin=52,topMargin=46,bottomMargin=46)
+          styles=getSampleStyleSheet()
+          teal=colors.HexColor('#07566A')
+          title=ParagraphStyle('TitleX',parent=styles['Title'],fontSize=25,leading=29,textColor=teal,alignment=TA_CENTER,spaceAfter=24)
+          h1=ParagraphStyle('H1X',parent=styles['Heading1'],fontSize=18,leading=22,textColor=teal,spaceBefore=10,spaceAfter=10)
+          h2=ParagraphStyle('H2X',parent=styles['Heading2'],fontSize=14,leading=18,textColor=teal,spaceBefore=8,spaceAfter=7)
+          body=ParagraphStyle('BodyX',parent=styles['BodyText'],fontSize=10.5,leading=15,spaceAfter=8)
+          small=ParagraphStyle('SmallX',parent=body,fontSize=9,leading=12,textColor=colors.HexColor('#59646A'))
+
+          def trend_table(rows):
+              data=[['', '2015','2019','2020','2025']]+rows
+              t=Table(data,colWidths=[170,72,72,72,72])
+              t.setStyle(TableStyle([
+                  ('FONTNAME',(0,0),(-1,0),'Helvetica-Bold'),
+                  ('FONTNAME',(0,1),(0,-1),'Helvetica-Bold'),
+                  ('FONTSIZE',(0,0),(-1,-1),9),
+                  ('BACKGROUND',(0,0),(-1,0),colors.HexColor('#E8EFF1')),
+                  ('BACKGROUND',(0,1),(-1,-1),colors.white),
+                  ('ROWBACKGROUNDS',(0,1),(-1,-1),[colors.white,colors.HexColor('#F4F6F7')]),
+                  ('GRID',(0,0),(-1,-1),0.25,colors.HexColor('#C8D1D4')),
+                  ('VALIGN',(0,0),(-1,-1),'MIDDLE'),
+                  ('LEFTPADDING',(0,0),(-1,-1),6),
+                  ('RIGHTPADDING',(0,0),(-1,-1),6),
+                  ('TOPPADDING',(0,0),(-1,-1),6),
+                  ('BOTTOMPADDING',(0,0),(-1,-1),6),
+              ]))
+              return t
+
+          story=[]
+          story += [Spacer(1,90), Paragraph('Impact socio-économique du port de Sète',title),
+                    Paragraph('Rapport synthétique de test - données entièrement synthétiques', ParagraphStyle('Sub',parent=body,alignment=TA_CENTER,fontSize=13,leading=18,textColor=colors.HexColor('#56676F'))),
+                    Spacer(1,250), Paragraph('Jeu de test StoryScro - septembre 2026', small), PageBreak()]
+
+          story += [Paragraph('1. Méthodologie',h1),
+                    Paragraph('1.1. Une mission d’actualisation',h2),
+                    Paragraph('Ce rapport synthétique compare quatre périodes et cherche à rendre lisibles les changements majeurs de trois activités portuaires. Les valeurs ci-dessous sont uniquement des données de test.',body),
+                    Paragraph('1.2. Principes méthodologiques',h2),
+                    Paragraph('L’impact est suivi au moyen du chiffre d’affaires, des emplois directs, des emplois indirects et des emplois induits. Les comparaisons portent sur 2015, 2019, 2020 et une projection 2025.',body),
+                    Paragraph('1.3. Lecture des résultats',h2),
+                    Paragraph('Les tendances sont interprétées par filière avant une consolidation finale. L’objectif est de distinguer stabilité, croissance et choc conjoncturel.',body), PageBreak()]
+
+          story += [Paragraph('2.1. Port de pêche',h1),
+                    Paragraph('2.1.1. Évolution quantitative et qualitative de la filière',h2),
+                    Paragraph('La filière pêche progresse avant 2020 puis se stabilise. La structure de l’activité reste relativement constante sur la période de projection.',body),
+                    Paragraph('2.1.2. Les principaux chiffres socio-économiques',h2),
+                    trend_table([
+                      ['Emplois directs','610 ETP','655 ETP','648 ETP','660 ETP'],
+                      ['Chiffre d’affaires direct','68 millions d€','76 millions d€','74 millions d€','77 millions d€'],
+                      ['Emplois indirects','390 ETP','410 ETP','404 ETP','414 ETP'],
+                      ['Emplois induits','1000 ETP','1065 ETP','1052 ETP','1074 ETP'],
+                    ]),
+                    Spacer(1,14), Paragraph('2.1.3. Points clés',h2),
+                    Paragraph('La trajectoire est principalement une histoire de stabilité après une phase de progression. Le choc 2020 reste limité dans ce jeu de test.',body), PageBreak()]
+
+          story += [Paragraph('2.2. Port de plaisance',h1),
+                    Paragraph('2.2.1. Évolution quantitative et qualitative de la filière',h2),
+                    Paragraph('La fréquentation et les services nautiques progressent régulièrement. La réparation navale constitue le principal moteur de croissance du scénario.',body),
+                    Paragraph('2.2.2. Les principaux chiffres socio-économiques',h2),
+                    trend_table([
+                      ['Emplois directs','145 ETP','188 ETP','205 ETP','224 ETP'],
+                      ['Chiffre d’affaires direct','8 millions d€','12 millions d€','14 millions d€','16 millions d€'],
+                      ['Emplois indirects','124 ETP','160 ETP','181 ETP','215 ETP'],
+                      ['Emplois induits','269 ETP','348 ETP','386 ETP','439 ETP'],
+                    ]),
+                    Spacer(1,14), Paragraph('2.2.3. Points clés',h2),
+                    Paragraph('La plaisance affiche la progression la plus régulière, soutenue par l’amélioration des services et l’attractivité du territoire.',body), PageBreak()]
+
+          story += [Paragraph('2.3. Port de commerce',h1),
+                    Paragraph('2.3.1. Évolution quantitative et qualitative de la filière',h2),
+                    Paragraph('Le commerce concentre la majorité des retombées. Après un recul en 2020, le scénario 2025 traduit une reprise marquée des volumes et de l’emploi.',body),
+                    Paragraph('2.3.2. Les principaux chiffres socio-économiques',h2),
+                    trend_table([
+                      ['Emplois directs','700 ETP','790 ETP','715 ETP','990 ETP'],
+                      ['Chiffre d’affaires direct','780 millions d€','720 millions d€','650 millions d€','850 millions d€'],
+                      ['Emplois indirects','490 ETP','530 ETP','475 ETP','810 ETP'],
+                      ['Emplois induits','1190 ETP','1320 ETP','1190 ETP','1800 ETP'],
+                    ]),
+                    Spacer(1,14), Paragraph('2.3.3. Points clés généraux',h2),
+                    Paragraph('La reprise projetée est plus forte sur l’emploi que sur le chiffre d’affaires. Cette divergence constitue le principal message à mettre en scène visuellement.',body), PageBreak()]
+
+          story += [Paragraph('2.4. Impact consolidé de Port Sud de France',h1),
+                    Paragraph('La consolidation met en regard les trois activités pour rendre visible la trajectoire d’ensemble.',body),
+                    trend_table([
+                      ['Emplois directs','1455 ETP','1633 ETP','1568 ETP','1874 ETP'],
+                      ['Chiffre d’affaires direct','856 millions d€','808 millions d€','738 millions d€','943 millions d€'],
+                      ['Emplois indirects','1004 ETP','1100 ETP','1060 ETP','1439 ETP'],
+                      ['Emplois induits','2459 ETP','2733 ETP','2628 ETP','3313 ETP'],
+                    ]),
+                    Spacer(1,20), Paragraph('Conclusion',h2),
+                    Paragraph('Le scénario synthétique combine une pêche stable, une plaisance en croissance continue et un commerce qui rebondit après 2020. La consolidation fait apparaître une trajectoire positive à horizon 2025.',body)]
+          doc.build(story)
+          print(out)
+          PY
+          python /tmp/make_report.py
+          test -s /tmp/structured-port-report.pdf
+
+      - name: Start StoryScro Tool
+        run: |
+          python -m http.server 4182 --bind 127.0.0.1 > /tmp/storyscro-tool-server.log 2>&1 &
+          for i in {1..30}; do
+            curl -fsS http://127.0.0.1:4182/storyscro-tool/ >/dev/null && exit 0
+            sleep 0.5
+          done
+          cat /tmp/storyscro-tool-server.log
+          exit 1
+
+      - name: Generate and inspect structured report
+        env:
+          STORYSCRO_TOOL_BASE: http://127.0.0.1:4182/storyscro-tool/
+          STORYSCRO_TOOL_PDF: /tmp/structured-port-report.pdf
+          STORYSCRO_TOOL_OUT: structured-report-artifacts
+          STORYSCRO_EXPECT_CHART: '1'
+          STORYSCRO_EXPECT_EXTERNAL_IMAGE: '1'
+        run: python storyscro-tool/test_smoke.py
+
+      - name: Upload QA artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: storyscro-structured-report-${{ github.sha }}
+          path: structured-report-artifacts/
+          if-no-files-found: warn
+          retention-days: 7

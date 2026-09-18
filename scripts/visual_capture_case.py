@@ -31,7 +31,9 @@ def wait_ready(driver):
             driver.execute_script("document.documentElement.style.scrollBehavior='auto'; document.body.style.scrollBehavior='auto';")
             return
         time.sleep(.25)
-    raise RuntimeError('StoryScro renderer did not finish loading')
+    detail = driver.execute_script("return {error:document.querySelector('.error')?.innerText||'', body:document.body.innerText.slice(0,2000)}")
+    console = driver.get_log('browser')
+    raise RuntimeError('StoryScro renderer did not finish loading: ' + json.dumps({'detail':detail,'console':console}, ensure_ascii=False))
 
 
 def scene_ids(driver):

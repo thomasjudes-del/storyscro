@@ -238,7 +238,9 @@ function groupLines(rawItems,pageWidth,pageHeight){
     const segments=[];let seg=[];let last=null;
     for(const it of items){
       const gap=last?it.x-(last.x+last.width):0;
-      const split=last && gap>Math.max(34,pageWidth*.055,Math.min(last.size,it.size)*4.2);
+      const prefixOnly=seg.length===1&&/^\d{1,2}(?:\.\d+){0,3}\.?$/.test(normalize(seg[0].text));
+      const nextStartsTitle=/^[A-ZÀ-Ý]/.test(normalize(it.text));
+      const split=last && gap>Math.max(34,pageWidth*.055,Math.min(last.size,it.size)*4.2) && !(prefixOnly&&nextStartsTitle);
       if(split&&seg.length){segments.push(seg);seg=[]}
       seg.push(it);last=it;
     }
@@ -300,10 +302,11 @@ function titleCaseRatio(text){
 
 function numberedHeadingQuality(line,bodySize){
   const text=normalize(line.text);
-  const m=text.match(/^(\d{1,2}(?:\.\d+){0,3})\.?\s+(.+)/);
+  const m=text.match(/^(\d{1,2}(?:\.\d+){0,3})\.?\s*(.+)/);
   if(!m)return false;
-  const rest=normalize(m[2]),words=rest.split(/\s+/).length;
-  if(!rest||rest.length>92||words>13||/[:;].{32,}/.test(rest)||/[.!?]$/.test(rest))return false;
+  const prefix=m[1],rest=normalize(m[2]),words=rest.split(/\s+/).length;
+  const firstNum=Number(prefix.split('.')[0]);
+  if(!rest||firstNum>20||/^[-–—]/.test(rest)||rest.length>92||words>13||/[:;].{32,}/.test(rest)||/[.!?]$/.test(rest))return false;
   if(/^(?:project|deliverable)\s+\d+/i.test(rest)||isCitationLike(text))return false;
   const firstAlpha=(rest.match(/[A-Za-zÀ-ÿ]/)||[''])[0];
   const titleish=firstAlpha&&firstAlpha===firstAlpha.toUpperCase()&&titleCaseRatio(rest)>=.54;
@@ -319,7 +322,8 @@ function isHeadingLike(line,bodySize){
   if(words>18&&line.page!==1)return false;
   if(line.x>line.pageWidth*.82)return false;
   const numbered=numberedHeadingQuality(line,bodySize);
-  const canonical=/^(?:abstract|introduction|background|related work|method(?:s|ology)?|approach|model architecture|experiments?|results?|discussion|limitations?|recommendations?|conclusions?|summary|outlook|references|appendix|annex|overview|executive summary|context|méthode|résultats?|conclusion|recommandations?|synthèse|contexte|policies|policy priorities|crosscurrents|comparison)\b/i.test(text);
+  const canonicalRaw=/^(?:abstract|introduction|background|related work|method(?:s|ology)?|approach|model architecture|experiments?|results?|discussion|limitations?|recommendations?|conclusions?|summary|outlook|references|appendix|annex|overview|executive summary|context|méthode|résultats?|conclusion|recommandations?|synthèse|contexte|policies|policy priorities|crosscurrents|comparison)\b/i.test(text);
+  const canonical=canonicalRaw&&words<=11&&text.length<=100&&!/[.!?;]$/.test(text)&&!/[,:].{22,}/.test(text);
   const firstAlpha=(text.match(/[A-Za-zÀ-ÿ]/)||[''])[0];
   const titleish=words>=2&&words<=12&&firstAlpha&&firstAlpha===firstAlpha.toUpperCase()&&line.maxSize>=bodySize*1.12&&titleCaseRatio(text)>=.68&&!/[.!?;]$/.test(text);
   const sizeSignal=line.maxSize>=bodySize*1.34 || (line.bold&&line.maxSize>=bodySize*1.05&&words<=12);
@@ -393,10 +397,12 @@ function structuralHeading(h,bodySize,denseNumberedPages=new Set()){
   if(!t||isBoilerplateText(t)||isCitationLike(t)||/\.{5,}/.test(t)||/^(?:figure|fig\.?|table|algorithm)\s*\d+/i.test(t))return false;
   if(/^(?:endnotes?|references?|bibliography|références|bibliographie|annex|appendix)\b/i.test(t))return true;
   if(/^chapter\s+\d+\b/i.test(t))return true;
-  if(/^(?:abstract|executive summary|résumé exécutif|introduction|background|related work|method(?:s|ology)?|approach|model architecture|experiments?|results?|discussion|limitations?|recommendations?|conclusions?|summary|outlook|policy priorities|policies to|synthèse|conclusion|recommandations?|comparison)\b/i.test(t))return h.maxSize>=bodySize*.92||h.bold;
-  const numbered=t.match(/^(\d{1,2}(?:\.\d+){0,3})\.?\s+(.+)/);
+  const canonical=/^(?:abstract|executive summary|résumé exécutif|introduction|background|related work|method(?:s|ology)?|approach|model architecture|experiments?|results?|discussion|limitations?|recommendations?|conclusions?|summary|outlook|policy priorities|policies to|synthèse|conclusion|recommandations?|comparison)\b/i.test(t);
+  if(canonical&&t.split(/\s+/).length<=11&&t.length<=100&&!/[.!?;]$/.test(t)&&!/[,:].{22,}/.test(t))return h.maxSize>=bodySize*.92||h.bold;
+  const numbered=t.match(/^(\d{1,2}(?:\.\d+){0,3})\.?\s*(.+)/);
   if(numbered){
-    const prefix=numbered[1],rest=normalize(numbered[2]),depth=prefix.split('.').length;
+    const prefix=numbered[1],rest=normalize(numbered[2]),depth=prefix.split('.').length,firstNum=Number(prefix.split('.')[0]);
+    if(firstNum>20||/^[-–—]/.test(rest))return false;
     if(/^\d+$/.test(prefix)&&denseNumberedPages.has(h.page)&&h.maxSize<bodySize*1.18)return false;
     if(rest.length>92||/:.{32,}/.test(rest)||/[.!?]$/.test(rest)||/^(?:project|deliverable)\s+\d+/i.test(rest))return false;
     const firstAlpha=(rest.match(/[A-Za-zÀ-ÿ]/)||[''])[0];
@@ -470,7 +476,7 @@ function buildSections(allLines,paragraphs,headings,bodySize){
     const h=boundaries[i],next=boundaries[i+1];const startKey=order(h.page,h.y),endKey=next?order(next.page,next.y):Infinity;
     const ps=paragraphs.filter(p=>{const k=order(p.page,p.y);return k>startKey&&k<endKey&&!isBoilerplateText(p.text)});
     const kind=sectionKind(h.text);const lastPage=ps.length?Math.max(...ps.map(p=>p.page)):h.page;
-    sections.push({id:`section-${i+1}`,title:normalize(h.text),pageStart:h.page,pageEnd:lastPage,kind,heading:h,paragraphs:ps});
+    sections.push({id:`section-${i+1}`,title:normalize(h.text),pageStart:h.page,pageEnd:lastPage,kind,level:h.level||null,heading:h,paragraphs:ps});
   }
   return sections.filter(s=>s.paragraphs.length||s.heading);
 }
@@ -604,7 +610,7 @@ async function ingestPdf(file,onProgress=()=>{},signal){
     headings:headings.map(h=>({id:h.id,text:h.text,page:h.page,level:h.level,size:h.maxSize,font:h.font,y:h.y,x:h.x})),
     paragraphs:paragraphs.map(p=>({id:p.id,text:p.text,page:p.page,size:p.size,font:p.font,x:p.x,y:p.y})),
     bullets,numbers,quotes,
-    sections:sections.map(s=>({id:s.id,title:s.title,page_start:s.pageStart,page_end:s.pageEnd,kind:s.kind||'core',paragraph_ids:s.paragraphs.map(p=>p.id)})),
+    sections:sections.map(s=>({id:s.id,title:s.title,page_start:s.pageStart,page_end:s.pageEnd,kind:s.kind||'core',level:s.level||null,paragraph_ids:s.paragraphs.map(p=>p.id)})),
     repeated_lines:[...repeatedKeys],
     toc_pages:[...tocPages],
     editorial_excluded_pages:[...editorialExcludedPages],
@@ -641,8 +647,15 @@ function topNumbers(ns,count=4){const seen=new Set();return [...ns].sort((a,b)=>
 function safeNav(s){return normalize(s).replace(/[.:;].*$/,'').slice(0,26)||'Section'}
 function bestSnapshot(evidence,page){return evidence.snapshots[page]||evidence.snapshots[1]||null}
 
-function consolidateSections(evidence,max=6){
+function consolidateSections(evidence,max=8){
+  const docTitle=normalize(evidence.document.title).toLowerCase();
   let raw=evidence.sections.filter(s=>s.title&&!/^page \d+$/i.test(s.title)&&!NOISE_RX.test(s.title)&&s.kind!=='references'&&s.kind!=='annex'&&s.title.split(/\s+/).length<=18&&!/^(?:figure|table|input-input layer)/i.test(s.title));
+  raw=raw.filter(s=>!(s.page_start===1&&s.title.length>=14&&docTitle.includes(normalize(s.title).toLowerCase())));
+  const introIndex=raw.findIndex(s=>/^(?:\d+(?:\.\d+)*\.?\s*)?(?:introduction|executive summary|abstract|résumé exécutif)\b/i.test(normalize(s.title)));
+  if(introIndex>0){
+    const keepBefore=raw.slice(0,introIndex).filter(s=>/executive summary|abstract|résumé exécutif/i.test(s.title));
+    raw=[...keepBefore,...raw.slice(introIndex)];
+  }
   if(raw.some(s=>/abstract|executive summary|résumé exécutif/i.test(s.title)))raw=raw.filter(s=>!/^overview$/i.test(s.title));
   if(raw.length<=max)return raw;
   const groups=[];const target=Math.max(1,max);let cursor=0;
@@ -650,7 +663,7 @@ function consolidateSections(evidence,max=6){
     const remaining=raw.length-cursor,slots=target-groups.length;
     const take=Math.max(1,Math.ceil(remaining/Math.max(1,slots)));
     const part=raw.slice(cursor,cursor+take);cursor+=take;
-    const title=part.length===1?part[0].title:`${part[0].title} · ${part[part.length-1].title}`;
+    const title=part[0].title;
     groups.push({id:`group-${groups.length+1}`,title,page_start:part[0].page_start,page_end:part[part.length-1].page_end,kind:'core',paragraph_ids:part.flatMap(x=>x.paragraph_ids),grouped_titles:part.map(x=>x.title)});
   }
   return groups.slice(0,max);

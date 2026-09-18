@@ -37,6 +37,10 @@ jobs:
             slug: eu-fossa-comparative
             url: https://interoperable-europe.ec.europa.eu/sites/default/files/inline-files/DLV%20WP1%20-%2007%20Comparative%20study_published%281%29.pdf
             filename: eu-fossa-comparative.pdf
+          - kind: consulting-strategy
+            slug: strategyand-france-pharma-2025
+            url: https://www.strategyand.pwc.com/fr/fr/assets/pdf/2025/07/fr-strategyand-leem-pwc-2025-barometre-360.pdf
+            filename: strategyand-france-pharma-2025.pdf
 
     steps:
       - name: Checkout

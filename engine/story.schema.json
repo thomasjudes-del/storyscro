@@ -67,6 +67,12 @@
             "string",
             "null"
           ]
+        },
+        "source_url": {
+          "type": [
+            "string",
+            "null"
+          ]
         }
       },
       "additionalProperties": true
@@ -229,6 +235,61 @@
         }
       },
       "additionalProperties": true
+    },
+    "presentation_profile": {
+      "type": "object",
+      "properties": {
+        "preset": {
+          "enum": [
+            "source_faithful",
+            "consulting",
+            "executive",
+            "dynamic",
+            "cinematic",
+            "data_heavy",
+            "minimal"
+          ]
+        },
+        "density": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "motion": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "image_weight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "type_scale": {
+          "type": "number",
+          "minimum": 0.75,
+          "maximum": 1.5
+        },
+        "compression": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "contrast": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "source_identity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
     }
   },
   "$defs": {

@@ -483,14 +483,19 @@ function inferSubtitle(lines,title,bodySize){
 
 function safePublisher(info,lines,bodySize){
   const institutionRx=/\b(?:commission|committee|fund|bank|agency|ministry|department|council|organisation|organization|institute|university|authority|government|parliament|office)\b/i;
-  const early=lines.filter(l=>l.page<=3&&!l.isRepeated&&l.text.length>=4&&l.text.length<=100&&!isBoilerplateText(l.text)&&institutionRx.test(l.text))
-    .sort((a,b)=>(b.maxSize/bodySize)-(a.maxSize/bodySize)||a.page-b.page);
-  const strong=early.find(l=>l.maxSize>=bodySize*1.08||/commission|committee|international monetary fund/i.test(l.text));
-  if(strong)return normalize(strong.text).replace(/\s*[|·-]\s*(?:April|July|June|May|September|October|November|December)\b.*$/i,'').slice(0,100);
+  const proseNoise=/\b(?:reuse|reproduction|publication|permission|copyright|acknowledged|responsible|disclaimer|shall not|may be held|source of the)\b/i;
+  const plausible=t=>{
+    t=normalize(t);const words=t.split(/\s+/).length;
+    return t.length>=4&&t.length<=82&&words<=11&&institutionRx.test(t)&&!proseNoise.test(t)&&!/[.!?;:]$/.test(t);
+  };
+  const early=lines.filter(l=>l.page<=3&&!l.isRepeated&&plausible(l.text))
+    .sort((a,b)=>(b.maxSize/bodySize)-(a.maxSize/bodySize)||a.page-b.page||a.text.length-b.text.length);
+  const strong=early.find(l=>l.maxSize>=bodySize*1.02||/climate change committee|international monetary fund|european commission|world bank/i.test(l.text));
+  if(strong)return normalize(strong.text).replace(/\s*[|·-]\s*(?:April|July|June|May|September|October|November|December)\b.*$/i,'').slice(0,82);
   const author=normalize(info?.Author||'');
-  if(author&&author.length<120&&!isBoilerplateText(author)&&institutionRx.test(author))return author;
+  if(plausible(author))return author;
   const creator=normalize(info?.Creator||'');
-  if(creator&&!/latex|pdftex|word|microsoft|adobe|acrobat|indesign|quark|libreoffice|ghostscript|wkhtml|prince|pandoc|hyperref/i.test(creator)&&creator.length<100&&institutionRx.test(creator))return creator;
+  if(creator&&!/latex|pdftex|word|microsoft|adobe|acrobat|indesign|quark|libreoffice|ghostscript|wkhtml|prince|pandoc|hyperref/i.test(creator)&&plausible(creator))return creator;
   return null;
 }
 
@@ -526,12 +531,12 @@ async function ingestPdf(file,onProgress=()=>{},signal){
     if(m)level=Math.min(3,m[1].split('.').length);
     else if(/^(?:abstract|introduction|background|related work|method(?:s|ology)?|approach|model(?: architecture)?|experiments?|results?|discussion|limitations?|recommendations?|conclusions?|summary|outlook|references|appendix|annex|executive summary|méthode|résultats?|conclusion|recommandations?|synthèse|contexte)\b/i.test(text)) level=1;
     else {level=thresholds.findIndex(sz=>h.maxSize>=sz-.25)+1;if(level<1)level=3;level=Math.min(3,level)}
-    return{...h,id:`heading-${i+1}`,level,score:h.maxSize/bodySize+(h.bold?.25:0)+(m?.2:0)};
-  }).filter(h=>h.score>=1.05);
+    return{...h,id:`heading-${i+1}`,level,score:h.maxSize/bodySize+(h.bold?.25:0)+(m?.2:0),structural_hint:!!m||/^(?:abstract|introduction|background|related work|method(?:s|ology)?|approach|model(?: architecture)?|experiments?|results?|discussion|limitations?|recommendations?|conclusions?|summary|outlook|references|appendix|annex|executive summary|méthode|résultats?|conclusion|recommandations?|synthèse|contexte)\b/i.test(text)};
+  }).filter(h=>h.score>=1.05||h.structural_hint);
   const headingIds=new Set(headings.map(h=>`${h.page}|${h.text}|${h.y}`));
   for(const l of allLines)l.isHeading=headingIds.has(`${l.page}|${l.text}|${l.y}`);
   const paragraphs=mergeParagraphs(allLines,bodySize).map((p,i)=>({...p,id:`para-${i+1}`}));
-  const bullets=detectBullets(allLines);const numbers=detectNumbers(paragraphs);const quotes=detectQuotes(paragraphs);const sections=buildSections(allLines,paragraphs,headings,bodySize);
+  const bullets=detectBullets(allLines);const numbers=detectNumbers(paragraphs);const quotes=detectQuotes(paragraphs);const tocPages=detectTocPages(allLines);const sections=buildSections(allLines,paragraphs,headings,bodySize);
   onProgress({stage:'evidence',progress:.52,title:'Building the evidence model',detail:`${headings.length} headings · ${numbers.length} numeric references · ${paragraphs.length} text blocks`});
 
   const samplePages=[1,Math.max(1,Math.round(pdf.numPages*.34)),Math.max(1,Math.round(pdf.numPages*.67)),pdf.numPages].filter((v,i,a)=>a.indexOf(v)===i);
@@ -562,6 +567,7 @@ async function ingestPdf(file,onProgress=()=>{},signal){
     bullets,numbers,quotes,
     sections:sections.map(s=>({id:s.id,title:s.title,page_start:s.pageStart,page_end:s.pageEnd,kind:s.kind||'core',paragraph_ids:s.paragraphs.map(p=>p.id)})),
     repeated_lines:[...repeatedKeys],
+    toc_pages:[...tocPages],
     snapshots,
     stats:{pages:pdf.numPages,headings:headings.length,paragraphs:paragraphs.length,numbers:numbers.length,bullets:bullets.length,quotes:quotes.length,sections:sections.length,elapsed_ms:Math.round(performance.now()-started)}
   };
@@ -611,8 +617,10 @@ function consolidateSections(evidence,max=6){
 }
 
 function chooseStatement(evidence){
+  const tocPages=new Set(evidence.toc_pages||[]);
+  const structuralNoise=t=>/\.{5,}|^(?:contents|table of contents|list of (?:tables|figures)|sommaire)\b/i.test(normalize(t));
   const summaryIds=new Set(evidence.sections.filter(s=>s.kind==='summary'||/abstract|executive summary|résumé exécutif/i.test(s.title||'')).flatMap(s=>s.paragraph_ids||[]));
-  const candidates=evidence.paragraphs.filter(p=>p.page<=Math.min(12,evidence.document.page_count)&&p.text.length>70&&p.text.length<1100&&usefulText(p.text));
+  const candidates=evidence.paragraphs.filter(p=>p.page<=Math.min(12,evidence.document.page_count)&&!tocPages.has(p.page)&&p.text.length>70&&p.text.length<1100&&usefulText(p.text)&&!structuralNoise(p.text));
   const scored=candidates.map(p=>{
     const t=p.text;let score=0;
     if(summaryIds.has(p.id))score+=10;
@@ -629,6 +637,7 @@ function chooseStatement(evidence){
 }
 
 function chooseConclusion(evidence,sections){
+  const tocPages=new Set(evidence.toc_pages||[]);
   const core=sections.filter(s=>s.kind!=='references'&&s.kind!=='annex');
   const explicit=[...core].reverse().find(s=>/conclusion|summary|outlook|recommend|discussion|synthèse|conclusion|recommandation|policy priorities/i.test(s.title||''));
   const fromSection=s=>{
@@ -640,7 +649,7 @@ function chooseConclusion(evidence,sections){
   if(explicit){const p=fromSection(explicit);if(p)return p}
   const lastCore=core[core.length-1];if(lastCore){const p=fromSection(lastCore);if(p)return p}
   const ceiling=Math.max(1,Math.floor(evidence.document.page_count*.92));
-  return [...evidence.paragraphs].reverse().find(p=>p.page<=ceiling&&p.text.length>70&&usefulText(p.text)&&!NOISE_RX.test(p.text)&&!/^figure\s*\d+/i.test(p.text))||null;
+  return [...evidence.paragraphs].reverse().find(p=>p.page<=ceiling&&!tocPages.has(p.page)&&p.text.length>70&&usefulText(p.text)&&!NOISE_RX.test(p.text)&&!/^figure\s*\d+/i.test(p.text)&&!/\.{5,}/.test(p.text))||null;
 }
 
 function makeSceneEvidence(items,file){return items.map(x=>x.raw!==undefined?evidenceForNumber(x,file):evidenceForParagraph(x,file))}

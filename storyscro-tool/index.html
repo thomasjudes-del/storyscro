@@ -459,7 +459,7 @@ function detectEditorialExcludedPages(allLines,tocPages=new Set()){
 function sectionKind(text){
   const t=normalize(text);
   if(/^(?:endnotes?|references?|bibliography|références|bibliographie)\b/i.test(t)||/^\d+\s+references?\b/i.test(t))return 'references';
-  if(/^(?:annex|appendix)\b/i.test(t)||/^\d+\s+(?:annex|appendix)\b/i.test(t))return 'annex';
+  if(/^(?:annex|appendix)\b/i.test(t)||/^\d+\s+(?:annex|appendix)\b/i.test(t)||/\bbox\s*\d+\b/i.test(t))return 'annex';
   if(/^(?:abstract|executive summary|résumé exécutif|overview)\b/i.test(t))return 'summary';
   return 'core';
 }
@@ -467,6 +467,8 @@ function sectionKind(text){
 function structuralHeading(h,bodySize,denseNumberedPages=new Set()){
   const t=normalize(h.text);
   if(!t||isBoilerplateText(t)||isCitationLike(t)||/\.{5,}/.test(t)||/^(?:figure|fig\.?|table|algorithm)\s*\d+/i.test(t))return false;
+  if(h.page<=2&&/^(?:world|economic|outlook|update|jul|july|april|may|june|international monetary fund|\d{4})$/i.test(t))return false;
+  if(h.page<=2&&/(?:world economic outlook update|global economy:.*uncertainty)/i.test(t))return false;
   if(/^(?:endnotes?|references?|bibliography|références|bibliographie|annex|appendix)\b/i.test(t))return true;
   if(/^chapter\s+\d+\b/i.test(t))return true;
   const canonical=/^(?:abstract|executive summary|résumé exécutif|introduction|background|related work|method(?:s|ology)?|approach|model architecture|experiments?|results?|discussion|limitations?|recommendations?|conclusions?|summary|outlook|policy priorities|policies to|synthèse|conclusion|recommandations?|comparison)\b/i.test(t);
@@ -474,7 +476,7 @@ function structuralHeading(h,bodySize,denseNumberedPages=new Set()){
   const numbered=t.match(/^(\d{1,2}(?:\.\d+){0,3})\.?\s*(.+)/);
   if(numbered){
     const prefix=numbered[1],rest=normalize(numbered[2]),depth=prefix.split('.').length,firstNum=Number(prefix.split('.')[0]);
-    if(firstNum>20||/^[-–—]/.test(rest))return false;
+    if(firstNum>20||/^[-–—]/.test(rest)||!/[A-Za-zÀ-ÿ]/.test(rest))return false;
     if(/^\d+$/.test(prefix)&&denseNumberedPages.has(h.page)&&h.maxSize<bodySize*1.18)return false;
     if(rest.length>92||/:.{32,}/.test(rest)||/[.!?]$/.test(rest)||/^(?:project|deliverable)\s+\d+/i.test(rest))return false;
     const firstAlpha=(rest.match(/[A-Za-zÀ-ÿ]/)||[''])[0];
@@ -483,7 +485,11 @@ function structuralHeading(h,bodySize,denseNumberedPages=new Set()){
     return depth>1 ? (h.maxSize>=bodySize*1.04&&(titleish||visual)) : (titleish||visual);
   }
   const words=t.split(/\s+/).length,firstAlpha=(t.match(/[A-Za-zÀ-ÿ]/)||[''])[0];
-  return words>=2&&words<=11&&firstAlpha&&firstAlpha===firstAlpha.toUpperCase()&&h.maxSize>=bodySize*1.22&&titleCaseRatio(t)>=.64&&!/[.!?;:]$/.test(t);
+  const leftish=(h.x??0)<Math.min(190,(h.pageWidth||600)*.34);
+  const cleanEnd=!/[.!?;:]$/.test(t)&&!/(?:\bde|\bdu|\bdes|\bà|\bau|\bpour|\bavec|\bsur|\ben|\bof|\band|\bto|\bfor)$/i.test(t);
+  const titleish=words>=2&&words<=15&&firstAlpha&&firstAlpha===firstAlpha.toUpperCase()&&leftish&&h.maxSize>=bodySize*1.12&&titleCaseRatio(t)>=.56&&cleanEnd;
+  const slideHeadline=words>=6&&words<=26&&firstAlpha&&firstAlpha===firstAlpha.toUpperCase()&&leftish&&h.maxSize>=bodySize*1.5&&cleanEnd;
+  return !!(titleish||slideHeadline);
 }
 
 function fallbackEditorialHeading(h,bodySize){
@@ -682,7 +688,7 @@ async function ingestPdf(file,onProgress=()=>{},signal){
     headings:headings.map(h=>({id:h.id,text:h.text,page:h.page,level:h.level,size:h.maxSize,font:h.font,y:h.y,x:h.x})),
     paragraphs:paragraphs.map(p=>({id:p.id,text:p.text,page:p.page,size:p.size,font:p.font,x:p.x,y:p.y})),
     bullets,numbers,quotes,tables,
-    sections:sections.map(s=>({id:s.id,title:s.title,page_start:s.pageStart,page_end:s.pageEnd,kind:s.kind||'core',level:s.level||null,paragraph_ids:s.paragraphs.map(p=>p.id)})),
+    sections:sections.map(s=>({id:s.id,title:s.title,page_start:s.pageStart,page_end:s.pageEnd,kind:s.kind||'core',level:s.level||null,heading_size:s.heading?.maxSize||null,heading_x:s.heading?.x||null,paragraph_ids:s.paragraphs.map(p=>p.id)})),
     repeated_lines:[...repeatedKeys],
     toc_pages:[...tocPages],
     editorial_excluded_pages:[...editorialExcludedPages],

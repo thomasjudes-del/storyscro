@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-VERSION = '0.1.1'
+VERSION = '0.2.0'
 GENERIC_TITLES = {
     'memoire technique', 'mémoire technique', 'technical report', 'report', 'rapport',
     'proposal', 'proposition', 'presentation', 'présentation'
@@ -115,6 +115,7 @@ def prepare(evidence: dict[str, Any]) -> dict[str, Any]:
         'evidence_candidates': {'numbers':numbers,'tables':tables,'images':images,'vector_visuals':vectors,'quotes':quotes,'repeated_margin_elements':evidence.get('repeated_margin_elements',[])},
         'classification_corrections': corrections,
         'style_profile': evidence.get('style_profile',{}),
+        'design_profile': evidence.get('design_profile',{}),
         'ingestion_statistics': evidence.get('statistics',{}),
         'constraints': {'source_grounded':True,'source_refs_required':True,'allowed_statuses':['VERIFIED','INFERENCE','HYPOTHESIS','TO_CONFIRM','NOT_FOUND'],'default_fidelity':'adaptive','default_compression':'balanced'}
     }

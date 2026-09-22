@@ -1,0 +1,503 @@
+{
+  "version": "1.0-internal-agent",
+  "document": {
+    "id": "attention-transformer",
+    "title": "Attention Is All You Need",
+    "subtitle": "A source-grounded visual reading of the Transformer paper",
+    "source_file": "attention.pdf",
+    "language": "en",
+    "page_count": 15,
+    "audience": "Technical and innovation readers",
+    "purpose": "Explain the architectural break introduced by the Transformer and the evidence the paper gives for it.",
+    "core_question": "What changes when sequence modelling replaces recurrence and convolution with attention alone?",
+    "publisher": "Google Brain / Google Research",
+    "source_url": "https://arxiv.org/pdf/1706.03762"
+  },
+  "editorial_policy": {
+    "fidelity": "adaptive",
+    "compression": "balanced",
+    "notes": "The paper is reorganized around architectural break, mechanism, computational consequence and reported results. No new technical claim is added."
+  },
+  "navigation": {
+    "chapter_header": true,
+    "reading_progress": true,
+    "micro_navigation": true,
+    "keyboard_navigation": true
+  },
+  "design_system": {
+    "source_strategy": "adapt",
+    "palette": {
+      "primary": "#111111",
+      "secondary": "#777777",
+      "accent": "#c62828",
+      "background": "#ffffff",
+      "surface": "#f4f4f2",
+      "text": "#111111",
+      "muted": "#666666"
+    },
+    "typography": {
+      "source_fonts": [
+        "NimbusRomNo9L-Regu",
+        "ArialMT"
+      ],
+      "heading_family": "Georgia",
+      "body_family": "Georgia",
+      "heading_stack": "Georgia, 'Times New Roman', serif",
+      "body_stack": "Georgia, 'Times New Roman', serif",
+      "character": "academic serif"
+    },
+    "branding": {
+      "publisher": "Transformer paper"
+    },
+    "source_pages": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      7,
+      8
+    ],
+    "notes": "Monochrome academic identity preserved; red used only as a restrained accent."
+  },
+  "presentation_profile": {
+    "preset": "source_faithful",
+    "density": 0.58,
+    "motion": 0.5,
+    "image_weight": 0.08,
+    "type_scale": 0.92,
+    "compression": 0.64,
+    "contrast": 0.72,
+    "source_identity": 0.9
+  },
+  "assets": [],
+  "evidence": [
+    {
+      "id": "ev-thesis",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "The paper proposes the Transformer, a network architecture based solely on attention mechanisms, dispensing with recurrence and convolutions entirely.",
+      "source_refs": [
+        {
+          "file": "attention.pdf",
+          "page": 1,
+          "element_id": "p1-b13"
+        }
+      ]
+    },
+    {
+      "id": "ev-parallel",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "The Transformer allows significantly more parallelization and can reach state-of-the-art translation quality after training for as little as twelve hours on eight P100 GPUs.",
+      "source_refs": [
+        {
+          "file": "attention.pdf",
+          "page": 2,
+          "element_id": "p2-b5"
+        }
+      ]
+    },
+    {
+      "id": "ev-encoder",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "The encoder is a stack of six identical layers; each has multi-head self-attention and a position-wise feed-forward network, with residual connections and layer normalization.",
+      "source_refs": [
+        {
+          "file": "attention.pdf",
+          "page": 3,
+          "element_id": "p3-b5"
+        }
+      ]
+    },
+    {
+      "id": "ev-decoder",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "The decoder is also a stack of six layers and adds multi-head attention over encoder outputs; masking prevents positions from attending to subsequent positions.",
+      "source_refs": [
+        {
+          "file": "attention.pdf",
+          "page": 3,
+          "element_id": "p3-b6"
+        }
+      ]
+    },
+    {
+      "id": "ev-complexity",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "A self-attention layer connects all positions with a constant number of sequentially executed operations, whereas a recurrent layer requires O(n) sequential operations.",
+      "source_refs": [
+        {
+          "file": "attention.pdf",
+          "page": 6,
+          "element_id": "p6-b14"
+        }
+      ]
+    },
+    {
+      "id": "ev-results",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "The big Transformer reports 28.4 BLEU on WMT 2014 English-to-German and 41.8 BLEU on English-to-French; the big model trained for 3.5 days on eight P100 GPUs.",
+      "source_refs": [
+        {
+          "file": "attention.pdf",
+          "page": 1,
+          "element_id": "p1-b13"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "id": "opening",
+      "title": "The architectural break",
+      "nav_label": "Opening",
+      "purpose": "orientation",
+      "source_evidence_ids": [
+        "ev-thesis"
+      ],
+      "scenes": [
+        {
+          "id": "attn-hero",
+          "nav_label": "Premise",
+          "primitive": "hero",
+          "semantic_role": "opening",
+          "message": "Replace recurrence with attention.",
+          "kicker": "NIPS 2017 | Sequence modelling",
+          "title": "Attention becomes the architecture.",
+          "body": "The paper's central move is not to add attention to an RNN. It is to remove recurrence and convolution from the core sequence model.",
+          "source_evidence_ids": [
+            "ev-thesis"
+          ],
+          "source_refs": [
+            {
+              "file": "attention.pdf",
+              "page": 1,
+              "element_id": "p1-b13"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "shorten",
+              "description": "The abstract and opening proposition are condensed into one editorial premise.",
+              "source_evidence_ids": [
+                "ev-thesis"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "attn-statement",
+          "nav_label": "Thesis",
+          "primitive": "full_screen_statement",
+          "semantic_role": "thesis",
+          "message": "The Transformer relies entirely on attention to model global dependencies.",
+          "body": "A model architecture eschewing recurrence. Attention becomes the mechanism for drawing global dependencies between input and output.",
+          "emphasis": [
+            {
+              "text": "Attention",
+              "style": "marker_highlight"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-thesis",
+            "ev-parallel"
+          ],
+          "source_refs": [
+            {
+              "file": "attention.pdf",
+              "page": 1,
+              "element_id": "p1-b13"
+            },
+            {
+              "file": "attention.pdf",
+              "page": 2,
+              "element_id": "p2-b5"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "paraphrase",
+              "description": "Two source statements are compressed without adding a new technical claim.",
+              "source_evidence_ids": [
+                "ev-thesis",
+                "ev-parallel"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mechanism",
+      "title": "How the architecture is assembled",
+      "nav_label": "Architecture",
+      "purpose": "mechanism",
+      "source_evidence_ids": [
+        "ev-encoder",
+        "ev-decoder"
+      ],
+      "scenes": [
+        {
+          "id": "attn-architecture",
+          "nav_label": "Encoder / decoder",
+          "primitive": "comparison",
+          "semantic_role": "architecture_comparison",
+          "message": "Both stacks repeat attention and feed-forward blocks; the decoder adds masked self-attention and attention over encoder outputs.",
+          "title": "Two stacks. One attention-first grammar.",
+          "body": "The paper keeps the encoder-decoder framing, but changes what happens inside each layer.",
+          "data": {
+            "items": [
+              {
+                "kicker": "Encoder",
+                "title": "6 repeated layers",
+                "text": "Multi-head self-attention + position-wise feed-forward network, wrapped with residual connections and layer normalization."
+              },
+              {
+                "kicker": "Decoder",
+                "title": "6 repeated layers",
+                "text": "Masked self-attention + attention over encoder outputs + feed-forward network, again with residual connections and layer normalization."
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-encoder",
+            "ev-decoder"
+          ],
+          "source_refs": [
+            {
+              "file": "attention.pdf",
+              "page": 3,
+              "element_id": "p3-b5"
+            },
+            {
+              "file": "attention.pdf",
+              "page": 3,
+              "element_id": "p3-b6"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "group",
+              "description": "Encoder and decoder descriptions are aligned side by side to expose the shared and distinct mechanisms.",
+              "source_evidence_ids": [
+                "ev-encoder",
+                "ev-decoder"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "attn-complexity",
+          "nav_label": "Computation",
+          "primitive": "comparison",
+          "semantic_role": "computational_comparison",
+          "message": "Self-attention reduces the number of sequential operations needed to connect distant positions.",
+          "title": "The gain is not only conceptual. It is computational.",
+          "data": {
+            "items": [
+              {
+                "kicker": "Recurrent layer",
+                "title": "O(n) sequential operations",
+                "text": "Computation follows sequence positions step by step."
+              },
+              {
+                "kicker": "Self-attention",
+                "title": "Constant sequential depth",
+                "text": "All positions can be connected with a constant number of sequentially executed operations."
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-complexity"
+          ],
+          "source_refs": [
+            {
+              "file": "attention.pdf",
+              "page": 6,
+              "element_id": "p6-b14"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "visualize",
+              "description": "The asymptotic comparison stated in the source is converted into a two-column visual comparison.",
+              "source_evidence_ids": [
+                "ev-complexity"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evidence",
+      "title": "What the experiments report",
+      "nav_label": "Results",
+      "purpose": "quantitative_evidence",
+      "source_evidence_ids": [
+        "ev-results",
+        "ev-parallel"
+      ],
+      "scenes": [
+        {
+          "id": "attn-bleu",
+          "nav_label": "BLEU",
+          "primitive": "chart",
+          "semantic_role": "quantitative_results",
+          "message": "The paper reports headline translation scores on two WMT 2014 tasks.",
+          "title": "Two headline translation results.",
+          "body": "These are different language-pair tasks, so the bars are not presented as a ranking between them. They expose the two reported headline BLEU results from the abstract.",
+          "data": {
+            "chart_type": "bar",
+            "labels": [
+              "EN→DE",
+              "EN→FR"
+            ],
+            "unit": "BLEU",
+            "series": [
+              {
+                "label": "Transformer (big)",
+                "unit": "BLEU",
+                "values": [
+                  28.4,
+                  41.8
+                ]
+              }
+            ]
+          },
+          "effects": [
+            {
+              "id": "progressive_build",
+              "intensity": "medium",
+              "target": "data",
+              "trigger": "scroll"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-results"
+          ],
+          "source_refs": [
+            {
+              "file": "attention.pdf",
+              "page": 1,
+              "element_id": "p1-b13"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "visualize",
+              "description": "The two BLEU results reported in the abstract are plotted without combining or normalising the tasks.",
+              "source_evidence_ids": [
+                "ev-results"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "attn-training",
+          "nav_label": "Training",
+          "primitive": "big_number",
+          "semantic_role": "training_evidence",
+          "message": "3.5 days",
+          "title": "The big model trained for 3.5 days on eight P100 GPUs.",
+          "body": "The paper also notes that a base Transformer could reach a new state of the art after as little as twelve hours on eight P100 GPUs.",
+          "data": {
+            "value": "3.5 days"
+          },
+          "emphasis": [
+            {
+              "text": "twelve hours",
+              "style": "underline"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-results",
+            "ev-parallel"
+          ],
+          "source_refs": [
+            {
+              "file": "attention.pdf",
+              "page": 7,
+              "element_id": "p7-b9"
+            },
+            {
+              "file": "attention.pdf",
+              "page": 2,
+              "element_id": "p2-b5"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "group",
+              "description": "Two training-time statements for different Transformer configurations are presented together with their distinction retained.",
+              "source_evidence_ids": [
+                "ev-results",
+                "ev-parallel"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "close",
+      "title": "The paper's proposition",
+      "nav_label": "Takeaway",
+      "purpose": "conclusion",
+      "source_evidence_ids": [
+        "ev-thesis",
+        "ev-complexity",
+        "ev-results"
+      ],
+      "scenes": [
+        {
+          "id": "attn-close",
+          "nav_label": "Takeaway",
+          "primitive": "conclusion",
+          "semantic_role": "synthesis",
+          "message": "Attention is not an accessory in this paper; it is the computational backbone.",
+          "title": "Remove the recurrence. Keep the sequence model.",
+          "kicker": "Source-grounded synthesis",
+          "source_evidence_ids": [
+            "ev-thesis",
+            "ev-complexity",
+            "ev-results"
+          ],
+          "source_refs": [
+            {
+              "file": "attention.pdf",
+              "page": 1,
+              "element_id": "p1-b13"
+            },
+            {
+              "file": "attention.pdf",
+              "page": 6,
+              "element_id": "p6-b14"
+            },
+            {
+              "file": "attention.pdf",
+              "page": 8,
+              "element_id": "p8-b16"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "restructure",
+              "description": "The closing synthesizes the paper's architectural claim, computational comparison and experimental evidence.",
+              "source_evidence_ids": [
+                "ev-thesis",
+                "ev-complexity",
+                "ev-results"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

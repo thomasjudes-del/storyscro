@@ -1,0 +1,581 @@
+{
+  "version": "1.0-internal-agent",
+  "document": {
+    "id": "eu-fossa-comparative",
+    "title": "European Institutions vs FOSS communities",
+    "subtitle": "A comparative reading of software development and security practices",
+    "source_file": "eu-fossa-comparative.pdf",
+    "language": "en",
+    "page_count": 46,
+    "audience": "DIGIT and software governance teams",
+    "purpose": "Expose where European Institutions and FOSS communities differ in development and security practice, and where each side has lessons for the other.",
+    "core_question": "Which software-development and security practices are stronger in institutional projects, which are stronger in FOSS communities, and what should each improve?",
+    "publisher": "European Commission / EU-FOSSA",
+    "source_url": "https://interoperable-europe.ec.europa.eu/sites/default/files/inline-files/DLV%20WP1%20-%2007%20Comparative%20study_published%281%29.pdf"
+  },
+  "editorial_policy": {
+    "fidelity": "adaptive",
+    "compression": "high",
+    "notes": "The 46-page deliverable is reorganized around the report's ten comparison areas and its own executive conclusions."
+  },
+  "navigation": {
+    "chapter_header": true,
+    "reading_progress": true,
+    "micro_navigation": true,
+    "keyboard_navigation": true
+  },
+  "design_system": {
+    "source_strategy": "adapt",
+    "palette": {
+      "primary": "#002060",
+      "secondary": "#5b6f9f",
+      "accent": "#c00000",
+      "background": "#ffffff",
+      "surface": "#f3f5f9",
+      "text": "#111827",
+      "muted": "#667085"
+    },
+    "typography": {
+      "source_fonts": [
+        "ArialMT",
+        "Arial-BoldMT",
+        "Calibri-Bold"
+      ],
+      "heading_family": "Arial",
+      "body_family": "Arial",
+      "heading_stack": "Arial, Helvetica, sans-serif",
+      "body_stack": "Arial, Helvetica, sans-serif",
+      "character": "EU project deliverable"
+    },
+    "branding": {
+      "publisher": "EU-FOSSA"
+    },
+    "source_pages": [
+      9,
+      11,
+      12,
+      13,
+      14,
+      17,
+      19,
+      30,
+      35,
+      38,
+      43
+    ],
+    "notes": "Institutional blue retained with red accent; page-by-page deliverable structure is compressed."
+  },
+  "presentation_profile": {
+    "preset": "consulting",
+    "density": 0.68,
+    "motion": 0.46,
+    "image_weight": 0.05,
+    "type_scale": 0.9,
+    "compression": 0.8,
+    "contrast": 0.7,
+    "source_identity": 0.9
+  },
+  "assets": [],
+  "evidence": [
+    {
+      "id": "ev-fossa-purpose",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "The study compares software development methodologies used in European Institutions and FOSS communities, with conclusions for the future evolution of development methodologies in European Institutions.",
+      "source_refs": [
+        {
+          "file": "eu-fossa-comparative.pdf",
+          "page": 9,
+          "element_id": "p9-b7"
+        }
+      ]
+    },
+    {
+      "id": "ev-fossa-scope",
+      "type": "method",
+      "status": "VERIFIED",
+      "text": "The comparison is organised across ten areas, including project management, software development methodology, security definition, testing, release management, code review, authentication and authorisation, incident management, problem management and licensing.",
+      "source_refs": [
+        {
+          "file": "eu-fossa-comparative.pdf",
+          "page": 11,
+          "element_id": "p11-b7"
+        }
+      ]
+    },
+    {
+      "id": "ev-fossa-pm",
+      "type": "conclusion",
+      "status": "VERIFIED",
+      "text": "European Institutions manage project management activities more efficiently than FOSS communities; FOSS communities should improve this area according to their resources.",
+      "source_refs": [
+        {
+          "file": "eu-fossa-comparative.pdf",
+          "page": 11,
+          "element_id": "p11-b10"
+        }
+      ]
+    },
+    {
+      "id": "ev-fossa-security",
+      "type": "conclusion",
+      "status": "VERIFIED",
+      "text": "For software security definition, both European Institutions and FOSS communities should improve; the report states that security awareness in FOSS communities is higher.",
+      "source_refs": [
+        {
+          "file": "eu-fossa-comparative.pdf",
+          "page": 11,
+          "element_id": "p11-b12"
+        }
+      ]
+    },
+    {
+      "id": "ev-fossa-testing",
+      "type": "conclusion",
+      "status": "VERIFIED",
+      "text": "European Institutions have resources for software security testing but do not perform it regularly or for all projects; FOSS communities should improve security knowledge and testing frequency.",
+      "source_refs": [
+        {
+          "file": "eu-fossa-comparative.pdf",
+          "page": 11,
+          "element_id": "p11-b13"
+        }
+      ]
+    },
+    {
+      "id": "ev-fossa-review",
+      "type": "conclusion",
+      "status": "VERIFIED",
+      "text": "FOSS communities are efficient in inspection and code review but should add security code review; European Institutions should involve security experts and promote security awareness.",
+      "source_refs": [
+        {
+          "file": "eu-fossa-comparative.pdf",
+          "page": 11,
+          "element_id": "p11-b15"
+        }
+      ]
+    },
+    {
+      "id": "ev-fossa-incident",
+      "type": "conclusion",
+      "status": "VERIFIED",
+      "text": "The report says FOSS communities are better at incident management; European Institutions should improve user notification and critical-incident processes.",
+      "source_refs": [
+        {
+          "file": "eu-fossa-comparative.pdf",
+          "page": 11,
+          "element_id": "p11-b17"
+        }
+      ]
+    },
+    {
+      "id": "ev-fossa-problem",
+      "type": "conclusion",
+      "status": "VERIFIED",
+      "text": "The report says FOSS communities are more efficient at problem management, while recommending improvements for both sides.",
+      "source_refs": [
+        {
+          "file": "eu-fossa-comparative.pdf",
+          "page": 12,
+          "element_id": "p12-b5"
+        }
+      ]
+    },
+    {
+      "id": "ev-fossa-method",
+      "type": "method",
+      "status": "VERIFIED",
+      "text": "For each comparison area, the study summarises evidence, compares factors such as workforce, documentation, processes, resources, tools and benefits, then derives conclusions and recommendations.",
+      "source_refs": [
+        {
+          "file": "eu-fossa-comparative.pdf",
+          "page": 13,
+          "element_id": "p13-b8"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "id": "opening",
+      "title": "A two-way comparison",
+      "nav_label": "Opening",
+      "purpose": "orientation",
+      "source_evidence_ids": [
+        "ev-fossa-purpose",
+        "ev-fossa-scope"
+      ],
+      "scenes": [
+        {
+          "id": "fossa-hero",
+          "nav_label": "Purpose",
+          "primitive": "hero",
+          "semantic_role": "opening",
+          "message": "Institutional discipline and open-source practice are compared area by area.",
+          "kicker": "EU-FOSSA | Comparative Study | 2016",
+          "title": "Not one model against another. Ten practices under comparison.",
+          "body": "The deliverable asks where European Institutions and FOSS communities differ in development and security practice, then turns those differences into recommendations.",
+          "source_evidence_ids": [
+            "ev-fossa-purpose",
+            "ev-fossa-scope"
+          ],
+          "source_refs": [
+            {
+              "file": "eu-fossa-comparative.pdf",
+              "page": 9,
+              "element_id": "p9-b7"
+            },
+            {
+              "file": "eu-fossa-comparative.pdf",
+              "page": 11,
+              "element_id": "p11-b7"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "restructure",
+              "description": "The deliverable's purpose and ten-area scope are elevated before the detailed sections.",
+              "source_evidence_ids": [
+                "ev-fossa-purpose",
+                "ev-fossa-scope"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fossa-method",
+          "nav_label": "Method",
+          "primitive": "scrollmation",
+          "semantic_role": "ordered_method",
+          "message": "The report follows a repeatable compare-and-recommend logic.",
+          "title": "Evidence → comparison → recommendation.",
+          "data": {
+            "steps": [
+              {
+                "n": "01",
+                "title": "Summarise the evidence",
+                "headline": "Start with observed practice",
+                "text": "For each area, the study consolidates material from previous deliverables."
+              },
+              {
+                "n": "02",
+                "title": "Compare the factors",
+                "headline": "Use the same lenses",
+                "text": "Workforce, documentation, processes, resources, tools and benefits structure the comparison."
+              },
+              {
+                "n": "03",
+                "title": "Derive actions",
+                "headline": "Turn differences into recommendations",
+                "text": "The study concludes each area with recommendations linked to the observed strengths and weaknesses."
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-fossa-method"
+          ],
+          "source_refs": [
+            {
+              "file": "eu-fossa-comparative.pdf",
+              "page": 13,
+              "element_id": "p13-b8"
+            },
+            {
+              "file": "eu-fossa-comparative.pdf",
+              "page": 13,
+              "element_id": "p13-b9"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "visualize",
+              "description": "The methodological paragraph is converted into a three-step sequence.",
+              "source_evidence_ids": [
+                "ev-fossa-method"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "discipline",
+      "title": "Where institutions lead",
+      "nav_label": "Institutions",
+      "purpose": "strengths_institutions",
+      "source_evidence_ids": [
+        "ev-fossa-pm",
+        "ev-fossa-testing"
+      ],
+      "scenes": [
+        {
+          "id": "fossa-institutions",
+          "nav_label": "Institutional strengths",
+          "primitive": "comparison",
+          "semantic_role": "practice_comparison",
+          "message": "Formal resources and process maturity favour European Institutions in some areas, but do not guarantee security practice is consistently applied.",
+          "title": "More structure does not automatically mean more security practice.",
+          "data": {
+            "items": [
+              {
+                "kicker": "Project management",
+                "title": "Institutional advantage",
+                "text": "The report judges European Institutions more efficient and mature in project-management practice."
+              },
+              {
+                "kicker": "Security testing",
+                "title": "Resources exist, regularity does not",
+                "text": "Institutions can perform many forms of testing, but the report says it is not done regularly or across all projects."
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-fossa-pm",
+            "ev-fossa-testing"
+          ],
+          "source_refs": [
+            {
+              "file": "eu-fossa-comparative.pdf",
+              "page": 11,
+              "element_id": "p11-b10"
+            },
+            {
+              "file": "eu-fossa-comparative.pdf",
+              "page": 11,
+              "element_id": "p11-b13"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "group",
+              "description": "Two executive-summary conclusions are placed together to distinguish process capacity from consistent security execution.",
+              "source_evidence_ids": [
+                "ev-fossa-pm",
+                "ev-fossa-testing"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "open",
+      "title": "Where FOSS communities lead",
+      "nav_label": "FOSS",
+      "purpose": "strengths_foss",
+      "source_evidence_ids": [
+        "ev-fossa-review",
+        "ev-fossa-incident",
+        "ev-fossa-problem",
+        "ev-fossa-security"
+      ],
+      "scenes": [
+        {
+          "id": "fossa-foss",
+          "nav_label": "FOSS strengths",
+          "primitive": "comparison",
+          "semantic_role": "practice_comparison",
+          "message": "The report gives FOSS communities stronger marks in several operational practices while still identifying security gaps.",
+          "title": "Openness creates different strengths.",
+          "data": {
+            "items": [
+              {
+                "kicker": "Awareness",
+                "title": "Security definition",
+                "text": "The report says FOSS security awareness is higher, while recommending improvements to both sides."
+              },
+              {
+                "kicker": "Review",
+                "title": "Inspection & code review",
+                "text": "FOSS communities are described as efficient in code review, but should add explicit security review."
+              },
+              {
+                "kicker": "Response",
+                "title": "Incident management",
+                "text": "FOSS communities are assessed as better at managing incidents."
+              },
+              {
+                "kicker": "Problems",
+                "title": "Problem management",
+                "text": "FOSS communities are assessed as more efficient at tackling problems, partly because their open nature exposes them to problems more frequently."
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-fossa-security",
+            "ev-fossa-review",
+            "ev-fossa-incident",
+            "ev-fossa-problem"
+          ],
+          "source_refs": [
+            {
+              "file": "eu-fossa-comparative.pdf",
+              "page": 11,
+              "element_id": "p11-b12"
+            },
+            {
+              "file": "eu-fossa-comparative.pdf",
+              "page": 11,
+              "element_id": "p11-b15"
+            },
+            {
+              "file": "eu-fossa-comparative.pdf",
+              "page": 11,
+              "element_id": "p11-b17"
+            },
+            {
+              "file": "eu-fossa-comparative.pdf",
+              "page": 12,
+              "element_id": "p12-b5"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "group",
+              "description": "Four source conclusions are assembled as a bounded set of FOSS strengths and remaining gaps.",
+              "source_evidence_ids": [
+                "ev-fossa-security",
+                "ev-fossa-review",
+                "ev-fossa-incident",
+                "ev-fossa-problem"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "synthesis",
+      "title": "The useful pattern is reciprocal",
+      "nav_label": "Synthesis",
+      "purpose": "synthesis",
+      "source_evidence_ids": [
+        "ev-fossa-pm",
+        "ev-fossa-security",
+        "ev-fossa-testing",
+        "ev-fossa-review",
+        "ev-fossa-incident",
+        "ev-fossa-problem"
+      ],
+      "scenes": [
+        {
+          "id": "fossa-synthesis",
+          "nav_label": "Trade-offs",
+          "primitive": "full_screen_statement",
+          "semantic_role": "synthesis",
+          "message": "Neither operating model owns every good practice.",
+          "body": "Institutional projects bring formal process and resources. FOSS communities bring strong review, incident and problem-solving habits. The report's recommendations run in both directions.",
+          "emphasis": [
+            {
+              "text": "both directions",
+              "style": "marker_highlight"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-fossa-pm",
+            "ev-fossa-security",
+            "ev-fossa-testing",
+            "ev-fossa-review",
+            "ev-fossa-incident",
+            "ev-fossa-problem"
+          ],
+          "source_refs": [
+            {
+              "file": "eu-fossa-comparative.pdf",
+              "page": 11,
+              "element_id": "p11-b10"
+            },
+            {
+              "file": "eu-fossa-comparative.pdf",
+              "page": 11,
+              "element_id": "p11-b12"
+            },
+            {
+              "file": "eu-fossa-comparative.pdf",
+              "page": 11,
+              "element_id": "p11-b13"
+            },
+            {
+              "file": "eu-fossa-comparative.pdf",
+              "page": 11,
+              "element_id": "p11-b15"
+            },
+            {
+              "file": "eu-fossa-comparative.pdf",
+              "page": 11,
+              "element_id": "p11-b17"
+            },
+            {
+              "file": "eu-fossa-comparative.pdf",
+              "page": 12,
+              "element_id": "p12-b5"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "restructure",
+              "description": "The report's area-by-area conclusions are synthesised into the reciprocal learning pattern they collectively support.",
+              "source_evidence_ids": [
+                "ev-fossa-pm",
+                "ev-fossa-security",
+                "ev-fossa-testing",
+                "ev-fossa-review",
+                "ev-fossa-incident",
+                "ev-fossa-problem"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fossa-close",
+          "nav_label": "Takeaway",
+          "primitive": "conclusion",
+          "semantic_role": "conclusion",
+          "message": "Security improvement comes from combining formal governance with the practices that openness makes routine.",
+          "title": "Borrow the strengths. Keep the evidence.",
+          "kicker": "Comparative-study synthesis",
+          "source_evidence_ids": [
+            "ev-fossa-pm",
+            "ev-fossa-review",
+            "ev-fossa-incident",
+            "ev-fossa-problem"
+          ],
+          "source_refs": [
+            {
+              "file": "eu-fossa-comparative.pdf",
+              "page": 11,
+              "element_id": "p11-b10"
+            },
+            {
+              "file": "eu-fossa-comparative.pdf",
+              "page": 11,
+              "element_id": "p11-b15"
+            },
+            {
+              "file": "eu-fossa-comparative.pdf",
+              "page": 11,
+              "element_id": "p11-b17"
+            },
+            {
+              "file": "eu-fossa-comparative.pdf",
+              "page": 12,
+              "element_id": "p12-b5"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "restructure",
+              "description": "The close condenses the study's reciprocal recommendations without inventing a single preferred methodology.",
+              "source_evidence_ids": [
+                "ev-fossa-pm",
+                "ev-fossa-review",
+                "ev-fossa-incident",
+                "ev-fossa-problem"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

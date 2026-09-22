@@ -117,7 +117,11 @@ def capture(label, width, height):
                 raise RuntimeError(f'Chapter mismatch at {scene_id}: {dims}')
             if dims['titleHeight']>dims['height']*.48:
                 raise RuntimeError(f'Title too tall at {scene_id}: {dims}')
-            if dims['titleTop'] and dims['titleTop']<dims['headerBottom']-2:
+            # A long non-sticky reading scene may naturally scroll its heading behind the fixed
+            # header. Treat overlap as a defect only while the scene itself is at its arrival frame
+            # or when the scene is sticky/scrolly and the heading is expected to remain composed.
+            sticky_or_arriving = meta['scrolly'] or dims['sceneTop'] >= -8
+            if sticky_or_arriving and dims['titleTop'] and dims['titleTop']<dims['headerBottom']-2:
                 raise RuntimeError(f'Title/header collision at {scene_id}: {dims}')
             out=OUT/f'{label}-{scene_id}.png'
             d.save_screenshot(str(out))

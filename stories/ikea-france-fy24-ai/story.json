@@ -518,7 +518,8 @@
           "media": [
             {
               "asset_id": "ikea-solar",
-              "role": "background"
+              "role": "background",
+              "presentation": "framed"
             }
           ],
           "source_evidence_ids": [

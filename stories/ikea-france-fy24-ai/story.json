@@ -547,7 +547,7 @@
           "primitive": "chart",
           "semantic_role": "emissions_change",
           "message": "Les émissions opérationnelles reculent fortement entre FY16 et FY24.",
-          "title": "Scopes 1 & 2 : de 6 696 à 4 089 tCO2e.",
+          "title": "Émissions opérationnelles : -39% depuis FY16.",
           "body": "Le rapport indique une baisse de 39% des émissions opérationnelles par rapport à 2016, tandis que le chiffre d’affaires a augmenté de 40%.",
           "data": {
             "chart_type": "bar",

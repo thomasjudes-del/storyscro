@@ -1,0 +1,98 @@
+name: Internal Agent Evidence Corpus
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/internal-agent-evidence-corpus.yml'
+      - 'engine/**'
+  workflow_dispatch:
+
+concurrency:
+  group: storyscro-internal-agent-evidence-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  corpus:
+    name: ${{ matrix.kind }} - ${{ matrix.slug }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - kind: scientific
+            slug: attention
+            url: https://arxiv.org/pdf/1706.03762
+            filename: attention.pdf
+          - kind: public-policy
+            slug: ccc-2025
+            url: https://www.theccc.org.uk/wp-content/uploads/2025/04/Progress-in-adapting-to-climate-change-2025-1.pdf
+            filename: ccc-2025.pdf
+          - kind: data-market
+            slug: imf-weo-2025
+            url: https://www.imf.org/-/media/files/publications/weo/2025/update/july/english/text.pdf
+            filename: imf-weo-2025.pdf
+          - kind: project-deliverable
+            slug: eu-fossa-comparative
+            url: https://interoperable-europe.ec.europa.eu/sites/default/files/inline-files/DLV%20WP1%20-%2007%20Comparative%20study_published%281%29.pdf
+            filename: eu-fossa-comparative.pdf
+          - kind: consulting-strategy
+            slug: strategyand-france-pharma-2025
+            url: https://www.strategyand.pwc.com/fr/fr/assets/pdf/2025/07/fr-strategyand-leem-pwc-2025-barometre-360.pdf
+            filename: strategyand-france-pharma-2025.pdf
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install engine dependencies
+        run: python -m pip install --disable-pip-version-check -r engine/requirements.txt
+      - name: Download PDF
+        run: |
+          mkdir -p "/tmp/storyscro/${{ matrix.slug }}"
+          curl -L --fail --retry 4 --retry-delay 3 "${{ matrix.url }}" -o "/tmp/storyscro/${{ matrix.slug }}/${{ matrix.filename }}"
+          test -s "/tmp/storyscro/${{ matrix.slug }}/${{ matrix.filename }}"
+      - name: Deterministic ingestion and planner input
+        run: |
+          mkdir -p "internal-agent-evidence/${{ matrix.slug }}/assets"
+          python engine/ingest.py "/tmp/storyscro/${{ matrix.slug }}/${{ matrix.filename }}" \
+            --out "internal-agent-evidence/${{ matrix.slug }}/evidence.json" \
+            --assets-dir "internal-agent-evidence/${{ matrix.slug }}/assets" \
+            --no-ocr
+          python engine/prepare_planner_input.py "internal-agent-evidence/${{ matrix.slug }}/evidence.json" \
+            --out "internal-agent-evidence/${{ matrix.slug }}/planner-input.json"
+          cat > "internal-agent-evidence/${{ matrix.slug }}/case.json" <<'JSON'
+          {
+            "kind": "${{ matrix.kind }}",
+            "slug": "${{ matrix.slug }}",
+            "source_url": "${{ matrix.url }}",
+            "filename": "${{ matrix.filename }}"
+          }
+          JSON
+      - name: Summarize evidence
+        run: |
+          python - <<'PY'
+          import json, pathlib
+          p=pathlib.Path("internal-agent-evidence/${{ matrix.slug }}")
+          e=json.loads((p/"evidence.json").read_text())
+          pi=json.loads((p/"planner-input.json").read_text())
+          summary={
+            "document": e.get("document",{}),
+            "statistics": e.get("statistics",{}),
+            "preferred_title": pi.get("document_candidates",{}).get("preferred_title"),
+            "sections": len(pi.get("document_candidates",{}).get("sections",[])),
+            "numbers": len(pi.get("evidence_candidates",{}).get("numbers",[])),
+            "tables": len(pi.get("evidence_candidates",{}).get("tables",[])),
+            "images": len(pi.get("evidence_candidates",{}).get("images",[])),
+          }
+          (p/"summary.json").write_text(json.dumps(summary,ensure_ascii=False,indent=2))
+          print(json.dumps(summary,ensure_ascii=False,indent=2))
+          PY
+      - name: Upload planner package
+        uses: actions/upload-artifact@v4
+        with:
+          name: internal-agent-evidence-${{ matrix.slug }}-${{ github.sha }}
+          path: internal-agent-evidence/${{ matrix.slug }}/
+          retention-days: 7

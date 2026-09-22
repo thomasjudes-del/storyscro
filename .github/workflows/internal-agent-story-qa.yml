@@ -1,0 +1,77 @@
+name: Internal Agent Story QA
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'stories/**'
+      - 'v3/**'
+      - 'engine/story.schema.json'
+      - 'scripts/validate_story.py'
+      - 'scripts/visual_capture_story.py'
+      - '.github/workflows/internal-agent-story-qa.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: storyscro-internal-agent-story-qa-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: set
+        name: Discover published internal-agent stories
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+          stories=[]
+          for p in sorted(Path('stories').glob('*/story.json')):
+              if (p.parent/'index.html').exists():
+                  stories.append({'slug':p.parent.name})
+          print('matrix='+json.dumps({'include':stories},separators=(',',':')))
+          PY
+
+  qa:
+    needs: discover
+    if: ${{ needs.discover.outputs.matrix != '{"include":[]}' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.discover.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install QA dependencies
+        run: python -m pip install --disable-pip-version-check jsonschema selenium==4.35.0
+      - name: Validate Story Model and provenance
+        run: python scripts/validate_story.py "stories/${{ matrix.slug }}/story.json"
+      - name: Start static server
+        run: |
+          python -m http.server 4174 --bind 127.0.0.1 > /tmp/storyscro-story-server.log 2>&1 &
+          for i in {1..30}; do
+            curl -fsS "http://127.0.0.1:4174/stories/${{ matrix.slug }}/" >/dev/null && exit 0
+            sleep 0.5
+          done
+          cat /tmp/storyscro-story-server.log
+          exit 1
+      - name: Desktop/mobile visual QA
+        env:
+          STORYSCRO_BASE: http://127.0.0.1:4174/stories/${{ matrix.slug }}/
+          STORYSCRO_OUT: visual-artifacts-story/${{ matrix.slug }}
+          STORYSCRO_MIN_SCENES: '5'
+        run: python scripts/visual_capture_story.py
+      - name: Upload visual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: internal-agent-story-${{ matrix.slug }}-${{ github.sha }}
+          path: visual-artifacts-story/${{ matrix.slug }}/
+          if-no-files-found: warn
+          retention-days: 7

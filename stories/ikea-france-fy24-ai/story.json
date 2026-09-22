@@ -1,0 +1,869 @@
+{
+  "version": "1.0-internal-agent",
+  "document": {
+    "id": "ikea-france-fy24",
+    "title": "IKEA France 2024 : du quotidien à l’empreinte",
+    "subtitle": "Lecture éditoriale du Rapport Développement Durable FY24",
+    "source_file": "ikea-france-fy24.pdf",
+    "language": "fr",
+    "page_count": 23,
+    "audience": "Clients, collaborateurs, partenaires et décideurs intéressés par l’empreinte économique, environnementale et sociale de IKEA France",
+    "purpose": "Rendre lisibles les principaux engagements, résultats et défis du rapport Développement Durable IKEA France FY24 sans reproduire sa pagination.",
+    "core_question": "Comment IKEA France articule-t-elle accessibilité, décarbonation, circularité et contribution sociale dans son rapport FY24 ?",
+    "publisher": "IKEA France",
+    "source_url": "https://www.ikea.com/fr/fr/files/pdf/60/5d/605dbc95/rapport_ikea_france_2025_vf.pdf"
+  },
+  "editorial_policy": {
+    "fidelity": "adaptive",
+    "compression": "high",
+    "notes": "Le rapport est réorganisé autour de quatre fonctions de lecture : échelle économique, climat, circularité et contribution sociale. Les chiffres restent rattachés aux pages sources."
+  },
+  "navigation": {
+    "chapter_header": true,
+    "reading_progress": true,
+    "micro_navigation": true,
+    "keyboard_navigation": true
+  },
+  "design_system": {
+    "source_strategy": "adapt",
+    "palette": {
+      "primary": "#0858a0",
+      "secondary": "#6f91ad",
+      "accent": "#ffda1a",
+      "background": "#ffffff",
+      "surface": "#f3f6f8",
+      "text": "#111111",
+      "muted": "#64727c"
+    },
+    "typography": {
+      "source_fonts": [
+        "NotoIKEALatin-Regular",
+        "NotoIKEALatin-Bold"
+      ],
+      "heading_family": "Noto IKEA Latin",
+      "body_family": "Noto IKEA Latin",
+      "heading_stack": "Arial, Helvetica, sans-serif",
+      "body_stack": "Arial, Helvetica, sans-serif",
+      "character": "geometric retail brand"
+    },
+    "branding": {
+      "publisher": "IKEA France"
+    },
+    "source_pages": [
+      1,
+      9,
+      10,
+      11,
+      13,
+      15,
+      18,
+      19,
+      20,
+      21,
+      22
+    ],
+    "notes": "Bleu de marque et caractère géométrique dérivés du rapport. Les images utilisées proviennent du PDF source."
+  },
+  "presentation_profile": {
+    "preset": "source_faithful",
+    "density": 0.66,
+    "motion": 0.44,
+    "image_weight": 0.64,
+    "type_scale": 0.88,
+    "compression": 0.8,
+    "contrast": 0.62,
+    "source_identity": 0.95
+  },
+  "assets": [
+    {
+      "id": "ikea-cover",
+      "type": "image",
+      "uri": "assets/hero.jpg",
+      "alt": "Intérieur IKEA coloré avec canapé",
+      "caption": "Image de couverture issue du rapport source.",
+      "origin": "source",
+      "source_page": 1,
+      "source_refs": [
+        {
+          "file": "ikea-france-fy24.pdf",
+          "page": 1,
+          "element_id": "p1-image1"
+        }
+      ]
+    },
+    {
+      "id": "ikea-solar",
+      "type": "image",
+      "uri": "assets/solar.jpg",
+      "alt": "Technicien devant une installation photovoltaïque",
+      "caption": "Image issue du rapport source, section climat et énergie.",
+      "origin": "source",
+      "source_page": 13,
+      "source_refs": [
+        {
+          "file": "ikea-france-fy24.pdf",
+          "page": 13,
+          "element_id": "p13-image1"
+        }
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev-four-pillars",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "La stratégie de développement durable de IKEA France repose sur quatre piliers : modes de vie plus durables, climat et biodiversité, circularité, société juste et équitable.",
+      "source_refs": [
+        {
+          "file": "ikea-france-fy24.pdf",
+          "page": 10,
+          "element_id": "p10-b4"
+        }
+      ]
+    },
+    {
+      "id": "ev-investment",
+      "type": "number",
+      "status": "VERIFIED",
+      "text": "Le groupe Ingka investit 1,2 milliard d’euros en France sur la période 2023-2026.",
+      "value": 1.2,
+      "unit": "Md€",
+      "source_refs": [
+        {
+          "file": "ikea-france-fy24.pdf",
+          "page": 9,
+          "element_id": "p9-b6"
+        }
+      ]
+    },
+    {
+      "id": "ev-visitors",
+      "type": "number",
+      "status": "VERIFIED",
+      "text": "Les magasins IKEA France ont accueilli 57,8 millions de visiteurs en FY24.",
+      "value": 57.8,
+      "unit": "millions de visiteurs",
+      "source_refs": [
+        {
+          "file": "ikea-france-fy24.pdf",
+          "page": 9,
+          "element_id": "p9-b12"
+        }
+      ]
+    },
+    {
+      "id": "ev-online",
+      "type": "number",
+      "status": "VERIFIED",
+      "text": "27% des ventes ont été réalisées en ligne en FY24.",
+      "value": 27,
+      "unit": "%",
+      "source_refs": [
+        {
+          "file": "ikea-france-fy24.pdf",
+          "page": 9,
+          "element_id": "p9-b12"
+        }
+      ]
+    },
+    {
+      "id": "ev-electricity",
+      "type": "number",
+      "status": "VERIFIED",
+      "text": "En 2024, les installations renouvelables de IKEA en France ont produit l’équivalent de 184% de la consommation d’électricité de ses unités.",
+      "value": 184,
+      "unit": "%",
+      "source_refs": [
+        {
+          "file": "ikea-france-fy24.pdf",
+          "page": 13,
+          "element_id": "p13-b10"
+        }
+      ]
+    },
+    {
+      "id": "ev-carbon",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "Les émissions opérationnelles de scopes 1 et 2 de IKEA France ont baissé de 39% par rapport à 2016, de 6 696 tCO2e en FY16 à 4 089 tCO2e en FY24, tandis que le chiffre d’affaires a augmenté de 40%.",
+      "source_refs": [
+        {
+          "file": "ikea-france-fy24.pdf",
+          "page": 13,
+          "element_id": "p13-b20"
+        }
+      ]
+    },
+    {
+      "id": "ev-delivery",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "En FY24, plus de 30% des livraisons clients ont été réalisées en zéro émission, 88% à Paris. Le flux fluvial parisien a évité 12 000 camions depuis son lancement et livré plus de 100 000 Parisiens.",
+      "source_refs": [
+        {
+          "file": "ikea-france-fy24.pdf",
+          "page": 15,
+          "element_id": "p15-b6"
+        },
+        {
+          "file": "ikea-france-fy24.pdf",
+          "page": 15,
+          "element_id": "p15-b9"
+        }
+      ]
+    },
+    {
+      "id": "ev-second-life",
+      "type": "number",
+      "status": "VERIFIED",
+      "text": "2 727 607 produits ont été revalorisés via les espaces seconde vie en France en FY24.",
+      "value": 2727607,
+      "unit": "produits",
+      "source_refs": [
+        {
+          "file": "ikea-france-fy24.pdf",
+          "page": 18,
+          "element_id": "p18-b16"
+        }
+      ]
+    },
+    {
+      "id": "ev-waste",
+      "type": "number",
+      "status": "VERIFIED",
+      "text": "Le taux de tri des déchets atteint 91,6% en FY24 dans les magasins et dépôts, avec un objectif de 100% en 2030.",
+      "value": 91.6,
+      "unit": "%",
+      "source_refs": [
+        {
+          "file": "ikea-france-fy24.pdf",
+          "page": 18,
+          "element_id": "p18-b23"
+        }
+      ]
+    },
+    {
+      "id": "ev-mattress",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "L’usine RetourMat dans l’Aveyron vise 20 000 matelas recyclés la première année, avec un taux de recyclage d’au moins 80% et zéro déchet envoyé à la décharge.",
+      "source_refs": [
+        {
+          "file": "ikea-france-fy24.pdf",
+          "page": 19,
+          "element_id": "p19-b12"
+        }
+      ]
+    },
+    {
+      "id": "ev-equality",
+      "type": "number",
+      "status": "VERIFIED",
+      "text": "Meubles IKEA France obtient 100/100 à l’index de l’égalité professionnelle femmes-hommes pour la quatrième année consécutive.",
+      "value": 100,
+      "unit": "/100",
+      "source_refs": [
+        {
+          "file": "ikea-france-fy24.pdf",
+          "page": 20,
+          "element_id": "p20-b12"
+        }
+      ]
+    },
+    {
+      "id": "ev-foundation",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "IKEA France indique 20 ans de partenariat avec la Fondation pour le Logement des Défavorisés, plus de 1,3 M€ de dons financiers, plus de 1 M€ de dons de produits et mécénat de compétences, et plus de 235 projets soutenus.",
+      "source_refs": [
+        {
+          "file": "ikea-france-fy24.pdf",
+          "page": 21,
+          "element_id": "p21-b8"
+        },
+        {
+          "file": "ikea-france-fy24.pdf",
+          "page": 21,
+          "element_id": "p21-b6"
+        }
+      ]
+    },
+    {
+      "id": "ev-refugees",
+      "type": "number",
+      "status": "VERIFIED",
+      "text": "Depuis septembre 2020, IKEA France indique avoir accompagné 256 personnes ayant le statut de réfugié.",
+      "value": 256,
+      "unit": "personnes",
+      "source_refs": [
+        {
+          "file": "ikea-france-fy24.pdf",
+          "page": 21,
+          "element_id": "p21-b9"
+        }
+      ]
+    },
+    {
+      "id": "ev-close",
+      "type": "conclusion",
+      "status": "VERIFIED",
+      "text": "IKEA France indique être sur la bonne trajectoire pour ses engagements climatiques à horizon 2030 tout en reconnaissant des défis restants et le besoin de coopération entre parties prenantes.",
+      "source_refs": [
+        {
+          "file": "ikea-france-fy24.pdf",
+          "page": 22,
+          "element_id": "p22-b3"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "id": "opening",
+      "title": "Une stratégie à quatre dimensions",
+      "nav_label": "Ouverture",
+      "purpose": "orientation",
+      "source_evidence_ids": [
+        "ev-four-pillars"
+      ],
+      "scenes": [
+        {
+          "id": "ikea-hero",
+          "nav_label": "Rapport FY24",
+          "primitive": "hero",
+          "semantic_role": "opening",
+          "message": "Accessibilité, climat, circularité et justice sociale sont présentés comme les quatre dimensions d’une même trajectoire.",
+          "kicker": "IKEA France | Développement durable | FY24",
+          "title": "Du quotidien à l’empreinte.",
+          "body": "Le rapport relie l’échelle économique de IKEA France à quatre engagements : modes de vie durables, climat et biodiversité, circularité et société plus juste.",
+          "media": [
+            {
+              "asset_id": "ikea-cover",
+              "role": "background"
+            }
+          ],
+          "effects": [
+            {
+              "id": "parallax",
+              "intensity": "subtle",
+              "target": "background",
+              "trigger": "scroll"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-four-pillars"
+          ],
+          "source_refs": [
+            {
+              "file": "ikea-france-fy24.pdf",
+              "page": 1
+            },
+            {
+              "file": "ikea-france-fy24.pdf",
+              "page": 10,
+              "element_id": "p10-b4"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "restructure",
+              "description": "Le titre et les quatre piliers du rapport sont condensés en une ouverture éditoriale.",
+              "source_evidence_ids": [
+                "ev-four-pillars"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ikea-pillars",
+          "nav_label": "4 piliers",
+          "primitive": "comparison",
+          "semantic_role": "strategy_framework",
+          "message": "Le rapport organise sa stratégie de durabilité autour de quatre champs d’action.",
+          "title": "Quatre piliers. Une même ambition de transformation.",
+          "data": {
+            "items": [
+              {
+                "kicker": "01",
+                "title": "Modes de vie durables",
+                "text": "Inciter les clients à adopter des modes de vie plus durables."
+              },
+              {
+                "kicker": "02",
+                "title": "Climat & biodiversité",
+                "text": "Limiter l’impact climatique et préserver la biodiversité."
+              },
+              {
+                "kicker": "03",
+                "title": "Circularité",
+                "text": "S’engager dans la transition vers un modèle circulaire."
+              },
+              {
+                "kicker": "04",
+                "title": "Société",
+                "text": "Contribuer à une société juste et équitable."
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-four-pillars"
+          ],
+          "source_refs": [
+            {
+              "file": "ikea-france-fy24.pdf",
+              "page": 10,
+              "element_id": "p10-b4"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "group",
+              "description": "Les quatre piliers explicitement listés dans le rapport sont alignés dans une même scène.",
+              "source_evidence_ids": [
+                "ev-four-pillars"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "title": "L’échelle économique comme levier",
+      "nav_label": "Échelle",
+      "purpose": "economic_context",
+      "source_evidence_ids": [
+        "ev-investment",
+        "ev-visitors",
+        "ev-online"
+      ],
+      "scenes": [
+        {
+          "id": "ikea-scale",
+          "nav_label": "Repères",
+          "primitive": "comparison",
+          "semantic_role": "parallel_metrics",
+          "message": "La trajectoire environnementale est portée par une organisation de grande échelle en France.",
+          "title": "Une empreinte qui commence par l’échelle.",
+          "data": {
+            "items": [
+              {
+                "kicker": "Investissements",
+                "title": "1,2 Md€",
+                "text": "Investissements annoncés en France par le groupe Ingka sur 2023-2026."
+              },
+              {
+                "kicker": "Fréquentation",
+                "title": "57,8 millions",
+                "text": "Visiteurs dans les magasins IKEA France en FY24."
+              },
+              {
+                "kicker": "Omnicanal",
+                "title": "27%",
+                "text": "Part des ventes réalisées en ligne en FY24."
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-investment",
+            "ev-visitors",
+            "ev-online"
+          ],
+          "source_refs": [
+            {
+              "file": "ikea-france-fy24.pdf",
+              "page": 9,
+              "element_id": "p9-b6"
+            },
+            {
+              "file": "ikea-france-fy24.pdf",
+              "page": 9,
+              "element_id": "p9-b12"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "group",
+              "description": "Trois indicateurs économiques et commerciaux explicitement publiés sont rapprochés pour donner l’échelle de l’activité.",
+              "source_evidence_ids": [
+                "ev-investment",
+                "ev-visitors",
+                "ev-online"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "climate",
+      "title": "Produire autrement, livrer autrement",
+      "nav_label": "Climat",
+      "purpose": "climate_progress",
+      "source_evidence_ids": [
+        "ev-electricity",
+        "ev-carbon",
+        "ev-delivery"
+      ],
+      "scenes": [
+        {
+          "id": "ikea-climate-visual",
+          "nav_label": "Énergie",
+          "primitive": "text_over_media",
+          "semantic_role": "visual_evidence",
+          "message": "La production renouvelable dépasse la consommation électrique annuelle des unités françaises.",
+          "title": "184% de la consommation électrique.",
+          "body": "En 2024, IKEA France indique que ses éoliennes et panneaux photovoltaïques ont produit l’équivalent de 184% de la consommation d’électricité de ses unités.",
+          "media": [
+            {
+              "asset_id": "ikea-solar",
+              "role": "background"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-electricity"
+          ],
+          "source_refs": [
+            {
+              "file": "ikea-france-fy24.pdf",
+              "page": 13,
+              "element_id": "p13-b10"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "visualize",
+              "description": "Le chiffre source est associé à une photographie de la section énergie du rapport.",
+              "source_evidence_ids": [
+                "ev-electricity"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ikea-carbon-chart",
+          "nav_label": "Carbone",
+          "primitive": "chart",
+          "semantic_role": "emissions_change",
+          "message": "Les émissions opérationnelles reculent fortement entre FY16 et FY24.",
+          "title": "Scopes 1 & 2 : de 6 696 à 4 089 tCO2e.",
+          "body": "Le rapport indique une baisse de 39% des émissions opérationnelles par rapport à 2016, tandis que le chiffre d’affaires a augmenté de 40%.",
+          "data": {
+            "chart_type": "bar",
+            "labels": [
+              "FY16",
+              "FY24"
+            ],
+            "unit": "tCO2e",
+            "series": [
+              {
+                "label": "Scopes 1 & 2",
+                "unit": "tCO2e",
+                "values": [
+                  6696,
+                  4089
+                ]
+              }
+            ]
+          },
+          "emphasis": [
+            {
+              "text": "39%",
+              "style": "marker_highlight"
+            }
+          ],
+          "effects": [
+            {
+              "id": "progressive_build",
+              "intensity": "medium",
+              "target": "data",
+              "trigger": "scroll"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-carbon"
+          ],
+          "source_refs": [
+            {
+              "file": "ikea-france-fy24.pdf",
+              "page": 13,
+              "element_id": "p13-b20"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "visualize",
+              "description": "Les deux valeurs d’émissions publiées sont représentées en barres ; la variation de 39% est celle indiquée par la source.",
+              "source_evidence_ids": [
+                "ev-carbon"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ikea-delivery",
+          "nav_label": "Livraisons",
+          "primitive": "comparison",
+          "semantic_role": "transport_progress",
+          "message": "La décarbonation passe aussi par le dernier kilomètre et le transport fluvial.",
+          "title": "Le transport change de mode.",
+          "data": {
+            "items": [
+              {
+                "kicker": "FY24",
+                "title": ">30% zéro émission",
+                "text": "Part des livraisons clients réalisées en zéro émission en France ; 88% à Paris."
+              },
+              {
+                "kicker": "Paris",
+                "title": "12 000 camions évités",
+                "text": "Effet cumulé annoncé du flux fluvial depuis son lancement ; plus de 100 000 Parisiens livrés par la Seine."
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-delivery"
+          ],
+          "source_refs": [
+            {
+              "file": "ikea-france-fy24.pdf",
+              "page": 15,
+              "element_id": "p15-b6"
+            },
+            {
+              "file": "ikea-france-fy24.pdf",
+              "page": 15,
+              "element_id": "p15-b9"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "compare",
+              "description": "Deux résultats de transport publiés sont mis en regard sans créer de métrique composite.",
+              "source_evidence_ids": [
+                "ev-delivery"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "circular",
+      "title": "Faire durer avant de recycler",
+      "nav_label": "Circularité",
+      "purpose": "circularity",
+      "source_evidence_ids": [
+        "ev-second-life",
+        "ev-waste",
+        "ev-mattress"
+      ],
+      "scenes": [
+        {
+          "id": "ikea-second-life",
+          "nav_label": "Seconde vie",
+          "primitive": "big_number",
+          "semantic_role": "circularity_metric",
+          "message": "2 727 607",
+          "title": "Plus de 2,7 millions de produits revalorisés en FY24.",
+          "body": "Le chiffre concerne les produits revalorisés via les espaces seconde vie de IKEA France sur l’année fiscale FY24.",
+          "data": {
+            "value": "2 727 607"
+          },
+          "source_evidence_ids": [
+            "ev-second-life"
+          ],
+          "source_refs": [
+            {
+              "file": "ikea-france-fy24.pdf",
+              "page": 18,
+              "element_id": "p18-b16"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "none",
+              "description": "La valeur exacte du rapport est conservée ; seule la mise en scène change.",
+              "source_evidence_ids": [
+                "ev-second-life"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ikea-circular-system",
+          "nav_label": "Boucle matière",
+          "primitive": "comparison",
+          "semantic_role": "circularity_system",
+          "message": "Réemploi, tri et recyclage industriel forment trois niveaux distincts de la stratégie circulaire.",
+          "title": "La circularité ne se résume pas au recyclage.",
+          "data": {
+            "items": [
+              {
+                "kicker": "Réemploi",
+                "title": "2,7 M de produits",
+                "text": "Produits revalorisés via les espaces seconde vie en FY24."
+              },
+              {
+                "kicker": "Tri",
+                "title": "91,6%",
+                "text": "Taux de tri des déchets FY24 ; objectif 100% en 2030."
+              },
+              {
+                "kicker": "Recyclage",
+                "title": "≥80%",
+                "text": "Taux visé par la technologie de l’usine RetourMat pour les matelas, avec zéro déchet envoyé à la décharge."
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-second-life",
+            "ev-waste",
+            "ev-mattress"
+          ],
+          "source_refs": [
+            {
+              "file": "ikea-france-fy24.pdf",
+              "page": 18,
+              "element_id": "p18-b16"
+            },
+            {
+              "file": "ikea-france-fy24.pdf",
+              "page": 18,
+              "element_id": "p18-b23"
+            },
+            {
+              "file": "ikea-france-fy24.pdf",
+              "page": 19,
+              "element_id": "p19-b12"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "group",
+              "description": "Trois niveaux de circularité explicitement documentés sont regroupés pour montrer leur complémentarité.",
+              "source_evidence_ids": [
+                "ev-second-life",
+                "ev-waste",
+                "ev-mattress"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "social",
+      "title": "La dimension sociale est mesurée autrement",
+      "nav_label": "Social",
+      "purpose": "social_contribution",
+      "source_evidence_ids": [
+        "ev-equality",
+        "ev-foundation",
+        "ev-refugees"
+      ],
+      "scenes": [
+        {
+          "id": "ikea-social",
+          "nav_label": "Repères",
+          "primitive": "comparison",
+          "semantic_role": "social_metrics",
+          "message": "Le rapport documente l’égalité interne et plusieurs partenariats d’inclusion ou de solidarité.",
+          "title": "Égalité, logement, emploi : trois registres d’action.",
+          "data": {
+            "items": [
+              {
+                "kicker": "Égalité F/H",
+                "title": "100 / 100",
+                "text": "Index d’égalité professionnelle de Meubles IKEA France, pour la quatrième année consécutive."
+              },
+              {
+                "kicker": "Mal-logement",
+                "title": "20 ans",
+                "text": "Partenariat avec la Fondation pour le Logement des Défavorisés ; plus de 235 projets soutenus selon le rapport."
+              },
+              {
+                "kicker": "Réfugiés",
+                "title": "256 personnes",
+                "text": "Personnes à statut réfugié accompagnées vers l’emploi depuis septembre 2020."
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-equality",
+            "ev-foundation",
+            "ev-refugees"
+          ],
+          "source_refs": [
+            {
+              "file": "ikea-france-fy24.pdf",
+              "page": 20,
+              "element_id": "p20-b12"
+            },
+            {
+              "file": "ikea-france-fy24.pdf",
+              "page": 21,
+              "element_id": "p21-b8"
+            },
+            {
+              "file": "ikea-france-fy24.pdf",
+              "page": 21,
+              "element_id": "p21-b9"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "group",
+              "description": "Trois indicateurs sociaux de natures différentes sont présentés côte à côte sans les fusionner en score.",
+              "source_evidence_ids": [
+                "ev-equality",
+                "ev-foundation",
+                "ev-refugees"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "close",
+      "title": "La trajectoire reste ouverte",
+      "nav_label": "Et maintenant ?",
+      "purpose": "conclusion",
+      "source_evidence_ids": [
+        "ev-close"
+      ],
+      "scenes": [
+        {
+          "id": "ikea-close",
+          "nav_label": "Suite",
+          "primitive": "conclusion",
+          "semantic_role": "conclusion",
+          "message": "Le rapport revendique des progrès mais ne présente pas la transformation comme achevée.",
+          "title": "Sur la trajectoire. Pas au bout du chemin.",
+          "kicker": "Et maintenant ?",
+          "source_evidence_ids": [
+            "ev-close"
+          ],
+          "source_refs": [
+            {
+              "file": "ikea-france-fy24.pdf",
+              "page": 22,
+              "element_id": "p22-b3"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "shorten",
+              "description": "La conclusion du rapport est condensée autour de ses trois éléments : trajectoire 2030, défis restants et coopération nécessaire.",
+              "source_evidence_ids": [
+                "ev-close"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

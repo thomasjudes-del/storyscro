@@ -421,6 +421,12 @@
           const xx=L+i*groupW+groupW/2+(si-(series.length-1)/2)*barW*1.12-barW/2,yy=y(v);
           rect.setAttribute('x',xx);rect.setAttribute('y',yy);rect.setAttribute('width',barW);rect.setAttribute('height',T+ih-yy);rect.setAttribute('rx',4);rect.setAttribute('fill',color);rect.classList.add('chart-bar');rect.style.setProperty('--bar-delay',String(i/Math.max(1,labels.length)));
           const title=document.createElementNS(NS,'title');title.textContent=sr.label+': '+formatChartValue(v,sr.unit);rect.appendChild(title);svg.appendChild(rect);
+          if(labels.length<=8 && series.length<=3){
+            const valueLabel=document.createElementNS(NS,'text');
+            valueLabel.setAttribute('x',xx+barW/2);valueLabel.setAttribute('y',Math.max(T+16,yy-12));
+            valueLabel.setAttribute('text-anchor','middle');valueLabel.textContent=formatChartValue(v,sr.unit);
+            valueLabel.classList.add('chart-value-label');svg.appendChild(valueLabel);
+          }
         });
       }else{
         const pts=sr.values.map((v,i)=>v===null?null:[x(i),y(v),v]).filter(Boolean);
@@ -478,7 +484,8 @@
   function renderGenericMedia(scene,chapter){
     const a=asset(scene.media?.[0]?.asset_id);
     if(!a?.uri) return renderGeneric(scene,chapter);
-    const section=document.createElement('section'); section.className='media-story-scene';
+    const presentation=scene.media?.[0]?.presentation||'full_bleed';
+    const section=document.createElement('section'); section.className='media-story-scene'+(presentation==='framed'?' media-framed':'');
     const body=Array.isArray(scene.body)?scene.body.join(' '):scene.body||scene.message||'';
     section.innerHTML=`<div class="media-story-bg" style="${bgStyle(a.id)}"></div><div class="media-story-shade"></div><div class="media-story-copy"><p class="kicker">${esc(chapter.nav_label||'')}</p><h2>${applyEmphasis(scene.title||scene.message,scene.emphasis)}</h2>${body?`<p>${applyEmphasis(body,scene.emphasis)}</p>`:''}${sourceButton(scene)}</div>`;
     return section;

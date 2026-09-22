@@ -41,6 +41,10 @@ jobs:
             slug: strategyand-france-pharma-2025
             url: https://www.strategyand.pwc.com/fr/fr/assets/pdf/2025/07/fr-strategyand-leem-pwc-2025-barometre-360.pdf
             filename: strategyand-france-pharma-2025.pdf
+          - kind: corporate-sustainability
+            slug: ikea-france-fy24
+            url: https://www.ikea.com/fr/fr/files/pdf/60/5d/605dbc95/rapport_ikea_france_2025_vf.pdf
+            filename: ikea-france-fy24.pdf
 
     steps:
       - uses: actions/checkout@v6

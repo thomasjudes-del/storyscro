@@ -98,7 +98,7 @@
       big_number: renderBigNumber,
       comparison: renderGeneric,
       timeline: renderGeneric,
-      chart: renderGeneric,
+      chart: renderChart,
       map: renderGeneric,
       gallery: renderGeneric,
       quote: renderGeneric,
@@ -364,6 +364,92 @@
     const steps=scene.data?.steps||[]; const section=document.createElement('section'); section.className='generic-section';
     section.innerHTML=`<div class="generic-inner"><p class="kicker">${esc(chapter.nav_label||'')}</p><h2>${esc(scene.title||scene.message)}</h2><div class="generic-grid">${steps.map((s,i)=>`<article class="generic-card"><b>${esc(s.n||String(i+1).padStart(2,'0'))}</b><h3>${esc(s.title||'')}</h3><p>${esc(s.text||'')}</p></article>`).join('')}</div>${sourceButton(scene)}</div>`; return section;
   }
+
+  function renderChart(scene,chapter){
+    const d=scene.data||{};
+    const labels=(d.labels||d.years||d.periods||[]).map(x=>String(x));
+    let series=Array.isArray(d.series)?d.series:[];
+    if(!series.length&&Array.isArray(d.values)) series=[{label:scene.title||scene.message,values:d.values,unit:d.unit||''}];
+    series=series.map((sr,i)=>({
+      label:String(sr.label||sr.name||('Series '+(i+1))),
+      unit:String(sr.unit||d.unit||''),
+      values:(sr.values||[]).map(v=>typeof v==='object'&&v!==null?Number(v.value):Number(v)).map(v=>Number.isFinite(v)?v:null)
+    })).filter(sr=>sr.values.some(v=>v!==null));
+    if(!labels.length||!series.length) return renderGeneric(scene,chapter);
+
+    const vals=series.flatMap(sr=>sr.values).filter(v=>v!==null);
+    let min=Math.min(...vals),max=Math.max(...vals);
+    if(!Number.isFinite(min)||!Number.isFinite(max)) return renderGeneric(scene,chapter);
+    if(min>0) min=0;
+    if(max===min) max=min+1;
+
+    const section=document.createElement('section'); section.className='scrolly chart-scene';
+    const stage=document.createElement('div'); stage.className='sticky-stage chart-stage';
+    const head=document.createElement('div'); head.className='chart-head';
+    const kicker=document.createElement('p'); kicker.className='kicker'; kicker.textContent=chapter.nav_label||'';
+    const h2=document.createElement('h2'); h2.innerHTML=applyEmphasis(scene.title||scene.message,scene.emphasis);
+    head.append(kicker,h2);
+    if(scene.body){
+      const p=document.createElement('p'); p.innerHTML=applyEmphasis(Array.isArray(scene.body)?scene.body.join(' '):scene.body,scene.emphasis); head.appendChild(p);
+    }
+    stage.appendChild(head);
+
+    const shell=document.createElement('div'); shell.className='chart-shell';
+    const NS='http://www.w3.org/2000/svg',svg=document.createElementNS(NS,'svg');
+    svg.setAttribute('viewBox','0 0 1000 500'); svg.setAttribute('role','img'); svg.setAttribute('aria-label',scene.title||scene.message);
+    svg.classList.add('story-chart');
+    const W=1000,H=500,L=92,R=42,T=54,B=80,iw=W-L-R,ih=H-T-B;
+    const x=i=>L+(labels.length===1?iw/2:i*iw/(labels.length-1));
+    const y=v=>T+(max-v)*(ih/(max-min));
+    const palette=['var(--brand-accent)','var(--brand-secondary)','var(--brand-primary)','#718096','#b7791f'];
+
+    for(const q of [0,.25,.5,.75,1]){
+      const val=min+(max-min)*q,yy=y(val);
+      const line=document.createElementNS(NS,'line'); line.setAttribute('x1',L);line.setAttribute('x2',W-R);line.setAttribute('y1',yy);line.setAttribute('y2',yy);line.classList.add('chart-grid-line');svg.appendChild(line);
+      const txt=document.createElementNS(NS,'text');txt.setAttribute('x',L-14);txt.setAttribute('y',yy+5);txt.setAttribute('text-anchor','end');txt.textContent=compactChartNumber(val);txt.classList.add('chart-y-label');svg.appendChild(txt);
+    }
+    labels.forEach((lab,i)=>{const txt=document.createElementNS(NS,'text');txt.setAttribute('x',x(i));txt.setAttribute('y',H-34);txt.setAttribute('text-anchor','middle');txt.textContent=lab;txt.classList.add('chart-x-label');svg.appendChild(txt)});
+
+    const type=String(d.chart_type||d.type||'line').toLowerCase();
+    series.forEach((sr,si)=>{
+      const color=palette[si%palette.length];
+      if(type==='bar'||type==='column'){
+        const groupW=iw/labels.length,barW=Math.max(8,Math.min(42,groupW/(series.length+1)));
+        sr.values.forEach((v,i)=>{
+          if(v===null)return;
+          const rect=document.createElementNS(NS,'rect');
+          const xx=L+i*groupW+groupW/2+(si-(series.length-1)/2)*barW*1.12-barW/2,yy=y(v);
+          rect.setAttribute('x',xx);rect.setAttribute('y',yy);rect.setAttribute('width',barW);rect.setAttribute('height',T+ih-yy);rect.setAttribute('rx',4);rect.setAttribute('fill',color);rect.classList.add('chart-bar');rect.style.setProperty('--bar-delay',String(i/Math.max(1,labels.length)));
+          const title=document.createElementNS(NS,'title');title.textContent=sr.label+': '+formatChartValue(v,sr.unit);rect.appendChild(title);svg.appendChild(rect);
+        });
+      }else{
+        const pts=sr.values.map((v,i)=>v===null?null:[x(i),y(v),v]).filter(Boolean);
+        const path=document.createElementNS(NS,'path');path.setAttribute('d',pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+','+p[1].toFixed(1)).join(' '));path.setAttribute('pathLength','1');path.setAttribute('stroke',color);path.classList.add('chart-line');svg.appendChild(path);
+        pts.forEach(p=>{
+          const c=document.createElementNS(NS,'circle');c.setAttribute('cx',p[0]);c.setAttribute('cy',p[1]);c.setAttribute('r',7);c.setAttribute('fill',color);c.classList.add('chart-dot');
+          const title=document.createElementNS(NS,'title');title.textContent=sr.label+': '+formatChartValue(p[2],sr.unit);c.appendChild(title);svg.appendChild(c);
+        });
+      }
+    });
+    shell.appendChild(svg);
+    const legend=document.createElement('div');legend.className='chart-legend';
+    series.forEach((sr,i)=>{const item=document.createElement('span');const sw=document.createElement('i');sw.style.background=palette[i%palette.length];item.appendChild(sw);item.appendChild(document.createTextNode(sr.label+(sr.unit?' ('+sr.unit+')':'')));legend.appendChild(item)});
+    shell.appendChild(legend);stage.appendChild(shell);
+    const source=document.createElement('div');source.className='chart-source';source.innerHTML=sourceButton(scene);stage.appendChild(source);
+    section.appendChild(stage);const space=document.createElement('div');space.className='scroll-space short';section.appendChild(space);
+    section._update=p=>section.style.setProperty('--chart-progress',clamp((p-.12)/.7).toFixed(3));
+    return section;
+  }
+
+  function compactChartNumber(v){
+    const a=Math.abs(v);
+    if(a>=1e9)return (v/1e9).toLocaleString(undefined,{maximumFractionDigits:1})+' Md';
+    if(a>=1e6)return (v/1e6).toLocaleString(undefined,{maximumFractionDigits:1})+' M';
+    if(a>=1e3)return (v/1e3).toLocaleString(undefined,{maximumFractionDigits:1})+' k';
+    return Number(v).toLocaleString(undefined,{maximumFractionDigits:1});
+  }
+  function formatChartValue(v,unit){return Number(v).toLocaleString(undefined,{maximumFractionDigits:1})+(unit?' '+unit:'')}
+
   function renderGeneric(scene,chapter){ const section=document.createElement('section'); section.className='generic-section'; const body=Array.isArray(scene.body)?scene.body.join('\n'):scene.body||scene.message; section.innerHTML=`<div class="generic-inner"><p class="kicker">${esc(chapter.nav_label||'')}</p><h2>${applyEmphasis(scene.title||scene.message,scene.emphasis)}</h2><p>${applyEmphasis(body,scene.emphasis)}</p>${sourceButton(scene)}</div>`; return section; }
   function renderGenericMedia(scene,chapter){ const section=renderGeneric(scene,chapter); const a=asset(scene.media?.[0]?.asset_id); if(a?.uri) section.style.background=`linear-gradient(rgba(255,255,255,.88),rgba(255,255,255,.88)),url('${a.uri}') center/cover`; return section; }
   function renderBigNumber(scene,chapter){

@@ -205,12 +205,20 @@ h1,h2,h3,.brand,.chapter-nav,.micro-nav{font-family:var(--font-heading,var(--fon
 .media-story-copy h2{font-size:clamp(46px,6vw,86px);line-height:.94;letter-spacing:-.05em;margin:8px 0 22px;text-wrap:balance}
 .media-story-copy>p:not(.kicker){font-size:clamp(18px,1.7vw,24px);line-height:1.48;max-width:60ch;color:rgba(255,255,255,.86)}
 .media-story-copy .source-button{margin-top:22px;color:#fff;border-color:rgba(255,255,255,.4);background:rgba(0,0,0,.14)}
+.media-framed{background:var(--brand-primary);align-items:center}
+.media-framed .media-story-bg{left:auto;right:5vw;top:15vh;bottom:9vh;width:48vw;background-size:contain;background-repeat:no-repeat;background-position:center;transform:none}
+.media-framed .media-story-shade{background:linear-gradient(90deg,rgba(5,20,29,.9) 0%,rgba(5,20,29,.76) 46%,rgba(5,20,29,.18) 69%,rgba(5,20,29,.08) 100%)}
+.media-framed .media-story-copy{width:min(590px,42vw);margin:0 0 0 7vw;padding-top:var(--header-h)}
 @media(max-width:820px){
   .media-story-scene{min-height:100svh}
   .media-story-shade{background:linear-gradient(0deg,rgba(5,20,29,.86) 0%,rgba(5,20,29,.55) 58%,rgba(5,20,29,.18) 100%)}
   .media-story-copy{width:auto;margin:0 7vw 8vh;padding-top:calc(var(--header-h) + 8vh)}
   .media-story-copy h2{font-size:clamp(38px,10vw,58px);line-height:.96}
   .media-story-copy>p:not(.kicker){font-size:16px}
+  .media-framed{align-items:end}
+  .media-framed .media-story-bg{left:6vw;right:6vw;top:11vh;bottom:auto;width:auto;height:42vh;background-size:contain;background-position:center top}
+  .media-framed .media-story-shade{background:linear-gradient(0deg,rgba(5,20,29,.96) 0%,rgba(5,20,29,.78) 48%,rgba(5,20,29,.10) 78%,rgba(5,20,29,.05) 100%)}
+  .media-framed .media-story-copy{width:auto;margin:0 7vw 7vh;padding-top:48vh}
 }
 
 /* Generic scroll-driven data visualisation */
@@ -222,6 +230,7 @@ h1,h2,h3,.brand,.chapter-nav,.micro-nav{font-family:var(--font-heading,var(--fon
 .story-chart{width:100%;height:auto;overflow:visible}
 .chart-grid-line{stroke:color-mix(in srgb,var(--ink) 13%,transparent);stroke-width:1}
 .chart-y-label,.chart-x-label{fill:color-mix(in srgb,var(--ink) 66%,transparent);font:500 16px var(--font-body,system-ui)}
+.chart-value-label{fill:var(--ink);font:800 15px var(--font-body,system-ui);paint-order:stroke;stroke:var(--paper);stroke-width:5px;stroke-linejoin:round}
 .chart-line{fill:none;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--chart-progress,0));transition:none}
 .chart-dot{opacity:var(--chart-progress,0);transform-box:fill-box;transform-origin:center;transform:scale(calc(.55 + var(--chart-progress,0)*.45));transition:none}
 .chart-bar{transform-box:fill-box;transform-origin:center bottom;transform:scaleY(clamp(0,var(--chart-progress,0),1));opacity:var(--chart-progress,0);transition:none}

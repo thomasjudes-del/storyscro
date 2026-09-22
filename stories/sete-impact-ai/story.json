@@ -1,0 +1,908 @@
+{
+  "version": "1.0-internal-agent",
+  "document": {
+    "id": "sete-impact-2022",
+    "title": "Port de Sète : trois trajectoires, un impact local",
+    "subtitle": "Actualisation de l’impact socio-économique, 2015-2025",
+    "source_file": "Librable - _tude socio-_co 2022.pdf",
+    "language": "fr",
+    "page_count": 6,
+    "audience": null,
+    "purpose": "Rendre lisibles les trajectoires socio-économiques des activités pêche, plaisance et commerce et leur consolidation à l’échelle du port.",
+    "core_question": "Comment les trois activités portuaires ont-elles évolué depuis 2015, comment ont-elles traversé 2020 et quelle trajectoire est projetée à 2025 ?",
+    "publisher": "Abington Advisory",
+    "source_url": null
+  },
+  "editorial_policy": {
+    "fidelity": "adaptive",
+    "compression": "balanced",
+    "notes": "Les faits, chiffres et conclusions restent sourcés. La structure est réorganisée autour des trajectoires comparées plutôt qu’autour de la pagination du PDF."
+  },
+  "navigation": {
+    "chapter_header": true,
+    "reading_progress": true,
+    "micro_navigation": true,
+    "keyboard_navigation": true
+  },
+  "design_system": {
+    "source_strategy": "adapt",
+    "palette": {
+      "primary": "#054F5C",
+      "secondary": "#699098",
+      "accent": "#457A84",
+      "background": "#FFFFFF",
+      "surface": "#F5F7F7",
+      "text": "#17353B",
+      "muted": "#718085"
+    },
+    "typography": {
+      "source_fonts": [
+        "Arial Narrow",
+        "Arial"
+      ],
+      "heading_family": "Arial Narrow",
+      "body_family": "Arial",
+      "heading_stack": "Arial Narrow, Arial, sans-serif",
+      "body_stack": "Arial, sans-serif",
+      "character": "condensed institutional"
+    },
+    "branding": {
+      "publisher": "Abington Advisory"
+    },
+    "source_pages": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "notes": "Palette et caractère typographique dérivés du PDF source. La composition, les graphiques et le rythme sont reconstruits pour le web."
+  },
+  "presentation_profile": {
+    "preset": "source_faithful",
+    "density": 0.58,
+    "motion": 0.38,
+    "image_weight": 0.34,
+    "type_scale": 0.92,
+    "compression": 0.62,
+    "contrast": 0.55,
+    "source_identity": 0.92
+  },
+  "assets": [
+    {
+      "id": "sete-port-photo",
+      "type": "image",
+      "uri": "https://upload.wikimedia.org/wikipedia/commons/d/df/S%C3%A8te_vue_sur_le_port.JPG",
+      "alt": "Vue sur le port de Sète",
+      "caption": "Vue sur le port de Sète. Image contextuelle externe, non utilisée comme preuve de l’étude.",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "origin": "external",
+      "credit": "Fagairolles 34 / Wikimedia Commons"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev-method-comparability",
+      "type": "method",
+      "status": "VERIFIED",
+      "text": "L’actualisation réutilise les méthodes de calcul et hypothèses de l’étude précédente afin de conserver la comparabilité avec la base 2015 à l’échelle de l’Occitanie.",
+      "source_refs": [
+        {
+          "file": "Librable - _tude socio-_co 2022.pdf",
+          "page": 2
+        }
+      ]
+    },
+    {
+      "id": "ev-method-indicators",
+      "type": "method",
+      "status": "VERIFIED",
+      "text": "L’impact socio-économique est évalué via trois indicateurs : chiffre d’affaires, valeur ajoutée et emplois en équivalent temps-plein.",
+      "source_refs": [
+        {
+          "file": "Librable - _tude socio-_co 2022.pdf",
+          "page": 2
+        }
+      ]
+    },
+    {
+      "id": "ev-method-levels",
+      "type": "method",
+      "status": "VERIFIED",
+      "text": "L’étude distingue trois niveaux interdépendants : impact direct, indirect et induit.",
+      "source_refs": [
+        {
+          "file": "Librable - _tude socio-_co 2022.pdf",
+          "page": 2
+        }
+      ]
+    },
+    {
+      "id": "ev-projection",
+      "type": "method",
+      "status": "VERIFIED",
+      "text": "La projection 2025 s’appuie sur les prévisions de trafics du projet stratégique du port et sur les évolutions qualitatives des filières identifiées avec les représentants du port.",
+      "source_refs": [
+        {
+          "file": "Librable - _tude socio-_co 2022.pdf",
+          "page": 3
+        }
+      ]
+    },
+    {
+      "id": "ev-fishing",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "La pêche progresse en 2019, est très peu affectée en 2020 et est projetée stable à 2025. La hausse 2019 est notamment reliée à la pêche thonière et à l’augmentation du nombre de mareyeurs.",
+      "source_refs": [
+        {
+          "file": "Librable - _tude socio-_co 2022.pdf",
+          "page": 3
+        },
+        {
+          "file": "Librable - _tude socio-_co 2022.pdf",
+          "page": 4
+        }
+      ]
+    },
+    {
+      "id": "ev-fishing-table",
+      "type": "table",
+      "status": "VERIFIED",
+      "text": "Principaux chiffres socio-économiques du port de pêche pour 2015, 2019, 2020 et 2025.",
+      "source_refs": [
+        {
+          "file": "Librable - _tude socio-_co 2022.pdf",
+          "page": 3
+        }
+      ]
+    },
+    {
+      "id": "ev-leisure",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "La plaisance est portée par la hausse des nuitées, la réparation navale et le développement du mégayachting. La petite et moyenne plaisance a connu une croissance de 15% pendant la crise, tandis que le mégayachting a été retardé.",
+      "source_refs": [
+        {
+          "file": "Librable - _tude socio-_co 2022.pdf",
+          "page": 4
+        }
+      ]
+    },
+    {
+      "id": "ev-leisure-table",
+      "type": "table",
+      "status": "VERIFIED",
+      "text": "Principaux chiffres socio-économiques du port de plaisance pour 2015, 2019, 2020 et 2025.",
+      "source_refs": [
+        {
+          "file": "Librable - _tude socio-_co 2022.pdf",
+          "page": 4
+        }
+      ]
+    },
+    {
+      "id": "ev-commerce",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "Le commerce combine hausse des trafics et mutation de leur composition : davantage d’emplois peuvent être générés alors que le chiffre d’affaires local diminue lorsque la transformation sur place recule. La crise 2020 est particulièrement visible, puis la trajectoire 2025 repart à la hausse.",
+      "source_refs": [
+        {
+          "file": "Librable - _tude socio-_co 2022.pdf",
+          "page": 5
+        }
+      ]
+    },
+    {
+      "id": "ev-commerce-table",
+      "type": "table",
+      "status": "VERIFIED",
+      "text": "Principaux chiffres socio-économiques du port de commerce pour 2015, 2019, 2020 et 2025.",
+      "source_refs": [
+        {
+          "file": "Librable - _tude socio-_co 2022.pdf",
+          "page": 5
+        }
+      ]
+    },
+    {
+      "id": "ev-commerce-diversification",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "En 2019, quatre filières agro-industrielles représentent 84% du chiffre d’affaires généré. Leur part est projetée à 66% en 2025, notamment avec le développement des trafics roulants et du ciment.",
+      "source_refs": [
+        {
+          "file": "Librable - _tude socio-_co 2022.pdf",
+          "page": 5
+        },
+        {
+          "file": "Librable - _tude socio-_co 2022.pdf",
+          "page": 6
+        }
+      ]
+    },
+    {
+      "id": "ev-consolidated",
+      "type": "table",
+      "status": "VERIFIED",
+      "text": "Consolidation de l’impact socio-économique de Port Sud de France : emplois directs 1537 / 1733 / 1682 / 1969 ETP ; emplois indirects 1073 / 1170 / 1143 / 1538 ETP ; emplois induits 2612 / 2903 / 2825 / 3507 ETP ; chiffre d’affaires direct 872,8 / 824,3 / 764,7 / 968,9 M€ pour 2015 / 2019 / 2020 / 2025.",
+      "source_refs": [
+        {
+          "file": "Librable - _tude socio-_co 2022.pdf",
+          "page": 6
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "id": "opening",
+      "title": "Lire le port comme trois trajectoires",
+      "nav_label": "Ouverture",
+      "purpose": "orientation",
+      "source_evidence_ids": [
+        "ev-method-comparability"
+      ],
+      "scenes": [
+        {
+          "id": "hero",
+          "nav_label": "Titre",
+          "primitive": "hero",
+          "semantic_role": "opening",
+          "message": "Trois activités portuaires. Trois trajectoires socio-économiques.",
+          "kicker": "Sète | Synthèse de l’étude | Février 2022",
+          "title": "Trois trajectoires. Un impact local.",
+          "body": "Pêche, plaisance, commerce : une lecture comparée de 2015 à la projection 2025.",
+          "media": [
+            {
+              "asset_id": "sete-port-photo",
+              "role": "background"
+            }
+          ],
+          "effects": [
+            {
+              "id": "parallax",
+              "intensity": "subtle",
+              "target": "background",
+              "trigger": "scroll"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-method-comparability"
+          ],
+          "source_refs": [
+            {
+              "file": "Librable - _tude socio-_co 2022.pdf",
+              "page": 1
+            },
+            {
+              "file": "Librable - _tude socio-_co 2022.pdf",
+              "page": 2
+            }
+          ],
+          "transformations": [
+            {
+              "type": "shorten",
+              "description": "Le titre source est condensé en une ouverture éditoriale centrée sur les trois activités étudiées.",
+              "source_evidence_ids": [
+                "ev-method-comparability"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "method",
+          "nav_label": "Méthode",
+          "primitive": "comparison",
+          "semantic_role": "method_summary",
+          "message": "Trois indicateurs, trois niveaux d’impact, une base méthodologique comparable.",
+          "title": "Comparer sans changer de règle du jeu.",
+          "body": "L’actualisation reprend la méthode de l’étude précédente afin de conserver une lecture comparable des évolutions depuis 2015. La projection 2025 reste une projection fondée sur les trafics attendus et les évolutions de filière identifiées avec le port.",
+          "data": {
+            "items": [
+              {
+                "kicker": "Indicateurs",
+                "title": "Ce qui est mesuré",
+                "text": "Chiffre d’affaires, valeur ajoutée, emplois en équivalent temps-plein."
+              },
+              {
+                "kicker": "Niveaux",
+                "title": "Où l’impact se produit",
+                "text": "Direct : acteurs portuaires et trafic. Indirect : fournisseurs. Induit : revenus et emplois locaux générés par la consommation."
+              },
+              {
+                "kicker": "2025",
+                "title": "Ce qui est projeté",
+                "text": "Prévisions de trafics du projet stratégique et évolutions qualitatives des filières identifiées avec les représentants du port."
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-method-indicators",
+            "ev-method-levels",
+            "ev-projection"
+          ],
+          "source_refs": [
+            {
+              "file": "Librable - _tude socio-_co 2022.pdf",
+              "page": 2
+            },
+            {
+              "file": "Librable - _tude socio-_co 2022.pdf",
+              "page": 3
+            }
+          ],
+          "transformations": [
+            {
+              "type": "group",
+              "description": "Les éléments méthodologiques sont regroupés en trois blocs de lecture sans modifier leur contenu.",
+              "source_evidence_ids": [
+                "ev-method-indicators",
+                "ev-method-levels",
+                "ev-projection"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "overview",
+      "title": "Les trajectoires divergent",
+      "nav_label": "Vue d’ensemble",
+      "purpose": "synthesis",
+      "source_evidence_ids": [
+        "ev-fishing-table",
+        "ev-leisure-table",
+        "ev-commerce-table"
+      ],
+      "scenes": [
+        {
+          "id": "indexed-ca",
+          "nav_label": "CA direct",
+          "primitive": "chart",
+          "semantic_role": "trend_comparison",
+          "message": "La plaisance accélère, la pêche se stabilise, le commerce recule avant de rebondir.",
+          "title": "Même point de départ. Trois trajectoires.",
+          "body": "Pour comparer des activités de tailles très différentes, le chiffre d’affaires direct est ici indexé à 100 en 2015. Les valeurs sont calculées à partir des tableaux sources.",
+          "data": {
+            "chart_type": "line",
+            "labels": [
+              "2015",
+              "2019",
+              "2020",
+              "2025"
+            ],
+            "unit": "indice 2015=100",
+            "series": [
+              {
+                "label": "Pêche",
+                "unit": "indice",
+                "values": [
+                  100,
+                  120.5,
+                  118,
+                  120.5
+                ]
+              },
+              {
+                "label": "Plaisance",
+                "unit": "indice",
+                "values": [
+                  100,
+                  164,
+                  190.7,
+                  197.3
+                ]
+              },
+              {
+                "label": "Commerce",
+                "unit": "indice",
+                "values": [
+                  100,
+                  91.3,
+                  83.8,
+                  109.3
+                ]
+              }
+            ]
+          },
+          "emphasis": [
+            {
+              "text": "Trois trajectoires",
+              "style": "marker_highlight"
+            }
+          ],
+          "effects": [
+            {
+              "id": "progressive_build",
+              "intensity": "medium",
+              "target": "data",
+              "trigger": "scroll"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-fishing-table",
+            "ev-leisure-table",
+            "ev-commerce-table"
+          ],
+          "source_refs": [
+            {
+              "file": "Librable - _tude socio-_co 2022.pdf",
+              "page": 3
+            },
+            {
+              "file": "Librable - _tude socio-_co 2022.pdf",
+              "page": 4
+            },
+            {
+              "file": "Librable - _tude socio-_co 2022.pdf",
+              "page": 5
+            }
+          ],
+          "transformations": [
+            {
+              "type": "aggregate",
+              "description": "Les chiffres d’affaires directs de chaque filière sont transformés en indices base 100 en 2015 pour permettre la comparaison de trajectoires ; aucune valeur source n’est remplacée.",
+              "source_evidence_ids": [
+                "ev-fishing-table",
+                "ev-leisure-table",
+                "ev-commerce-table"
+              ]
+            },
+            {
+              "type": "visualize",
+              "description": "Les indices sont représentés sous forme de courbes comparées.",
+              "source_evidence_ids": [
+                "ev-fishing-table",
+                "ev-leisure-table",
+                "ev-commerce-table"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fishing",
+      "title": "Pêche : croissance puis stabilité",
+      "nav_label": "Pêche",
+      "purpose": "sector_reading",
+      "source_evidence_ids": [
+        "ev-fishing",
+        "ev-fishing-table"
+      ],
+      "scenes": [
+        {
+          "id": "fishing-ca",
+          "nav_label": "Pêche",
+          "primitive": "chart",
+          "semantic_role": "trend",
+          "message": "Après le saut de 2019, le chiffre d’affaires direct reste proche de ce niveau.",
+          "title": "Pêche : le choc 2020 reste limité.",
+          "body": "Le chiffre d’affaires direct passe de 74 M€ en 2015 à 89,2 M€ en 2019, puis 87,3 M€ en 2020. La projection 2025 revient à 89,2 M€. Le rapport relie la hausse 2019 à la pêche thonière et au nombre de mareyeurs.",
+          "data": {
+            "chart_type": "line",
+            "labels": [
+              "2015",
+              "2019",
+              "2020",
+              "2025"
+            ],
+            "series": [
+              {
+                "label": "Chiffre d’affaires direct",
+                "unit": "M€",
+                "values": [
+                  74,
+                  89.2,
+                  87.3,
+                  89.2
+                ]
+              }
+            ]
+          },
+          "effects": [
+            {
+              "id": "progressive_build",
+              "intensity": "medium",
+              "target": "data",
+              "trigger": "scroll"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-fishing",
+            "ev-fishing-table"
+          ],
+          "source_refs": [
+            {
+              "file": "Librable - _tude socio-_co 2022.pdf",
+              "page": 3
+            },
+            {
+              "file": "Librable - _tude socio-_co 2022.pdf",
+              "page": 4
+            }
+          ],
+          "transformations": [
+            {
+              "type": "visualize",
+              "description": "La série de chiffre d’affaires direct du tableau source est convertie en courbe.",
+              "source_evidence_ids": [
+                "ev-fishing-table"
+              ]
+            },
+            {
+              "type": "shorten",
+              "description": "Les points clés sont condensés autour de la trajectoire 2015-2025.",
+              "source_evidence_ids": [
+                "ev-fishing"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "leisure",
+      "title": "Plaisance : la trajectoire la plus dynamique",
+      "nav_label": "Plaisance",
+      "purpose": "sector_reading",
+      "source_evidence_ids": [
+        "ev-leisure",
+        "ev-leisure-table"
+      ],
+      "scenes": [
+        {
+          "id": "leisure-ca",
+          "nav_label": "Plaisance",
+          "primitive": "chart",
+          "semantic_role": "trend",
+          "message": "Le chiffre d’affaires direct progresse à chaque point de mesure.",
+          "title": "Plaisance : presque doubler en dix ans.",
+          "body": "Le chiffre d’affaires direct progresse de 7,5 M€ en 2015 à 14,8 M€ projetés en 2025. Le document l’explique par la fréquentation, la réparation navale et le développement du mégayachting.",
+          "data": {
+            "chart_type": "line",
+            "labels": [
+              "2015",
+              "2019",
+              "2020",
+              "2025"
+            ],
+            "series": [
+              {
+                "label": "Chiffre d’affaires direct",
+                "unit": "M€",
+                "values": [
+                  7.5,
+                  12.3,
+                  14.3,
+                  14.8
+                ]
+              }
+            ]
+          },
+          "emphasis": [
+            {
+              "text": "presque doubler",
+              "style": "underline"
+            }
+          ],
+          "effects": [
+            {
+              "id": "progressive_build",
+              "intensity": "medium",
+              "target": "data",
+              "trigger": "scroll"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-leisure",
+            "ev-leisure-table"
+          ],
+          "source_refs": [
+            {
+              "file": "Librable - _tude socio-_co 2022.pdf",
+              "page": 4
+            }
+          ],
+          "transformations": [
+            {
+              "type": "visualize",
+              "description": "La série de chiffre d’affaires direct du tableau source est convertie en courbe.",
+              "source_evidence_ids": [
+                "ev-leisure-table"
+              ]
+            },
+            {
+              "type": "shorten",
+              "description": "Les facteurs de croissance sont résumés sans ajouter de causalité non présente dans le document.",
+              "source_evidence_ids": [
+                "ev-leisure"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "commerce",
+      "title": "Commerce : plus d’emplois, une économie qui se recompose",
+      "nav_label": "Commerce",
+      "purpose": "sector_reading",
+      "source_evidence_ids": [
+        "ev-commerce",
+        "ev-commerce-table",
+        "ev-commerce-diversification"
+      ],
+      "scenes": [
+        {
+          "id": "commerce-ca",
+          "nav_label": "Trajectoire",
+          "primitive": "chart",
+          "semantic_role": "trend",
+          "message": "Le chiffre d’affaires direct recule jusqu’en 2020 puis dépasse son niveau 2015 dans la projection 2025.",
+          "title": "Commerce : le rebond masque une transformation.",
+          "body": "Le chiffre d’affaires direct passe de 791,3 M€ en 2015 à 663,1 M€ en 2020, puis 864,9 M€ projetés en 2025. Le rapport souligne qu’une part croissante des trafics génère beaucoup de logistique mais moins de transformation locale.",
+          "data": {
+            "chart_type": "line",
+            "labels": [
+              "2015",
+              "2019",
+              "2020",
+              "2025"
+            ],
+            "series": [
+              {
+                "label": "Chiffre d’affaires direct",
+                "unit": "M€",
+                "values": [
+                  791.3,
+                  722.8,
+                  663.1,
+                  864.9
+                ]
+              }
+            ]
+          },
+          "effects": [
+            {
+              "id": "progressive_build",
+              "intensity": "medium",
+              "target": "data",
+              "trigger": "scroll"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-commerce",
+            "ev-commerce-table"
+          ],
+          "source_refs": [
+            {
+              "file": "Librable - _tude socio-_co 2022.pdf",
+              "page": 5
+            }
+          ],
+          "transformations": [
+            {
+              "type": "visualize",
+              "description": "La série de chiffre d’affaires direct du tableau source est convertie en courbe.",
+              "source_evidence_ids": [
+                "ev-commerce-table"
+              ]
+            },
+            {
+              "type": "shorten",
+              "description": "Le commentaire source sur la transformation locale et la logistique est condensé.",
+              "source_evidence_ids": [
+                "ev-commerce"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "commerce-mix",
+          "nav_label": "Diversification",
+          "primitive": "comparison",
+          "semantic_role": "composition_change",
+          "message": "La dépendance aux quatre grandes filières historiques diminue dans la projection 2025.",
+          "title": "Une base économique moins concentrée.",
+          "body": "Le rapport associe cette diversification au développement des trafics roulants et du ciment.",
+          "data": {
+            "items": [
+              {
+                "kicker": "2019",
+                "title": "Quatre filières agro-industrielles",
+                "value": "84",
+                "unit": "% du CA",
+                "text": "Graines oléagineuses, tourteaux, engrais et biocarburant concentrent l’essentiel du chiffre d’affaires généré."
+              },
+              {
+                "kicker": "2025",
+                "title": "Part projetée des mêmes filières",
+                "value": "66",
+                "unit": "% du CA",
+                "text": "Leur poids diminue avec l’arrivée ou la montée en puissance de nouveaux trafics, notamment roulants et ciment."
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-commerce-diversification"
+          ],
+          "source_refs": [
+            {
+              "file": "Librable - _tude socio-_co 2022.pdf",
+              "page": 5
+            },
+            {
+              "file": "Librable - _tude socio-_co 2022.pdf",
+              "page": 6
+            }
+          ],
+          "transformations": [
+            {
+              "type": "compare",
+              "description": "Deux valeurs explicitement données dans le texte source sont mises en regard pour visualiser la diversification projetée.",
+              "source_evidence_ids": [
+                "ev-commerce-diversification"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "consolidated",
+      "title": "À l’échelle du port, 2020 est un creux, pas le point d’arrivée",
+      "nav_label": "Consolidé",
+      "purpose": "synthesis",
+      "source_evidence_ids": [
+        "ev-consolidated"
+      ],
+      "scenes": [
+        {
+          "id": "jobs-consolidated",
+          "nav_label": "Emplois",
+          "primitive": "chart",
+          "semantic_role": "trend_comparison",
+          "message": "Les trois niveaux d’emploi reculent légèrement en 2020 puis progressent fortement dans la projection 2025.",
+          "title": "L’emploi repart au-delà de 2019.",
+          "body": "La projection 2025 atteint 1 969 emplois directs, 1 538 indirects et 3 507 induits. Les trois séries sont présentées séparément afin de conserver la structure du modèle d’impact.",
+          "data": {
+            "chart_type": "line",
+            "labels": [
+              "2015",
+              "2019",
+              "2020",
+              "2025"
+            ],
+            "series": [
+              {
+                "label": "Emplois directs",
+                "unit": "ETP",
+                "values": [
+                  1537,
+                  1733,
+                  1682,
+                  1969
+                ]
+              },
+              {
+                "label": "Emplois indirects",
+                "unit": "ETP",
+                "values": [
+                  1073,
+                  1170,
+                  1143,
+                  1538
+                ]
+              },
+              {
+                "label": "Emplois induits",
+                "unit": "ETP",
+                "values": [
+                  2612,
+                  2903,
+                  2825,
+                  3507
+                ]
+              }
+            ]
+          },
+          "effects": [
+            {
+              "id": "progressive_build",
+              "intensity": "medium",
+              "target": "data",
+              "trigger": "scroll"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-consolidated"
+          ],
+          "source_refs": [
+            {
+              "file": "Librable - _tude socio-_co 2022.pdf",
+              "page": 6
+            }
+          ],
+          "transformations": [
+            {
+              "type": "visualize",
+              "description": "Les trois séries d’emplois du tableau consolidé sont représentées sur une même échelle en ETP.",
+              "source_evidence_ids": [
+                "ev-consolidated"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "closing",
+      "title": "La projection 2025 ne raconte pas une croissance uniforme",
+      "nav_label": "Conclusion",
+      "purpose": "synthesis",
+      "source_evidence_ids": [
+        "ev-fishing",
+        "ev-leisure",
+        "ev-commerce",
+        "ev-consolidated"
+      ],
+      "scenes": [
+        {
+          "id": "finale",
+          "nav_label": "À retenir",
+          "primitive": "conclusion",
+          "semantic_role": "synthesis",
+          "message": "Stabilité de la pêche. Croissance de la plaisance. Recomposition et rebond du commerce.",
+          "kicker": "À retenir",
+          "title": "Trois moteurs, trois rythmes.",
+          "body": "La projection 2025 combine une pêche globalement stable, une plaisance en croissance continue et un commerce qui se diversifie après le choc 2020. À l’échelle consolidée, les emplois projetés dépassent leur niveau 2019.",
+          "effects": [
+            {
+              "id": "fade",
+              "intensity": "subtle",
+              "target": "text",
+              "trigger": "enter"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-fishing",
+            "ev-leisure",
+            "ev-commerce",
+            "ev-consolidated"
+          ],
+          "source_refs": [
+            {
+              "file": "Librable - _tude socio-_co 2022.pdf",
+              "page": 4
+            },
+            {
+              "file": "Librable - _tude socio-_co 2022.pdf",
+              "page": 5
+            },
+            {
+              "file": "Librable - _tude socio-_co 2022.pdf",
+              "page": 6
+            }
+          ],
+          "transformations": [
+            {
+              "type": "group",
+              "description": "Les conclusions de chaque filière et le tableau consolidé sont regroupés en une synthèse finale sans ajouter de fait nouveau.",
+              "source_evidence_ids": [
+                "ev-fishing",
+                "ev-leisure",
+                "ev-commerce",
+                "ev-consolidated"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

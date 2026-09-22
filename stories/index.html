@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>StoryScro Internal Agent Validation</title>
+  <style>
+    :root{font-family:Inter,Arial,sans-serif;color:#17202a;background:#f4f6f7}
+    *{box-sizing:border-box}body{margin:0}main{max-width:1180px;margin:auto;padding:72px 28px 96px}
+    .eyebrow{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#6954e8}
+    h1{font-size:clamp(42px,7vw,88px);line-height:.92;letter-spacing:-.05em;max-width:900px;margin:12px 0 24px}
+    .intro{font-size:20px;line-height:1.55;max-width:800px;color:#55636d}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:48px}
+    a.card{display:block;padding:28px;text-decoration:none;color:inherit;background:white;border:1px solid #dce2e6;min-height:220px;transition:.2s}
+    a.card:hover{transform:translateY(-3px);box-shadow:0 16px 44px rgba(30,43,54,.1)}
+    .type{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#6954e8}
+    h2{font-size:30px;line-height:1.05;letter-spacing:-.03em;margin:18px 0 12px}
+    p{line-height:1.5;color:#5f6e77;margin:0}.note{margin-top:42px;padding-top:24px;border-top:1px solid #ccd5da;font-size:14px}
+    @media(max-width:700px){main{padding:48px 20px}.grid{grid-template-columns:1fr}a.card{min-height:0}}
+  </style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">Milestone A · Internal agent validation</div>
+  <h1>Different PDFs. One generic StoryScro renderer.</h1>
+  <p class="intro">These cases are planned from source evidence and rendered through the same Story Model contract and generic renderer. They are deliberately different in length, purpose and data density.</p>
+  <section class="grid">
+    <a class="card" href="./sete-impact-ai/"><div class="type">Impact study · 6 pages</div><h2>Port de Sète</h2><p>Socio-economic trajectories, indexed comparison, sector trends and consolidated employment.</p></a>
+    <a class="card" href="./attention-ai/"><div class="type">Scientific paper · 15 pages</div><h2>Attention Is All You Need</h2><p>Architecture, computational comparison and reported translation evidence.</p></a>
+    <a class="card" href="./france-pharma-2025-ai/"><div class="type">Consulting / industry · 27 pages</div><h2>France pharma 2025</h2><p>Structural strengths, industrial investment and attractiveness frictions.</p></a>
+    <a class="card" href="./eu-fossa-ai/"><div class="type">EU project deliverable · 46 pages</div><h2>EU-FOSSA comparative study</h2><p>Institutional and open-source development/security practices compared and synthesised.</p></a>
+    <a class="card" href="./imf-weo-2025-ai/"><div class="type">Data / macroeconomics · 12 pages</div><h2>IMF WEO July 2025</h2><p>Growth revision, trade front-loading, cross-economy projections and downside risk.</p></a>
+    <a class="card" href="./ccc-adaptation-2025-ai/"><div class="type">Public policy · 170 pages</div><h2>CCC Adaptation 2025</h2><p>Climate-risk urgency, delivery assessment and four programme-level actions.</p></a>
+  </section>
+  <p class="note">Validation set only. The existing shared <code>/v2/</code> and <code>/ccc-2025/</code> demonstrations are separate and unchanged.</p>
+</main>
+</body>
+</html>

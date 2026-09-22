@@ -33,6 +33,40 @@ def main():
     titles = [s['title'] for s in planner['document_candidates']['sections']]
     assert 'Chapter 1' in titles and 'Chapter 2' in titles
 
+    # Regression: branded reports often make a TOC label or KPI callout visually
+    # larger than the cover title. They must not hijack document identity or chapters.
+    noisy = {
+        'document': {'source_file':'branded.pdf','sha256':'def','page_count':3,'language':'fr'},
+        'style_profile': {'body_font_size':10},
+        'title_candidates': [
+            {'block_id':'p1-b1','page':1,'text':'Rapport Développement Durable 2024','font_size':28,'score':6.8,'bbox':[40,700,400,800]},
+            {'block_id':'p2-b1','page':2,'text':'sommaire','font_size':60,'score':12.0,'bbox':[600,80,900,170]},
+        ],
+        'repeated_margin_elements': [], 'assets': [], 'statistics': {},
+        'pages': [
+            {'number':1,'height':842,'blocks':[
+                {'id':'p1-b1','page':1,'bbox':[40,700,400,800],'text':'Rapport Développement Durable 2024','semantic_type':'heading_1','style':{'max_font_size':28}},
+            ],'derived':[]},
+            {'number':2,'height':842,'blocks':[
+                {'id':'p2-b1','page':2,'bbox':[600,80,900,170],'text':'sommaire','semantic_type':'heading_1','style':{'max_font_size':60}},
+                {'id':'p2-b2','page':2,'bbox':[40,240,180,300],'text':'43%','semantic_type':'heading_1','style':{'max_font_size':44}},
+                {'id':'p2-b3','page':2,'bbox':[40,320,240,380],'text':'+ de 2,7 millions','semantic_type':'heading_1','style':{'max_font_size':38}},
+                {'id':'p2-b4','page':2,'bbox':[40,420,500,470],'text':'Réduire notre empreinte carbone','semantic_type':'heading_1','style':{'max_font_size':28}},
+            ],'derived':[
+                {'id':'layout-table','type':'table','page':2,'bbox':[40,500,400,560],'role':'data_table','rows':[['Président',''],['','de France']],'row_count':2,'column_count':2},
+            ]},
+            {'number':3,'height':842,'blocks':[
+                {'id':'p3-b1','page':3,'bbox':[40,60,500,100],'text':'Evidence paragraph.','semantic_type':'paragraph','style':{'max_font_size':10}},
+            ],'derived':[]},
+        ]
+    }
+    noisy_planner = prepare(noisy)
+    assert noisy_planner['document_candidates']['preferred_title']['text'] == 'Rapport Développement Durable 2024'
+    noisy_titles = [x['title'] for x in noisy_planner['document_candidates']['sections']]
+    assert 'sommaire' not in noisy_titles and '43%' not in noisy_titles and '+ de 2,7 millions' not in noisy_titles
+    assert 'Réduire notre empreinte carbone' in noisy_titles
+    assert noisy_planner['evidence_candidates']['tables'] == []
+
     grammar = load_json(ROOT / 'engine' / 'narrative-grammar.json')
     request = build_input(planner, grammar, 'Use adaptive fidelity.', None)
     assert request[0]['role'] == 'user'

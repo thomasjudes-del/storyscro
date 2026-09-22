@@ -97,7 +97,7 @@
       text_section: renderGeneric,
       text_over_media: renderGenericMedia,
       big_number: renderBigNumber,
-      comparison: renderGeneric,
+      comparison: renderComparison,
       timeline: renderGeneric,
       chart: renderChart,
       map: renderGeneric,
@@ -450,6 +450,30 @@
     return Number(v).toLocaleString(undefined,{maximumFractionDigits:1});
   }
   function formatChartValue(v,unit){return Number(v).toLocaleString(undefined,{maximumFractionDigits:1})+(unit?' '+unit:'')}
+
+
+  function renderComparison(scene,chapter){
+    const items=scene.data?.items||scene.data?.options||[];
+    if(!Array.isArray(items)||items.length<2) return renderGeneric(scene,chapter);
+    const section=document.createElement('section'); section.className='comparison-scene';
+    const inner=document.createElement('div'); inner.className='comparison-inner';
+    const head=document.createElement('div'); head.className='comparison-head';
+    const kicker=document.createElement('p'); kicker.className='kicker'; kicker.textContent=chapter.nav_label||'';
+    const h2=document.createElement('h2'); h2.innerHTML=applyEmphasis(scene.title||scene.message,scene.emphasis); head.append(kicker,h2);
+    if(scene.body){const p=document.createElement('p');p.innerHTML=applyEmphasis(Array.isArray(scene.body)?scene.body.join(' '):scene.body,scene.emphasis);head.appendChild(p)}
+    inner.appendChild(head);
+    const grid=document.createElement('div');grid.className='comparison-grid';
+    items.forEach((it,i)=>{
+      const card=document.createElement('article');card.className='comparison-card';
+      const meta=document.createElement('span');meta.textContent=it.kicker||it.label||String(i+1).padStart(2,'0');card.appendChild(meta);
+      const h3=document.createElement('h3');h3.textContent=it.title||it.name||'';card.appendChild(h3);
+      if(it.value!==undefined){const strong=document.createElement('strong');strong.textContent=String(it.value)+(it.unit?' '+it.unit:'');card.appendChild(strong)}
+      const p=document.createElement('p');p.textContent=it.text||it.body||'';card.appendChild(p);grid.appendChild(card);
+    });
+    inner.appendChild(grid);
+    const src=document.createElement('div');src.innerHTML=sourceButton(scene);inner.appendChild(src);
+    section.appendChild(inner);return section;
+  }
 
   function renderGeneric(scene,chapter){ const section=document.createElement('section'); section.className='generic-section'; const body=Array.isArray(scene.body)?scene.body.join('\n'):scene.body||scene.message; section.innerHTML=`<div class="generic-inner"><p class="kicker">${esc(chapter.nav_label||'')}</p><h2>${applyEmphasis(scene.title||scene.message,scene.emphasis)}</h2><p>${applyEmphasis(body,scene.emphasis)}</p>${sourceButton(scene)}</div>`; return section; }
   function renderGenericMedia(scene,chapter){ const section=renderGeneric(scene,chapter); const a=asset(scene.media?.[0]?.asset_id); if(a?.uri) section.style.background=`linear-gradient(rgba(255,255,255,.88),rgba(255,255,255,.88)),url('${a.uri}') center/cover`; return section; }

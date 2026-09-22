@@ -43,7 +43,7 @@ def inspect(driver, scene_id):
       const rect=scene?.getBoundingClientRect();
       const h1=scene?.querySelector('h1'),h2=scene?.querySelector('h2'),header=document.querySelector('.story-header');
       const visible=el=>{if(!el)return false;const r=el.getBoundingClientRect(),cs=getComputedStyle(el);return cs.display!=='none'&&cs.visibility!=='hidden'&&Number(cs.opacity||1)>.16&&r.width>0&&r.height>0};
-      const textNodes=[...scene?.querySelectorAll('h1,h2,h3,p,strong')||[]].filter(visible);
+      const textNodes=[...scene?.querySelectorAll('h1,h2,h3,p,strong,.big-number-value')||[]].filter(visible);
       const collisions=[];
       for(let i=0;i<textNodes.length;i++)for(let j=i+1;j<textNodes.length;j++){
         const a=textNodes[i].getBoundingClientRect(),b=textNodes[j].getBoundingClientRect();
@@ -117,6 +117,8 @@ def capture(label, width, height):
                 raise RuntimeError(f'Chapter mismatch at {scene_id}: {dims}')
             if dims['titleHeight']>dims['height']*.48:
                 raise RuntimeError(f'Title too tall at {scene_id}: {dims}')
+            if dims['collisionCount']>0:
+                raise RuntimeError(f'Visible text collision at {scene_id}: {dims}')
             # A long non-sticky reading scene may naturally scroll its heading behind the fixed
             # header. Treat overlap as a defect only while the scene itself is at its arrival frame
             # or when the scene is sticky/scrolly and the heading is expected to remain composed.

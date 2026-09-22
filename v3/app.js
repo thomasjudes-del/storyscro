@@ -487,8 +487,8 @@
     const section=document.createElement('section'); section.className='scrolly metric-scrolly';
     const value=String(scene.data?.value||scene.message||'');
     const compactLength=value.replace(/\s/g,'').length;
-    if(compactLength>=8)section.classList.add('metric-long');
-    else if(compactLength>=5)section.classList.add('metric-medium');
+    if(compactLength>=7)section.classList.add('metric-long');
+    else if(compactLength>=4)section.classList.add('metric-medium');
     section.innerHTML=`<div class="sticky-stage metric-stage"><div class="metric-backdrop" aria-hidden="true"></div><div class="metric-inner"><p class="kicker">${esc(chapter.nav_label||'')}</p><div class="big-number-value">${esc(value)}</div><h2>${applyEmphasis(scene.title||'',scene.emphasis)}</h2><p>${applyEmphasis(scene.body||'',scene.emphasis)}</p>${sourceButton(scene)}</div></div><div class="scroll-space short"></div>`;
     section._update=p=>{
       const cfg=pacing(scene), intro=clamp(Number(cfg.intro_hold??.18),0,.45);

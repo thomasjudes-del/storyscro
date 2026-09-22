@@ -665,11 +665,11 @@
           "nav_label": "Seconde vie",
           "primitive": "big_number",
           "semantic_role": "circularity_metric",
-          "message": "2 727 607",
+          "message": "2,7 M",
           "title": "Plus de 2,7 millions de produits revalorisés en FY24.",
-          "body": "Le chiffre concerne les produits revalorisés via les espaces seconde vie de IKEA France sur l’année fiscale FY24.",
+          "body": "Le rapport donne la valeur exacte de 2 727 607 produits revalorisés via les espaces seconde vie de IKEA France en FY24.",
           "data": {
-            "value": "2 727 607"
+            "value": "2,7 M"
           },
           "source_evidence_ids": [
             "ev-second-life"
@@ -683,8 +683,8 @@
           ],
           "transformations": [
             {
-              "type": "none",
-              "description": "La valeur exacte du rapport est conservée ; seule la mise en scène change.",
+              "type": "shorten",
+              "description": "La valeur exacte 2 727 607 est arrondie à 2,7 M pour l’affichage éditorial ; la valeur exacte est conservée dans le texte et la provenance.",
               "source_evidence_ids": [
                 "ev-second-life"
               ]

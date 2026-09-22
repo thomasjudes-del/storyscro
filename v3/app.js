@@ -238,10 +238,9 @@
 
   function renderStatement(scene){
     const section=document.createElement('section'); section.className='scrolly statement statement-scrolly';
-    const text=String(scene.body||scene.message);
-    const first=text.split('. ')[0] + (text.includes('. ')?'.':'');
-    const rest=text.slice(first.length).trim();
-    section.innerHTML=`<div class="sticky-stage statement-stage"><div class="statement-inner"><p>${applyEmphasis(first,scene.emphasis)}</p><h2>${applyEmphasis(rest||text,scene.emphasis)}</h2>${sourceButton(scene)}</div></div><div class="scroll-space short"></div>`;
+    const heading=String(scene.title||scene.message||'');
+    const support=String(scene.body||((scene.title&&scene.message!==scene.title)?scene.message:'')||'');
+    section.innerHTML=`<div class="sticky-stage statement-stage"><div class="statement-inner"><h2>${applyEmphasis(heading,scene.emphasis)}</h2>${support?`<p>${applyEmphasis(support,scene.emphasis)}</p>`:''}${sourceButton(scene)}</div></div><div class="scroll-space short"></div>`;
     section._update=p=>{
       const cfg=pacing(scene), intro=clamp(Number(cfg.intro_hold??.2),0,.45);
       const q=clamp((p-intro)/Math.max(.08,.72-intro));

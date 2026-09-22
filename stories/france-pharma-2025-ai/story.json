@@ -1,0 +1,632 @@
+{
+  "version": "1.0-internal-agent",
+  "document": {
+    "id": "france-pharma-2025",
+    "title": "France pharma: attractive scale, harder conversion",
+    "subtitle": "Baromètre 360° 2025",
+    "source_file": "strategyand-france-pharma-2025.pdf",
+    "language": "fr",
+    "page_count": 27,
+    "audience": "Dirigeants et décideurs de l'industrie pharmaceutique",
+    "purpose": "Faire ressortir le contraste entre les actifs structurels de la France et les freins qui pèsent sur l'investissement et l'accès au marché.",
+    "core_question": "Comment la France peut-elle rester une grande place pharmaceutique tout en convertissant moins bien certains de ses atouts en attractivité perçue ?",
+    "publisher": "PwC Strategy& / Leem",
+    "source_url": "https://www.strategyand.pwc.com/fr/fr/assets/pdf/2025/07/fr-strategyand-leem-pwc-2025-barometre-360.pdf"
+  },
+  "editorial_policy": {
+    "fidelity": "adaptive",
+    "compression": "high",
+    "notes": "La narration croise les indicateurs de taille, R&D, production, accès et attractivité perçue. Les chiffres restent attachés aux pages sources."
+  },
+  "navigation": {
+    "chapter_header": true,
+    "reading_progress": true,
+    "micro_navigation": true,
+    "keyboard_navigation": true
+  },
+  "design_system": {
+    "source_strategy": "adapt",
+    "palette": {
+      "primary": "#404048",
+      "secondary": "#6b6b73",
+      "accent": "#a32020",
+      "background": "#ffffff",
+      "surface": "#f4f4f5",
+      "text": "#151515",
+      "muted": "#6e6e73"
+    },
+    "typography": {
+      "source_fonts": [
+        "ArialMT",
+        "Arial-BoldMT",
+        "Georgia"
+      ],
+      "heading_family": "Arial",
+      "body_family": "Arial",
+      "heading_stack": "Arial, Helvetica, sans-serif",
+      "body_stack": "Arial, Helvetica, sans-serif",
+      "character": "consulting report"
+    },
+    "branding": {
+      "publisher": "PwC Strategy& / Leem"
+    },
+    "source_pages": [
+      1,
+      2,
+      5,
+      6,
+      7,
+      10,
+      11,
+      13,
+      20,
+      23,
+      25,
+      26
+    ],
+    "notes": "Neutral consulting base with restrained red accent derived from source."
+  },
+  "presentation_profile": {
+    "preset": "consulting",
+    "density": 0.68,
+    "motion": 0.36,
+    "image_weight": 0.08,
+    "type_scale": 0.88,
+    "compression": 0.78,
+    "contrast": 0.62,
+    "source_identity": 0.9
+  },
+  "assets": [],
+  "evidence": [
+    {
+      "id": "ev-pharma-pillars",
+      "type": "method",
+      "status": "VERIFIED",
+      "text": "Le baromètre 360° 2025 est structuré autour de trois piliers couvrant les dimensions d’attractivité du secteur pharmaceutique en France.",
+      "source_refs": [
+        {
+          "file": "strategyand-france-pharma-2025.pdf",
+          "page": 2,
+          "element_id": "p2-b2"
+        }
+      ]
+    },
+    {
+      "id": "ev-pharma-market",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "La France est le 2ème plus gros marché pharmaceutique en Europe derrière l’Allemagne en valeur.",
+      "source_refs": [
+        {
+          "file": "strategyand-france-pharma-2025.pdf",
+          "page": 6,
+          "element_id": "p6-b2"
+        }
+      ]
+    },
+    {
+      "id": "ev-pharma-jobs",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "La France représente le 2ème bassin d’emplois pharmaceutiques en Europe derrière l’Allemagne; 70% des emplois se trouvent hors d’Île-de-France.",
+      "source_refs": [
+        {
+          "file": "strategyand-france-pharma-2025.pdf",
+          "page": 7,
+          "element_id": "p7-b2"
+        }
+      ]
+    },
+    {
+      "id": "ev-pharma-rd",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "Selon les répondants, les investissements R&D en France sont restés stables en 2024 vs 2023 à 5,9 Mds€, dont près de 70% dédiés à la recherche clinique.",
+      "source_refs": [
+        {
+          "file": "strategyand-france-pharma-2025.pdf",
+          "page": 10,
+          "element_id": "p10-b3"
+        }
+      ]
+    },
+    {
+      "id": "ev-pharma-trials",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "La France se classe à la 3ème place européenne sur les essais cliniques alors qu’elle occupait la 2ème en 2010.",
+      "source_refs": [
+        {
+          "file": "strategyand-france-pharma-2025.pdf",
+          "page": 11,
+          "element_id": "p11-b2"
+        }
+      ]
+    },
+    {
+      "id": "ev-pharma-multiplier",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "Pour chaque euro injecté par l’industrie pharmaceutique, environ 2,1€ sont générés pour l’économie française.",
+      "source_refs": [
+        {
+          "file": "strategyand-france-pharma-2025.pdf",
+          "page": 13,
+          "element_id": "p13-b2"
+        }
+      ]
+    },
+    {
+      "id": "ev-pharma-access",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "En France, le taux de disponibilité des nouveaux médicaments baisse de 6 points en 2024 par rapport à 2023; le nombre d’indications en négociation de prix depuis plus de 500 jours augmente de 22%.",
+      "source_refs": [
+        {
+          "file": "strategyand-france-pharma-2025.pdf",
+          "page": 20,
+          "element_id": "p20-b2"
+        }
+      ]
+    },
+    {
+      "id": "ev-pharma-manufacturing",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "Sur 431 nouvelles indications approuvées en Europe depuis 2020, 9,3% ont au moins un site de fabrication en France.",
+      "source_refs": [
+        {
+          "file": "strategyand-france-pharma-2025.pdf",
+          "page": 23,
+          "element_id": "p23-b9"
+        }
+      ]
+    },
+    {
+      "id": "ev-pharma-production-invest",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "L’enquête auprès des laboratoires pharmaceutiques montre une augmentation de 38% des investissements de production en France en 2024 vs 2023, de 2 069 M€ à 2 849 M€.",
+      "source_refs": [
+        {
+          "file": "strategyand-france-pharma-2025.pdf",
+          "page": 25,
+          "element_id": "p25-b2"
+        }
+      ]
+    },
+    {
+      "id": "ev-pharma-perception",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "92% des directions des laboratoires interrogés témoignent d’un manque d’attractivité de la France pour le secteur pharmaceutique.",
+      "source_refs": [
+        {
+          "file": "strategyand-france-pharma-2025.pdf",
+          "page": 26,
+          "element_id": "p26-b2"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "id": "opening",
+      "title": "Une attractivité sous tension",
+      "nav_label": "Ouverture",
+      "purpose": "orientation",
+      "source_evidence_ids": [
+        "ev-pharma-market",
+        "ev-pharma-perception"
+      ],
+      "scenes": [
+        {
+          "id": "pharma-hero",
+          "nav_label": "Contraste",
+          "primitive": "hero",
+          "semantic_role": "opening",
+          "message": "La France conserve de la taille, mais l’attractivité perçue se dégrade.",
+          "kicker": "Baromètre 360° | 2025",
+          "title": "Grande place pharmaceutique. Conversion plus difficile.",
+          "body": "Le baromètre juxtapose des actifs solides de marché, d’emploi et de R&D avec des signaux plus faibles sur l’accès, la production de nouveaux médicaments et la perception des dirigeants.",
+          "source_evidence_ids": [
+            "ev-pharma-market",
+            "ev-pharma-jobs",
+            "ev-pharma-rd",
+            "ev-pharma-perception"
+          ],
+          "source_refs": [
+            {
+              "file": "strategyand-france-pharma-2025.pdf",
+              "page": 6,
+              "element_id": "p6-b2"
+            },
+            {
+              "file": "strategyand-france-pharma-2025.pdf",
+              "page": 7,
+              "element_id": "p7-b2"
+            },
+            {
+              "file": "strategyand-france-pharma-2025.pdf",
+              "page": 10,
+              "element_id": "p10-b3"
+            },
+            {
+              "file": "strategyand-france-pharma-2025.pdf",
+              "page": 26,
+              "element_id": "p26-b2"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "restructure",
+              "description": "Les forces et faiblesses réparties dans le rapport sont rapprochées pour former la question éditoriale centrale.",
+              "source_evidence_ids": [
+                "ev-pharma-market",
+                "ev-pharma-jobs",
+                "ev-pharma-rd",
+                "ev-pharma-perception"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "pharma-frame",
+          "nav_label": "Cadre",
+          "primitive": "comparison",
+          "semantic_role": "method_summary",
+          "message": "Le baromètre couvre l’attractivité à 360° plutôt qu’un seul indicateur.",
+          "title": "Trois piliers, plusieurs signaux.",
+          "data": {
+            "items": [
+              {
+                "kicker": "Échelle",
+                "title": "Marché & emplois",
+                "text": "Taille du marché, emploi, empreinte territoriale et contribution économique."
+              },
+              {
+                "kicker": "Innovation",
+                "title": "R&D & essais cliniques",
+                "text": "Investissements R&D, recherche clinique, données et technologies."
+              },
+              {
+                "kicker": "Conversion",
+                "title": "Accès & production",
+                "text": "Disponibilité, délais, fabrication des nouveaux médicaments et investissements industriels."
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-pharma-pillars"
+          ],
+          "source_refs": [
+            {
+              "file": "strategyand-france-pharma-2025.pdf",
+              "page": 2,
+              "element_id": "p2-b2"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "group",
+              "description": "Les dimensions du baromètre sont regroupées en trois fonctions de lecture pour cette version condensée.",
+              "source_evidence_ids": [
+                "ev-pharma-pillars"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "assets",
+      "title": "Les actifs structurels",
+      "nav_label": "Forces",
+      "purpose": "strengths",
+      "source_evidence_ids": [
+        "ev-pharma-market",
+        "ev-pharma-jobs",
+        "ev-pharma-rd",
+        "ev-pharma-multiplier"
+      ],
+      "scenes": [
+        {
+          "id": "pharma-strengths",
+          "nav_label": "Repères",
+          "primitive": "comparison",
+          "semantic_role": "parallel_metrics",
+          "message": "Le rapport documente une base économique et scientifique encore puissante.",
+          "title": "Quatre actifs qui comptent.",
+          "data": {
+            "items": [
+              {
+                "kicker": "Marché",
+                "title": "2ème en Europe",
+                "text": "La France est le deuxième marché pharmaceutique européen en valeur, derrière l’Allemagne."
+              },
+              {
+                "kicker": "Emploi",
+                "title": "2ème bassin européen",
+                "text": "La France est deuxième pour l’emploi pharmaceutique; 70% des emplois sont hors Île-de-France."
+              },
+              {
+                "kicker": "R&D",
+                "title": "5,9 Mds€",
+                "text": "Investissements R&D déclarés stables en 2024, dont près de 70% dédiés à la recherche clinique."
+              },
+              {
+                "kicker": "Économie",
+                "title": "x2,1",
+                "text": "Le baromètre estime qu’environ 2,1€ sont générés pour l’économie française par euro injecté par l’industrie."
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-pharma-market",
+            "ev-pharma-jobs",
+            "ev-pharma-rd",
+            "ev-pharma-multiplier"
+          ],
+          "source_refs": [
+            {
+              "file": "strategyand-france-pharma-2025.pdf",
+              "page": 6,
+              "element_id": "p6-b2"
+            },
+            {
+              "file": "strategyand-france-pharma-2025.pdf",
+              "page": 7,
+              "element_id": "p7-b2"
+            },
+            {
+              "file": "strategyand-france-pharma-2025.pdf",
+              "page": 10,
+              "element_id": "p10-b3"
+            },
+            {
+              "file": "strategyand-france-pharma-2025.pdf",
+              "page": 13,
+              "element_id": "p13-b2"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "group",
+              "description": "Quatre indicateurs issus de sections différentes sont regroupés en une seule vue des actifs structurels.",
+              "source_evidence_ids": [
+                "ev-pharma-market",
+                "ev-pharma-jobs",
+                "ev-pharma-rd",
+                "ev-pharma-multiplier"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "pharma-production",
+          "nav_label": "Production",
+          "primitive": "chart",
+          "semantic_role": "investment_change",
+          "message": "Les investissements de production progressent fortement en 2024.",
+          "title": "Production: +38% en un an.",
+          "body": "L’enquête du baromètre passe de 2 069 M€ en 2023 à 2 849 M€ en 2024.",
+          "data": {
+            "chart_type": "bar",
+            "labels": [
+              "2023",
+              "2024"
+            ],
+            "unit": "M€",
+            "series": [
+              {
+                "label": "Investissements de production",
+                "unit": "M€",
+                "values": [
+                  2069,
+                  2849
+                ]
+              }
+            ]
+          },
+          "emphasis": [
+            {
+              "text": "+38%",
+              "style": "marker_highlight"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-pharma-production-invest"
+          ],
+          "source_refs": [
+            {
+              "file": "strategyand-france-pharma-2025.pdf",
+              "page": 25,
+              "element_id": "p25-b2"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "visualize",
+              "description": "Les deux valeurs annuelles explicites sont représentées en barres.",
+              "source_evidence_ids": [
+                "ev-pharma-production-invest"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "frictions",
+      "title": "Les points de friction",
+      "nav_label": "Freins",
+      "purpose": "constraints",
+      "source_evidence_ids": [
+        "ev-pharma-trials",
+        "ev-pharma-access",
+        "ev-pharma-manufacturing",
+        "ev-pharma-perception"
+      ],
+      "scenes": [
+        {
+          "id": "pharma-frictions",
+          "nav_label": "Signaux",
+          "primitive": "comparison",
+          "semantic_role": "constraint_comparison",
+          "message": "Les fragilités apparaissent sur la conversion des actifs en accès, essais, production de nouveaux médicaments et confiance.",
+          "title": "Le problème n’est pas la taille seule.",
+          "data": {
+            "items": [
+              {
+                "kicker": "Essais cliniques",
+                "title": "3ème en Europe",
+                "text": "La France était deuxième en 2010 et apparaît troisième dans le baromètre 2025."
+              },
+              {
+                "kicker": "Accès",
+                "title": "Disponibilité -6 pts",
+                "text": "Le taux de disponibilité des nouveaux médicaments recule en 2024; les indications en négociation depuis plus de 500 jours augmentent de 22%."
+              },
+              {
+                "kicker": "Fabrication",
+                "title": "9,3%",
+                "text": "Part des nouvelles indications approuvées depuis 2020 ayant au moins un site de fabrication enregistré en France."
+              },
+              {
+                "kicker": "Perception",
+                "title": "92%",
+                "text": "Part des directions interrogées témoignant d’un manque d’attractivité de la France pour le secteur."
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-pharma-trials",
+            "ev-pharma-access",
+            "ev-pharma-manufacturing",
+            "ev-pharma-perception"
+          ],
+          "source_refs": [
+            {
+              "file": "strategyand-france-pharma-2025.pdf",
+              "page": 11,
+              "element_id": "p11-b2"
+            },
+            {
+              "file": "strategyand-france-pharma-2025.pdf",
+              "page": 20,
+              "element_id": "p20-b2"
+            },
+            {
+              "file": "strategyand-france-pharma-2025.pdf",
+              "page": 23,
+              "element_id": "p23-b9"
+            },
+            {
+              "file": "strategyand-france-pharma-2025.pdf",
+              "page": 26,
+              "element_id": "p26-b2"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "group",
+              "description": "Les signaux de friction sont rapprochés sans les convertir en un score composite.",
+              "source_evidence_ids": [
+                "ev-pharma-trials",
+                "ev-pharma-access",
+                "ev-pharma-manufacturing",
+                "ev-pharma-perception"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "pharma-92",
+          "nav_label": "Perception",
+          "primitive": "big_number",
+          "semantic_role": "survey_signal",
+          "message": "92%",
+          "title": "La perception des directions devient le signal d’alerte le plus frontal.",
+          "body": "Le baromètre indique que 92% des directions de laboratoires interrogées témoignent d’un manque d’attractivité de la France.",
+          "data": {
+            "value": "92%"
+          },
+          "source_evidence_ids": [
+            "ev-pharma-perception"
+          ],
+          "source_refs": [
+            {
+              "file": "strategyand-france-pharma-2025.pdf",
+              "page": 26,
+              "element_id": "p26-b2"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "none",
+              "description": "La valeur et sa formulation sont conservées; seule la mise en scène change.",
+              "source_evidence_ids": [
+                "ev-pharma-perception"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "close",
+      "title": "Le paradoxe français",
+      "nav_label": "Synthèse",
+      "purpose": "conclusion",
+      "source_evidence_ids": [
+        "ev-pharma-market",
+        "ev-pharma-production-invest",
+        "ev-pharma-perception"
+      ],
+      "scenes": [
+        {
+          "id": "pharma-close",
+          "nav_label": "Synthèse",
+          "primitive": "conclusion",
+          "semantic_role": "synthesis",
+          "message": "La France conserve des actifs majeurs; le baromètre montre que leur conversion en attractivité ne va plus de soi.",
+          "title": "Des actifs solides. Une attractivité à reconquérir.",
+          "kicker": "Synthèse source-grounded",
+          "source_evidence_ids": [
+            "ev-pharma-market",
+            "ev-pharma-production-invest",
+            "ev-pharma-perception"
+          ],
+          "source_refs": [
+            {
+              "file": "strategyand-france-pharma-2025.pdf",
+              "page": 6,
+              "element_id": "p6-b2"
+            },
+            {
+              "file": "strategyand-france-pharma-2025.pdf",
+              "page": 25,
+              "element_id": "p25-b2"
+            },
+            {
+              "file": "strategyand-france-pharma-2025.pdf",
+              "page": 26,
+              "element_id": "p26-b2"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "restructure",
+              "description": "La conclusion rapproche taille de marché, investissement industriel et perception d’attractivité pour expliciter le contraste documenté par le rapport.",
+              "source_evidence_ids": [
+                "ev-pharma-market",
+                "ev-pharma-production-invest",
+                "ev-pharma-perception"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

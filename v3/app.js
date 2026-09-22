@@ -18,9 +18,10 @@
 
   const motionReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  const grammarUrl=window.STORYSCRO_GRAMMAR_URL||'../engine/narrative-grammar.json';
   Promise.all([
     fetch('story.json').then(r => { if(!r.ok) throw new Error(`story.json ${r.status}`); return r.json(); }),
-    fetch('../engine/narrative-grammar.json').then(r => { if(!r.ok) throw new Error(`narrative-grammar.json ${r.status}`); return r.json(); })
+    fetch(grammarUrl).then(r => { if(!r.ok) throw new Error(`narrative-grammar.json ${r.status}`); return r.json(); })
   ]).then(([story,grammar]) => {
     STORY = story; GRAMMAR = grammar;
     validateStory(STORY);

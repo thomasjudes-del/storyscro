@@ -1,0 +1,516 @@
+{
+  "version": "1.0-internal-agent",
+  "document": {
+    "id": "ccc-adaptation-2025",
+    "title": "UK adaptation: the gap between risk and delivery",
+    "subtitle": "Progress in adapting to climate change – 2025 report to Parliament",
+    "source_file": "ccc-2025.pdf",
+    "language": "en",
+    "page_count": 170,
+    "audience": "Government, Parliament and adaptation decision-makers",
+    "purpose": "Compress the CCC's 170-page progress assessment into the central risk, delivery gap and four areas for government action.",
+    "core_question": "Is the UK adapting at the pace required by the climate risks it already faces?",
+    "publisher": "Climate Change Committee",
+    "source_url": "https://www.theccc.org.uk/wp-content/uploads/2025/04/Progress-in-adapting-to-climate-change-2025-1.pdf"
+  },
+  "editorial_policy": {
+    "fidelity": "adaptive",
+    "compression": "high",
+    "notes": "The long report is reorganized around the executive assessment: rising hazards, inadequate delivery and the four programme-level actions recommended by the CCC."
+  },
+  "navigation": {
+    "chapter_header": true,
+    "reading_progress": true,
+    "micro_navigation": true,
+    "keyboard_navigation": true
+  },
+  "design_system": {
+    "source_strategy": "adapt",
+    "palette": {
+      "primary": "#280048",
+      "secondary": "#6088b0",
+      "accent": "#7142ff",
+      "background": "#ffffff",
+      "surface": "#f5f2f8",
+      "text": "#280049",
+      "muted": "#6e6574"
+    },
+    "typography": {
+      "source_fonts": [
+        "CenturyGothic",
+        "CenturyGothic-Bold"
+      ],
+      "heading_family": "Century Gothic",
+      "body_family": "Century Gothic",
+      "heading_stack": "'Century Gothic', Arial, sans-serif",
+      "body_stack": "'Century Gothic', Arial, sans-serif",
+      "character": "public policy report"
+    },
+    "branding": {
+      "publisher": "Climate Change Committee"
+    },
+    "source_pages": [
+      11,
+      12,
+      13,
+      14,
+      17,
+      21,
+      22,
+      23,
+      29,
+      45
+    ],
+    "notes": "CCC purple identity retained; complex assessment tables are compressed into decision-focused scenes."
+  },
+  "presentation_profile": {
+    "preset": "executive",
+    "density": 0.62,
+    "motion": 0.4,
+    "image_weight": 0.05,
+    "type_scale": 0.9,
+    "compression": 0.84,
+    "contrast": 0.72,
+    "source_identity": 0.94
+  },
+  "assets": [],
+  "evidence": [
+    {
+      "id": "ev-ccc-urgency",
+      "type": "conclusion",
+      "status": "VERIFIED",
+      "text": "The increasing impacts of climate change are clear; adaptation is needed now for current extreme weather and the rapidly increasing severity of future risks.",
+      "source_refs": [
+        {
+          "file": "ccc-2025.pdf",
+          "page": 11,
+          "element_id": "p11-b4"
+        }
+      ]
+    },
+    {
+      "id": "ev-ccc-15",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "The world temporarily exceeded 1.5°C above pre-industrial levels in 2024; further climate change will bring the UK rising sea levels, warmer and wetter winters, and drier and hotter summers with more intense heatwaves and localised extreme rainfall.",
+      "source_refs": [
+        {
+          "file": "ccc-2025.pdf",
+          "page": 12,
+          "element_id": "p12-b12"
+        }
+      ]
+    },
+    {
+      "id": "ev-ccc-infra",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "Over a third of UK railway and road kilometres are currently at flood risk, predicted to rise to around half by 2050.",
+      "source_refs": [
+        {
+          "file": "ccc-2025.pdf",
+          "page": 13,
+          "element_id": "p13-b4"
+        }
+      ]
+    },
+    {
+      "id": "ev-ccc-delivery",
+      "type": "conclusion",
+      "status": "VERIFIED",
+      "text": "The CCC finds inadequate overall progress on delivering adaptation outcomes: no outcome has evidence of 'good' delivery, and 12 of 46 outcomes are scored insufficient.",
+      "source_refs": [
+        {
+          "file": "ccc-2025.pdf",
+          "page": 45,
+          "element_id": "p45-b6"
+        }
+      ]
+    },
+    {
+      "id": "ev-ccc-four",
+      "type": "recommendation",
+      "status": "VERIFIED",
+      "text": "The CCC recommends four key programme-level areas of action to strengthen the national approach to climate resilience.",
+      "source_refs": [
+        {
+          "file": "ccc-2025.pdf",
+          "page": 21,
+          "element_id": "p21-b3"
+        }
+      ]
+    },
+    {
+      "id": "ev-ccc-objectives",
+      "type": "recommendation",
+      "status": "VERIFIED",
+      "text": "Improve objectives and targets with clear, measurable adaptation objectives and sectoral targets.",
+      "source_refs": [
+        {
+          "file": "ccc-2025.pdf",
+          "page": 21,
+          "element_id": "p21-b4"
+        }
+      ]
+    },
+    {
+      "id": "ev-ccc-coordination",
+      "type": "recommendation",
+      "status": "VERIFIED",
+      "text": "Improve coordination across government and better integrate adaptation and climate risk with wider resilience activity.",
+      "source_refs": [
+        {
+          "file": "ccc-2025.pdf",
+          "page": 21,
+          "element_id": "p21-b14"
+        }
+      ]
+    },
+    {
+      "id": "ev-ccc-policy",
+      "type": "recommendation",
+      "status": "VERIFIED",
+      "text": "Integrate adaptation within relevant policies and spending decisions, with sufficient funding and clarity on roles.",
+      "source_refs": [
+        {
+          "file": "ccc-2025.pdf",
+          "page": 21,
+          "element_id": "p21-b16"
+        }
+      ]
+    },
+    {
+      "id": "ev-ccc-monitor",
+      "type": "recommendation",
+      "status": "VERIFIED",
+      "text": "Implement monitoring, evaluation and learning across sectors; almost every indicator available to track adaptation progress lacks a target.",
+      "source_refs": [
+        {
+          "file": "ccc-2025.pdf",
+          "page": 22,
+          "element_id": "p22-b4"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "id": "opening",
+      "title": "Risk is accelerating",
+      "nav_label": "Risk",
+      "purpose": "orientation",
+      "source_evidence_ids": [
+        "ev-ccc-urgency",
+        "ev-ccc-15",
+        "ev-ccc-infra"
+      ],
+      "scenes": [
+        {
+          "id": "ccc-hero-ai",
+          "nav_label": "Urgency",
+          "primitive": "hero",
+          "semantic_role": "opening",
+          "message": "Climate risk is already material; the adaptation response is not keeping pace.",
+          "kicker": "Climate Change Committee | 2025",
+          "title": "The risk is moving faster than the response.",
+          "body": "The CCC's progress report starts from impacts already being felt, then asks whether policy and delivery are changing quickly enough.",
+          "source_evidence_ids": [
+            "ev-ccc-urgency"
+          ],
+          "source_refs": [
+            {
+              "file": "ccc-2025.pdf",
+              "page": 11,
+              "element_id": "p11-b4"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "shorten",
+              "description": "The executive-summary opening is compressed into a single decision frame.",
+              "source_evidence_ids": [
+                "ev-ccc-urgency"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ccc-climate",
+          "nav_label": "Climate signal",
+          "primitive": "comparison",
+          "semantic_role": "risk_evidence",
+          "message": "The report ties current records to a worsening risk envelope.",
+          "title": "Today's extremes are the baseline, not the endpoint.",
+          "data": {
+            "items": [
+              {
+                "kicker": "Global",
+                "title": "1.5°C crossed in 2024",
+                "text": "The report notes that the world temporarily exceeded 1.5°C above pre-industrial levels in 2024."
+              },
+              {
+                "kicker": "Infrastructure",
+                "title": ">1/3 at flood risk today",
+                "text": "Over a third of UK railway and road kilometres are currently at flood risk, rising to around half by 2050."
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-ccc-15",
+            "ev-ccc-infra"
+          ],
+          "source_refs": [
+            {
+              "file": "ccc-2025.pdf",
+              "page": 12,
+              "element_id": "p12-b12"
+            },
+            {
+              "file": "ccc-2025.pdf",
+              "page": 13,
+              "element_id": "p13-b4"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "group",
+              "description": "Two executive risk indicators are paired to connect climate trend and infrastructure exposure without creating a composite metric.",
+              "source_evidence_ids": [
+                "ev-ccc-15",
+                "ev-ccc-infra"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "delivery",
+      "title": "Delivery is the weak point",
+      "nav_label": "Delivery",
+      "purpose": "assessment",
+      "source_evidence_ids": [
+        "ev-ccc-delivery"
+      ],
+      "scenes": [
+        {
+          "id": "ccc-delivery-statement",
+          "nav_label": "Assessment",
+          "primitive": "full_screen_statement",
+          "semantic_role": "assessment_conclusion",
+          "message": "No assessed outcome has evidence of good delivery.",
+          "body": "There is still inadequate overall progress on delivering adaptation outcomes. The CCC does not find a single outcome with evidence of 'good' delivery.",
+          "emphasis": [
+            {
+              "text": "not find a single outcome",
+              "style": "marker_highlight"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-ccc-delivery"
+          ],
+          "source_refs": [
+            {
+              "file": "ccc-2025.pdf",
+              "page": 45,
+              "element_id": "p45-b6"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "shorten",
+              "description": "The core assessment is retained nearly verbatim and isolated as the central turning point.",
+              "source_evidence_ids": [
+                "ev-ccc-delivery"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ccc-12of46",
+          "nav_label": "Insufficient",
+          "primitive": "big_number",
+          "semantic_role": "assessment_metric",
+          "message": "12 of 46",
+          "title": "Twelve assessed outcomes are scored insufficient.",
+          "body": "The wider judgement is that progress is too slow, stalled or heading in the wrong direction across the available indicators.",
+          "data": {
+            "value": "12 / 46"
+          },
+          "source_evidence_ids": [
+            "ev-ccc-delivery"
+          ],
+          "source_refs": [
+            {
+              "file": "ccc-2025.pdf",
+              "page": 45,
+              "element_id": "p45-b6"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "none",
+              "description": "The published count is retained and isolated for emphasis.",
+              "source_evidence_ids": [
+                "ev-ccc-delivery"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "actions",
+      "title": "Four changes to the national approach",
+      "nav_label": "Actions",
+      "purpose": "recommendations",
+      "source_evidence_ids": [
+        "ev-ccc-four",
+        "ev-ccc-objectives",
+        "ev-ccc-coordination",
+        "ev-ccc-policy",
+        "ev-ccc-monitor"
+      ],
+      "scenes": [
+        {
+          "id": "ccc-actions",
+          "nav_label": "Four actions",
+          "primitive": "scrollmation",
+          "semantic_role": "ordered_method",
+          "message": "The CCC recommends four programme-level changes to make adaptation more effective.",
+          "title": "Change the operating system of adaptation.",
+          "data": {
+            "steps": [
+              {
+                "n": "01",
+                "title": "Objectives & targets",
+                "headline": "Define what climate-resilient means",
+                "text": "Set clear overarching objectives and measurable sectoral targets."
+              },
+              {
+                "n": "02",
+                "title": "Coordination",
+                "headline": "Connect adaptation to wider resilience",
+                "text": "Strengthen coordination across departments, spending decisions and resilience activity."
+              },
+              {
+                "n": "03",
+                "title": "Policy & funding",
+                "headline": "Integrate adaptation into mainstream decisions",
+                "text": "Use spending and policy processes to avoid locking in risk and to resource resilience."
+              },
+              {
+                "n": "04",
+                "title": "Monitoring & learning",
+                "headline": "Measure outcomes, not just activity",
+                "text": "Build the indicators, targets and data collection needed to track whether adaptation is working."
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-ccc-four",
+            "ev-ccc-objectives",
+            "ev-ccc-coordination",
+            "ev-ccc-policy",
+            "ev-ccc-monitor"
+          ],
+          "source_refs": [
+            {
+              "file": "ccc-2025.pdf",
+              "page": 21,
+              "element_id": "p21-b3"
+            },
+            {
+              "file": "ccc-2025.pdf",
+              "page": 21,
+              "element_id": "p21-b4"
+            },
+            {
+              "file": "ccc-2025.pdf",
+              "page": 21,
+              "element_id": "p21-b14"
+            },
+            {
+              "file": "ccc-2025.pdf",
+              "page": 21,
+              "element_id": "p21-b16"
+            },
+            {
+              "file": "ccc-2025.pdf",
+              "page": 22,
+              "element_id": "p22-b4"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "group",
+              "description": "The four programme-level recommendations are converted into a scroll sequence, preserving their distinct roles.",
+              "source_evidence_ids": [
+                "ev-ccc-four",
+                "ev-ccc-objectives",
+                "ev-ccc-coordination",
+                "ev-ccc-policy",
+                "ev-ccc-monitor"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "close",
+      "title": "A turning point, not a progress update",
+      "nav_label": "Takeaway",
+      "purpose": "conclusion",
+      "source_evidence_ids": [
+        "ev-ccc-urgency",
+        "ev-ccc-delivery",
+        "ev-ccc-four"
+      ],
+      "scenes": [
+        {
+          "id": "ccc-close-ai",
+          "nav_label": "Takeaway",
+          "primitive": "conclusion",
+          "semantic_role": "conclusion",
+          "message": "The CCC frames the report as a turning point: rising risks are clear, delivery remains inadequate, and the national adaptation approach needs to change.",
+          "title": "From tracking adaptation to driving it.",
+          "kicker": "2025 report to Parliament",
+          "source_evidence_ids": [
+            "ev-ccc-urgency",
+            "ev-ccc-delivery",
+            "ev-ccc-four"
+          ],
+          "source_refs": [
+            {
+              "file": "ccc-2025.pdf",
+              "page": 11,
+              "element_id": "p11-b4"
+            },
+            {
+              "file": "ccc-2025.pdf",
+              "page": 45,
+              "element_id": "p45-b6"
+            },
+            {
+              "file": "ccc-2025.pdf",
+              "page": 21,
+              "element_id": "p21-b3"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "restructure",
+              "description": "The close synthesises the executive urgency, delivery assessment and four programme-level actions.",
+              "source_evidence_ids": [
+                "ev-ccc-urgency",
+                "ev-ccc-delivery",
+                "ev-ccc-four"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

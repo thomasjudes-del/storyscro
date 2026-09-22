@@ -3,14 +3,53 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import re
 from pathlib import Path
 from typing import Any
 
 VERSION = '0.3.0'
 GENERIC_TITLES = {
     'memoire technique', 'mémoire technique', 'technical report', 'report', 'rapport',
-    'proposal', 'proposition', 'presentation', 'présentation'
+    'proposal', 'proposition', 'presentation', 'présentation',
+    'sommaire', 'table des matières', 'table des matieres', 'contents', 'table of contents',
+    'index', 'executive summary', 'résumé exécutif', 'resume executif'
 }
+
+SECTION_NOISE = {
+    'sommaire', 'table des matières', 'table des matieres', 'contents', 'table of contents',
+    'index', 'toc'
+}
+
+
+def normalized_text(text: str) -> str:
+    return ' '.join((text or '').strip().lower().split())
+
+
+def is_metric_callout(text: str) -> bool:
+    """Reject short display metrics from the chapter hierarchy.
+
+    Branded reports often typeset figures such as "43%", "20 ans" or
+    "+ de 2,7 millions" at heading size. They are evidence, not chapter labels.
+    """
+    raw = ' '.join((text or '').strip().split())
+    if not raw or len(raw) > 32:
+        return False
+    # Preserve common year-led editorial headings such as "2025 Outlook".
+    if re.match(r'^(?:19|20)\d{2}\s+[A-Za-zÀ-ÿ]', raw):
+        return False
+    if not re.match(r'^[+\-]?\s*(?:de\s+)?\d', raw, flags=re.I):
+        return False
+    alpha = sum(ch.isalpha() for ch in raw)
+    return alpha <= 12
+
+
+def is_section_heading(block: dict[str, Any]) -> bool:
+    text = normalized_text(block.get('text', ''))
+    return (
+        block.get('semantic_type') == 'heading_1'
+        and text not in SECTION_NOISE
+        and not is_metric_callout(block.get('text', ''))
+    )
 
 
 def load(path: Path):
@@ -54,10 +93,14 @@ def choose_title(evidence: dict[str, Any]) -> dict[str, Any] | None:
         return None
     def score(candidate):
         text = candidate.get('text', '').strip()
-        generic = text.lower() in GENERIC_TITLES
+        generic = normalized_text(text) in GENERIC_TITLES
         descriptive = min(len(text), 90) / 45
-        first = 1.2 if candidate.get('page') == 1 else 0
-        return candidate.get('score', 0) + descriptive + first - (3.5 if generic else 0)
+        # A real report title is overwhelmingly likely to be on the cover/front page.
+        # This must be strong enough to beat a later oversized "Sommaire/Contents".
+        first = 4.0 if candidate.get('page') == 1 else 0
+        structural_penalty = 10.0 if generic else 0
+        metric_penalty = 8.0 if is_metric_callout(text) else 0
+        return candidate.get('score', 0) + descriptive + first - structural_penalty - metric_penalty
     return max(candidates, key=score)
 
 
@@ -68,7 +111,7 @@ def build_sections(evidence: dict[str, Any]) -> list[dict[str, Any]]:
         for block in page.get('blocks', []):
             if block.get('semantic_type') in {'header', 'footer'}:
                 continue
-            if block.get('semantic_type') == 'heading_1':
+            if is_section_heading(block):
                 current = {'id': f"section-{len(sections)+1}", 'title': block['text'], 'heading_block_id': block['id'], 'page_start': block['page'], 'page_end': block['page'], 'blocks': [compact_block(block)]}
                 sections.append(current)
             elif current is None:
@@ -93,7 +136,14 @@ def derive_candidates(evidence: dict[str, Any]):
         for item in page.get('derived', []):
             typ = item.get('type')
             if typ == 'number': numbers.append(item)
-            elif typ == 'table': tables.append({k:item.get(k) for k in ('id','page','bbox','role','rows','row_count','column_count','caption') if item.get(k) is not None})
+            elif typ == 'table':
+                rows = item.get('rows') or []
+                nonempty = sum(1 for row in rows for cell in row if str(cell or '').strip())
+                # Tiny layout tables are commonly used to align signatures/titles in
+                # designed PDFs. Keep real qualitative/numeric tables, drop only the
+                # degenerate 2x2-ish layout cases with almost no populated cells.
+                if nonempty >= 3 or int(item.get('row_count') or 0) >= 3 or int(item.get('column_count') or 0) >= 3:
+                    tables.append({k:item.get(k) for k in ('id','page','bbox','role','rows','row_count','column_count','caption') if item.get(k) is not None})
             elif typ == 'image_placement':
                 a = assets.get(item.get('asset_id'), {})
                 images.append({**{k:item.get(k) for k in ('id','page','bbox','area_ratio','asset_id','caption') if item.get(k) is not None}, 'asset':{k:a.get(k) for k in ('id','sha256','dhash','width','height','extension','file') if a.get(k) is not None}})

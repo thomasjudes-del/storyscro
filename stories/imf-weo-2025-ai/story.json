@@ -1,0 +1,557 @@
+{
+  "version": "1.0-internal-agent",
+  "document": {
+    "id": "imf-weo-july-2025",
+    "title": "Tenuous resilience, persistent uncertainty",
+    "subtitle": "World Economic Outlook Update, July 2025",
+    "source_file": "imf-weo-2025.pdf",
+    "language": "en",
+    "page_count": 12,
+    "audience": "Economic and policy decision-makers",
+    "purpose": "Explain why the IMF raised its near-term growth forecast while still describing the outlook as fragile.",
+    "core_question": "Why does a slightly stronger 2025-26 forecast not amount to a more secure global outlook?",
+    "publisher": "International Monetary Fund",
+    "source_url": "https://www.imf.org/-/media/files/publications/weo/2025/update/july/english/text.pdf"
+  },
+  "editorial_policy": {
+    "fidelity": "adaptive",
+    "compression": "high",
+    "notes": "The update is reorganized around the contrast between revised growth, trade distortions, easing inflation and downside risks."
+  },
+  "navigation": {
+    "chapter_header": true,
+    "reading_progress": true,
+    "micro_navigation": true,
+    "keyboard_navigation": true
+  },
+  "design_system": {
+    "source_strategy": "adapt",
+    "palette": {
+      "primary": "#0060a8",
+      "secondary": "#4f7fa7",
+      "accent": "#4472c4",
+      "background": "#ffffff",
+      "surface": "#f0f5f8",
+      "text": "#17202a",
+      "muted": "#637381"
+    },
+    "typography": {
+      "source_fonts": [
+        "Garamond",
+        "ArialNarrow"
+      ],
+      "heading_family": "Garamond",
+      "body_family": "Garamond",
+      "heading_stack": "Garamond, Georgia, serif",
+      "body_stack": "Garamond, Georgia, serif",
+      "character": "institutional economic outlook"
+    },
+    "branding": {
+      "publisher": "International Monetary Fund"
+    },
+    "source_pages": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      10
+    ],
+    "notes": "IMF blue and serif editorial character preserved."
+  },
+  "presentation_profile": {
+    "preset": "data_heavy",
+    "density": 0.68,
+    "motion": 0.42,
+    "image_weight": 0.04,
+    "type_scale": 0.9,
+    "compression": 0.76,
+    "contrast": 0.58,
+    "source_identity": 0.92
+  },
+  "assets": [],
+  "evidence": [
+    {
+      "id": "ev-imf-growth",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "Global growth is projected at 3.0% in 2025 and 3.1% in 2026, compared with 3.3% in 2024.",
+      "source_refs": [
+        {
+          "file": "imf-weo-2025.pdf",
+          "page": 4,
+          "element_id": "p4-b34"
+        }
+      ]
+    },
+    {
+      "id": "ev-imf-revision",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "The 2025 forecast is 0.2 percentage point higher than the April 2025 WEO reference forecast and 0.1 point higher for 2026, reflecting front-loading ahead of tariffs, lower effective US tariff rates, easier financial conditions and fiscal expansion in some major jurisdictions.",
+      "source_refs": [
+        {
+          "file": "imf-weo-2025.pdf",
+          "page": 2,
+          "element_id": "p2-b6"
+        }
+      ]
+    },
+    {
+      "id": "ev-imf-inflation",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "Global headline inflation is expected to fall to 4.2% in 2025 and 3.6% in 2026.",
+      "source_refs": [
+        {
+          "file": "imf-weo-2025.pdf",
+          "page": 2,
+          "element_id": "p2-b6"
+        }
+      ]
+    },
+    {
+      "id": "ev-imf-trade",
+      "type": "claim",
+      "status": "VERIFIED",
+      "text": "World trade volume is revised upward by 0.9 percentage point for 2025 and downward by 0.6 point for 2026 as front-loading fades.",
+      "source_refs": [
+        {
+          "file": "imf-weo-2025.pdf",
+          "page": 6,
+          "element_id": "p6-b3"
+        }
+      ]
+    },
+    {
+      "id": "ev-imf-risks",
+      "type": "conclusion",
+      "status": "VERIFIED",
+      "text": "Risks to the outlook are tilted to the downside: higher tariffs, persistent uncertainty, geopolitical tensions, larger fiscal deficits or increased risk aversion could weaken growth or tighten financial conditions.",
+      "source_refs": [
+        {
+          "file": "imf-weo-2025.pdf",
+          "page": 2,
+          "element_id": "p2-b7"
+        }
+      ]
+    },
+    {
+      "id": "ev-imf-economies",
+      "type": "table",
+      "status": "VERIFIED",
+      "text": "IMF projections include: advanced economies 1.5% growth in 2025 and 1.6% in 2026; emerging market and developing economies 4.1% and 4.0%; United States 1.9% and 2.0%; China 4.8% and 4.2%.",
+      "source_refs": [
+        {
+          "file": "imf-weo-2025.pdf",
+          "page": 10,
+          "element_id": "p10-b7"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "id": "opening",
+      "title": "A stronger forecast with weaker foundations",
+      "nav_label": "Opening",
+      "purpose": "orientation",
+      "source_evidence_ids": [
+        "ev-imf-growth",
+        "ev-imf-revision",
+        "ev-imf-risks"
+      ],
+      "scenes": [
+        {
+          "id": "imf-hero",
+          "nav_label": "Outlook",
+          "primitive": "hero",
+          "semantic_role": "opening",
+          "message": "The forecast improves, but the IMF still calls the resilience tenuous.",
+          "kicker": "World Economic Outlook Update | July 2025",
+          "title": "A small upgrade. Persistent uncertainty.",
+          "body": "The near-term numbers are better than the April reference forecast. The underlying story is still dominated by tariffs, front-loading, uncertainty and fiscal risk.",
+          "source_evidence_ids": [
+            "ev-imf-growth",
+            "ev-imf-revision",
+            "ev-imf-risks"
+          ],
+          "source_refs": [
+            {
+              "file": "imf-weo-2025.pdf",
+              "page": 2,
+              "element_id": "p2-b6"
+            },
+            {
+              "file": "imf-weo-2025.pdf",
+              "page": 2,
+              "element_id": "p2-b7"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "restructure",
+              "description": "The opening juxtaposes the upgraded forecast with the downside-risk assessment stated in the update.",
+              "source_evidence_ids": [
+                "ev-imf-growth",
+                "ev-imf-revision",
+                "ev-imf-risks"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "imf-growth-chart",
+          "nav_label": "Growth",
+          "primitive": "chart",
+          "semantic_role": "global_growth_trend",
+          "message": "Global growth slows from 2024, then edges up in 2026.",
+          "title": "Resilience, but below the recent pace.",
+          "body": "The IMF projects 3.0% global growth in 2025 and 3.1% in 2026, below the 3.3% outcome for 2024.",
+          "data": {
+            "chart_type": "line",
+            "labels": [
+              "2024",
+              "2025",
+              "2026"
+            ],
+            "unit": "%",
+            "series": [
+              {
+                "label": "World output growth",
+                "unit": "%",
+                "values": [
+                  3.3,
+                  3,
+                  3.1
+                ]
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-imf-growth"
+          ],
+          "source_refs": [
+            {
+              "file": "imf-weo-2025.pdf",
+              "page": 4,
+              "element_id": "p4-b34"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "visualize",
+              "description": "Three published world-growth values are plotted as a short trend.",
+              "source_evidence_ids": [
+                "ev-imf-growth"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "why",
+      "title": "Why the forecast was revised up",
+      "nav_label": "Revision",
+      "purpose": "drivers",
+      "source_evidence_ids": [
+        "ev-imf-revision",
+        "ev-imf-trade"
+      ],
+      "scenes": [
+        {
+          "id": "imf-drivers",
+          "nav_label": "Drivers",
+          "primitive": "comparison",
+          "semantic_role": "drivers",
+          "message": "The upgrade is partly mechanical and policy-driven rather than a clean signal of stronger underlying demand.",
+          "title": "Four forces lift the near term.",
+          "data": {
+            "items": [
+              {
+                "kicker": "Trade",
+                "title": "Front-loading",
+                "text": "Trade and activity were pulled forward ahead of expected higher tariffs."
+              },
+              {
+                "kicker": "Tariffs",
+                "title": "Lower effective rates",
+                "text": "Average effective US tariff rates were lower than those announced in April."
+              },
+              {
+                "kicker": "Finance",
+                "title": "Easier conditions",
+                "text": "Financial conditions improved, including through a weaker US dollar."
+              },
+              {
+                "kicker": "Fiscal",
+                "title": "Expansion",
+                "text": "Fiscal expansion in some major jurisdictions supports the near-term forecast."
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-imf-revision"
+          ],
+          "source_refs": [
+            {
+              "file": "imf-weo-2025.pdf",
+              "page": 2,
+              "element_id": "p2-b6"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "group",
+              "description": "The four drivers explicitly listed in the IMF overview are separated into parallel cards.",
+              "source_evidence_ids": [
+                "ev-imf-revision"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "imf-trade",
+          "nav_label": "Trade",
+          "primitive": "comparison",
+          "semantic_role": "intertemporal_trade_effect",
+          "message": "Front-loading improves 2025 trade but borrows activity from 2026.",
+          "title": "A boost now, a payback later.",
+          "data": {
+            "items": [
+              {
+                "kicker": "2025 revision",
+                "title": "+0.9 pp",
+                "text": "World trade volume is revised upward as firms bring flows forward under trade-policy uncertainty."
+              },
+              {
+                "kicker": "2026 revision",
+                "title": "-0.6 pp",
+                "text": "The IMF expects the front-loading effect to fade and the associated payback to materialize."
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-imf-trade"
+          ],
+          "source_refs": [
+            {
+              "file": "imf-weo-2025.pdf",
+              "page": 6,
+              "element_id": "p6-b3"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "visualize",
+              "description": "The two explicit trade-volume revisions are placed side by side to show the intertemporal shift.",
+              "source_evidence_ids": [
+                "ev-imf-trade"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "distribution",
+      "title": "Growth is not evenly distributed",
+      "nav_label": "Economies",
+      "purpose": "comparison",
+      "source_evidence_ids": [
+        "ev-imf-economies"
+      ],
+      "scenes": [
+        {
+          "id": "imf-economies",
+          "nav_label": "2025 / 2026",
+          "primitive": "chart",
+          "semantic_role": "cross_economy_comparison",
+          "message": "Advanced economies grow more slowly than emerging and developing economies, with notable divergence inside each group.",
+          "title": "One global number, different regional speeds.",
+          "data": {
+            "chart_type": "bar",
+            "labels": [
+              "Adv. econ.",
+              "EMDE",
+              "United States",
+              "China"
+            ],
+            "unit": "%",
+            "series": [
+              {
+                "label": "2025",
+                "unit": "%",
+                "values": [
+                  1.5,
+                  4.1,
+                  1.9,
+                  4.8
+                ]
+              },
+              {
+                "label": "2026",
+                "unit": "%",
+                "values": [
+                  1.6,
+                  4,
+                  2,
+                  4.2
+                ]
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-imf-economies"
+          ],
+          "source_refs": [
+            {
+              "file": "imf-weo-2025.pdf",
+              "page": 10,
+              "element_id": "p10-b7"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "visualize",
+              "description": "Selected published projections are plotted without aggregating them into a new index.",
+              "source_evidence_ids": [
+                "ev-imf-economies"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "risk",
+      "title": "The forecast remains fragile",
+      "nav_label": "Risks",
+      "purpose": "risk_synthesis",
+      "source_evidence_ids": [
+        "ev-imf-inflation",
+        "ev-imf-risks"
+      ],
+      "scenes": [
+        {
+          "id": "imf-inflation",
+          "nav_label": "Inflation",
+          "primitive": "chart",
+          "semantic_role": "inflation_trend",
+          "message": "Headline inflation continues to decline globally, but cross-country differences remain large.",
+          "title": "Inflation cools. The policy problem does not disappear.",
+          "data": {
+            "chart_type": "line",
+            "labels": [
+              "2025",
+              "2026"
+            ],
+            "unit": "%",
+            "series": [
+              {
+                "label": "Global headline inflation",
+                "unit": "%",
+                "values": [
+                  4.2,
+                  3.6
+                ]
+              }
+            ]
+          },
+          "source_evidence_ids": [
+            "ev-imf-inflation"
+          ],
+          "source_refs": [
+            {
+              "file": "imf-weo-2025.pdf",
+              "page": 2,
+              "element_id": "p2-b6"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "visualize",
+              "description": "The two published global inflation projections are plotted as a short trend.",
+              "source_evidence_ids": [
+                "ev-imf-inflation"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "imf-risk-statement",
+          "nav_label": "Risk",
+          "primitive": "full_screen_statement",
+          "semantic_role": "risk_conclusion",
+          "message": "Risks remain tilted to the downside.",
+          "body": "A rebound in tariffs, prolonged uncertainty, geopolitical disruption, larger fiscal deficits or renewed risk aversion could weaken growth or tighten financial conditions.",
+          "emphasis": [
+            {
+              "text": "tilted to the downside",
+              "style": "marker_highlight"
+            }
+          ],
+          "source_evidence_ids": [
+            "ev-imf-risks"
+          ],
+          "source_refs": [
+            {
+              "file": "imf-weo-2025.pdf",
+              "page": 2,
+              "element_id": "p2-b7"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "shorten",
+              "description": "The IMF risk paragraph is condensed to the named downside channels.",
+              "source_evidence_ids": [
+                "ev-imf-risks"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "imf-close",
+          "nav_label": "Takeaway",
+          "primitive": "conclusion",
+          "semantic_role": "conclusion",
+          "message": "The July upgrade is real, but it is not the same thing as restored certainty.",
+          "title": "Better numbers. Still a tenuous resilience.",
+          "kicker": "WEO July 2025",
+          "source_evidence_ids": [
+            "ev-imf-growth",
+            "ev-imf-revision",
+            "ev-imf-risks"
+          ],
+          "source_refs": [
+            {
+              "file": "imf-weo-2025.pdf",
+              "page": 2,
+              "element_id": "p2-b6"
+            },
+            {
+              "file": "imf-weo-2025.pdf",
+              "page": 2,
+              "element_id": "p2-b7"
+            }
+          ],
+          "transformations": [
+            {
+              "type": "restructure",
+              "description": "The conclusion preserves the report's own contrast between revised projections and persistent downside risk.",
+              "source_evidence_ids": [
+                "ev-imf-growth",
+                "ev-imf-revision",
+                "ev-imf-risks"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

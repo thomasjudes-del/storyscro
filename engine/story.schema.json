@@ -506,6 +506,7 @@
             "reorder",
             "group",
             "aggregate",
+            "compare",
             "visualize",
             "restructure",
             "translate",

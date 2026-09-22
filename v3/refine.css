@@ -176,7 +176,7 @@ h1,h2,h3,.brand,.chapter-nav,.micro-nav{font-family:var(--font-heading,var(--fon
 .metric-inner .kicker{grid-area:kicker;align-self:end;margin-bottom:12px}
 .metric-stage .big-number-value{grid-area:number;align-self:center;font-size:clamp(120px,20vw,300px);line-height:.78;color:var(--brand-accent);transform:scale(calc(.9 + var(--metric-progress,0) * .08));transform-origin:45% 55%;transition:none;letter-spacing:-.07em;white-space:nowrap}
 .metric-medium .metric-stage .big-number-value{font-size:clamp(105px,16vw,235px)}
-.metric-long .metric-stage .big-number-value{font-size:clamp(82px,12vw,175px);letter-spacing:-.055em}
+.metric-long .metric-stage .big-number-value{font-size:clamp(72px,8.5vw,128px);letter-spacing:-.045em}
 .metric-stage h2{grid-area:title;align-self:end;font-size:clamp(38px,4.6vw,66px);line-height:.96;letter-spacing:-.045em;margin:0 0 18px;max-width:720px}
 .metric-stage p:not(.kicker){grid-area:body;font-size:19px;line-height:1.5;max-width:650px;margin:0;color:color-mix(in srgb,var(--ink) 70%,#fff)}
 .metric-stage .source-button{grid-area:source;justify-self:start;margin-top:24px;color:var(--ink);border-color:color-mix(in srgb,var(--ink) 28%,transparent);background:rgba(255,255,255,.5)}
@@ -190,7 +190,7 @@ h1,h2,h3,.brand,.chapter-nav,.micro-nav{font-family:var(--font-heading,var(--fon
   .metric-inner{width:88vw;grid-template-columns:1fr;grid-template-areas:"kicker" "number" "title" "body" "source";align-content:center;padding:calc(var(--header-h) + 5vh) 0 7vh}
   .metric-stage .big-number-value{font-size:clamp(96px,31vw,150px);line-height:.78;margin:2vh 0;white-space:normal;overflow-wrap:anywhere}
   .metric-medium .metric-stage .big-number-value{font-size:clamp(82px,27vw,130px)}
-  .metric-long .metric-stage .big-number-value{font-size:clamp(58px,19vw,92px);letter-spacing:-.04em}
+  .metric-long .metric-stage .big-number-value{font-size:clamp(48px,14.5vw,72px);letter-spacing:-.025em}
   .metric-stage h2{font-size:clamp(32px,8.5vw,48px)}
   .metric-stage p:not(.kicker){font-size:16px}
 }

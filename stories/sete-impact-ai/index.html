@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#054F5C">
+  <title>Port de Sète | StoryScro</title>
+  <link rel="stylesheet" href="../../v3/style.css">
+  <link rel="stylesheet" href="../../v3/refine.css">
+</head>
+<body>
+  <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+  <header class="story-header" id="storyHeader">
+    <a class="brand" href="#story-top" aria-label="StoryScro"><span class="brand-mark"></span><span>StoryScro</span></a>
+    <nav class="chapter-nav" id="chapterNav" aria-label="Chapitres"></nav>
+    <div class="header-actions"><a class="source-pdf-link" id="sourcePdfLink" href="#" target="_blank" rel="noopener noreferrer" hidden>Original PDF</a><button class="source-trigger" id="allSourcesBtn" type="button">Sources</button></div>
+  </header>
+  <aside class="micro-nav" id="microNav" aria-label="Navigation dans le récit"><div class="micro-track" id="microTrack"></div></aside>
+  <main id="story-top" tabindex="-1">
+    <div class="loading" id="loading"><span></span><p>Construction du récit…</p></div>
+    <div id="storyRoot"></div>
+  </main>
+  <aside class="source-drawer" id="sourceDrawer" aria-hidden="true">
+    <button class="drawer-close" id="sourceClose" type="button">Fermer</button>
+    <p class="drawer-kicker">Provenance</p><h2 id="sourceTitle">Sources</h2><div id="sourceBody"></div>
+  </aside>
+  <script>window.STORYSCRO_GRAMMAR_URL='../../engine/narrative-grammar.json';</script>
+  <script src="../../v3/app.js"></script>
+  <script src="../../v3/refine.js"></script>
+</body>
+</html>
